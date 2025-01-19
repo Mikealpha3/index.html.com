@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prédiction de Couleurs Élite</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f8ff; /* Fond bleu clair */
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden; /* Empêcher le défilement */
+        }
+        .container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            max-width: 800px;
+            width: 100%;
+            height: 95vh;
+            overflow-y: auto; /* Ajouter un défilement interne si nécessaire */
+            position: relative; /* Permettre l'utilisation de la position absolue pour le minuteur */
+        }
+        h1 {
+            color: #5b5b5b;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .timer-container {
+            text-align: center;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            border: 2px solid #007bff; /* Ajouter une bordure bleue */
+            position: relative; /* Pour positionner le bouton de restauration */
+        }
+        .timer {
+            font-size: 2em;
+            margin-bottom: 10px;
+            color: #000000; /* Couleur du texte noire */
+            animation: dash 1s linear infinite; /* Animation des pointillés */
+        }
+        @keyframes dash {
+            0% { border-right: 2px solid transparent; }
+            50% { border-right: 2px solid black; }
+            100% { border-right: 2px solid transparent; }
+        }
+        .buttons {
+            display: flex;
+            justify-content: center;
+        }
+        .timer-button {
+            padding: 10px 20px;
+            font-size: 1em;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .timer-button:hover {
+            background-color: #dddddd;
+        }
+        .timer-button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        label {
+            margin: 5px 0;
+            font-weight: bold;
+            display: inline-block;
+            width: 180px; /* Align labels with inputs */
+        }
+        .action-buttons, .right-buttons {
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        button {
+            padding: 10px 20px;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            font-size: 16px;
+            margin-right: 10px; /* Ajouter un écart entre les boutons */
+        }
+        .btn-predict {
+            background-color: #28a745; /* Vert */
+        }
+        .btn-predict:hover {
+            background-color: #218838;
+        }
+        .btn-clear {
+            background-color: #dc3545; /* Rouge */
+        }
+        .btn-clear:hover {
+            background-color: #c82333;
+        }
+        .btn-history, .btn-undo {
+            background-color: #007bff; /* Bleu */
+        }
+        .btn-history:hover, .btn-undo:hover {
+            background-color: #0056b3;
+        }
+        .btn-success {
+            background-color: #28a745; /* Vert */
+        }
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        .btn-failure {
+            background-color: #dc3545; /* Rouge */
+        }
+        .btn-failure:hover {
+            background-color: #c82333;
+        }
+        .btn-copy, .btn-export {
+            background-color: #ffc107; /* Jaune */
+        }
+        .btn-copy:hover, .btn-export:hover {
+            background-color: #e0a800;
+        }
+        .color-input {
+            padding: 10px;
+            border: 2px solid #aaa;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            width: 120px; /* Ajuster la largeur pour plus de visibilité */
+            text-align: center;
+            font-size: 18px;
+            color: #444;
+            background-color: #fff; /* Couleur de fond blanc */
+        }
+        .color-input::placeholder {
+            color: #888; /* Couleur du placeholder */
+        }
+        select {
+            padding: 10px;
+            border: 2px solid #aaa;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            width: auto;
+            color: #444;
+            background-color: #fff; /* Couleur de fond blanc */
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #f0f0f0; /* Arrière-plan gris clair */
+        }
+        #historyContainer {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .highlight {
+            background-color: yellow; /* Couleur de surlignage temporaire */
+        }
+        .feedback-buttons {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        .feedback-buttons button {
+            width: 30%; /* Ajuster la largeur des boutons */
+        }
+        .stats {
+            margin-top: 20px;
+            font-size: 18px;
+            text-align: left;
+        }
+        .bottom-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+        .date-selector {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .undo-button {
+            position: relative;
+            margin-top: 10px; /* Ajouter de la marge pour positionner au-dessus du tableau */
+        }
+        /* Style de la barre de défilement */
+        ::-webkit-scrollbar {
+            width: 16px; /* Augmenter la largeur de la barre de défilement */
+        }
+        ::-webkit-scrollbar-track {
+            background: #e1e1e1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Prédiction de Couleurs Élite</h1>
+        <div class="timer-container">
+            <div id="timer" class="timer">05:00</div>
+            <div class="buttons">
+                <button class="timer-button" id="startButton" onclick="startTimer()">Démarrer</button>
+            </div>
+        </div>
+        <div class="date-selector">
+            <label for="dateInput">Date :</label>
+            <input type="date" id="dateInput" class="color-input">
+        </div>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <input type="text" id="colorInput" class="color-input" maxlength="3" oninput="validateInput()" placeholder="Ajouter les Couleurs (ex: RVV)">
+        </div>
+        <div class="action-buttons">
+            <button class="btn-success" onclick="appendColor('R')">R</button>
+            <button class="btn-success" onclick="appendColor('V')">V</button>
+        </div>
+        <div class="action-buttons">
+            <button class="btn-predict" onclick="predictColor()">Prédire</button>
+            <button class="btn-clear" onclick="clearFields()">Effacer</button>
+        </div>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <select id="mostFrequentColor">
+                <option value="rouge">Rouge</option>
+                <option value="vert">Vert</option>
+                <option value="egal">Égal</option>
+            </select>
+        </div>
+        <div class="history-header">
+            <h2>Historique</h2>
+            <div>
+                <button class="btn-copy" onclick="copyHistory()">Copier</button>
+                <button class="btn-export" onclick="exportHistory()">Exporter</button>
+            </div>
+        </div>
+        <div id="historyContainer" class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>COULEURS</th>
+                        <th>PRÉDICTION</th>
+                        <th>COULEUR RÉCURRENTE</th>
+                        <th>RÉSULTAT</th>
+                    </tr>
+                </thead>
+                <tbody id="history">
+                </tbody>
+            </table>
+        </div>
+        <p id="predictionResult"></p>
+        <p id="previousResult"></p> <!-- Message pour les résultats précédents -->
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <label for="correctPrediction" style="margin-bottom: 0;">Prédiction Incorrecte :</label>
+            <input type="text" id="correctPrediction" class="color-input" placeholder="Couleur Correcte" maxlength="5">
+            <button class="btn-success" onclick="correctPrediction()">Corriger</button>
+            <button class="btn-undo" onclick="undo()">Marche Arrière</button> <!-- Bouton déplacé à droite de "Corriger" -->
+        </div>
+        <div class="feedback-buttons">
+            <button class="btn-success" id="btnSuccess" onclick="giveFeedback(true)">Gagner ✅</button>
+            <button class="btn-failure" id="btnFailure" onclick="giveFeedback(false)">Perte ❌</button>
+            <button class="btn-history" onclick="clearHistory()">Effacer l'Historique</button>
+        </div>
+        <div class="stats">
+            <p id="successRate"></p>
+            <p id="totalPredictions">Total des Prédictions : 0</p>
+            <p id="totalSuccesses">Total des Réussites : 0</p>
+            <p id="totalFailures">Total des Pertes : 0</p>
+            <p id="points">Points : 0</p>
+        </div>
+    </div>
+
+    <script>
+        let history = [];
+        let previousHistory = [];
+        let consecutiveLosses = 0;
+        let successes = 0;
+        let failures = 0; // Ajout du compteur de points
+        let points = 0; // Ajout du compteur de points
+        let lastResultWasLoss = false; // Indicateur de la dernière prédiction perdue
+
+        let timer;
+        let totalSeconds = 300; // 5 minutes = 300 secondes
+
+        function startTimer() {
+            document.getElementById('startButton').disabled = true;
+            timer = setInterval(setTime, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timer);
+            document.getElementById('startButton').disabled = false;
+        }
+
+        function setTime() {
+            if (totalSeconds > 0) {
+                --totalSeconds;
+                let minutes = Math.floor(totalSeconds / 60);
+                let seconds = totalSeconds % 60;
+
+                document.getElementById('timer').innerText =
+                    ("0" + minutes).slice(-2) + ":" + ("0" + seconds).slice(-2);
+            } else {
+                stopTimer();
+                alert("Le temps est écoulé !");
+                resetTimer();
+            }
+        }
+
+        function resetTimer() {
+            totalSeconds = 300;
+            document.getElementById('timer').innerText = "05:00";
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadHistoryFromLocalStorage();
+            showTutorial(); // Afficher le tutoriel au démarrage
+        });
+
+        function validateInput() {
+            const input = document.getElementById('colorInput');
+            input.value = input.value.toUpperCase().replace(/[^RV]/g, '').slice(0, 3);
+        }
+
+        function appendColor(color) {
+            const input = document.getElementById('colorInput');
+            if (input.value.length < 3) {
+                input.value += color;
+            }
+        }
+
+        function predictColor() {
+            const colorInput = document.getElementById('colorInput').value.toUpperCase();
+            const validColors = ['R', 'V'];
+
+            if (colorInput === 'VRV' || colorInput === 'RVR') {
+                document.getElementById('previousResult').textContent = 'Prédiction Indécise';
+                return;
+            }
+
+            if (colorInput.length !== 3 || !colorInput.split('').every(char => validColors.includes(char))) {
+                alert('Veuillez entrer une séquence de trois couleurs, utilisant uniquement "R" ou "V".');
+                return;
+            }
+
+            const lastColors = colorInput.split('').map(char => char === 'R' ? 'rouge' : 'vert');
+            const mostFrequentColor = document.getElementById('mostFrequentColor').value.toLowerCase();
+
+            let nextColor;
+
+            // Algorithme de prédiction basé sur les motifs fournis et la couleur la plus récurrente
+            if (lastColors.every(color => color === 'vert')) {
+                nextColor = 'vert';
+            } else if (lastColors.every(color => color === 'rouge')) {
+                nextColor = 'rouge';
+            } else if (lastColors[lastColors.length - 1] === 'vert' && lastColors.includes('rouge')) {
+                nextColor = 'rouge';
+            } else if (lastColors[lastColors.length - 1] === 'rouge' && lastColors.includes('vert')) {
+                nextColor = 'vert';
+            } else if (mostFrequentColor === 'egal') {
+                nextColor = lastColors[lastColors.length - 1] === 'rouge' ? 'vert' : 'rouge';
+            } else {
+                nextColor = mostFrequentColor; // Utiliser la couleur la plus récurrente pour la prédiction
+            }
+
+            // Vérifier si la prédiction existe déjà dans l'historique
+            const previousResult = history.find(record => record.colors === lastColors.join(', '));
+
+            if (previousResult) {
+                if (previousResult.result === 'Échec') {
+                    document.getElementById('previousResult').textContent = 'Cette prédiction existe déjà dans l\'historique avec résultat Échec. Essayez de miser la couleur contraire.';
+                } else {
+                    document.getElementById('previousResult').textContent = `Prédiction : ${previousResult.prediction}, Résultat : ${previousResult.result}, Couleur Récurrente : ${previousResult.frequentColor}`;
+                }
+            } else {
+                document.getElementById('previousResult').textContent = ''; // Effacer le message précédent
+            }
+
+            // Ajouter automatiquement à l'historique même si la prédiction existe déjà
+            previousHistory = [...history]; // Sauvegarde de l'historique actuel
+            history.push({ colors: lastColors.join(', '), prediction: nextColor, frequentColor: mostFrequentColor, result: '', date: document.getElementById('dateInput').value || new Date().toLocaleDateString() });
+
+            const predictionResult = document.getElementById('predictionResult');
+            predictionResult.textContent = "Prédiction : " + nextColor;
+
+            // Effacer les champs après la prédiction
+            document.getElementById('colorInput').value = '';
+
+            updateHistory();
+            enableFeedbackButtons();
+
+            // Notification de confirmation de la prédiction
+            alert('Prédiction ajoutée avec succès !');
+        }
+
+        function displayPreviousResult(previousResult) {
+            const resultMessage = `Cette prédiction existe déjà dans l'historique. Prédiction : ${previousResult.prediction}, Résultat : ${previousResult.result}, Couleur Récurrente : ${previousResult.frequentColor}`;
+            document.getElementById('previousResult').textContent = resultMessage;
+        }
+
+        function clearFields() {
+            document.getElementById('colorInput').value = '';
+            document.getElementById('mostFrequentColor').value = 'rouge';
+            document.getElementById('predictionResult').textContent = '';
+            document.getElementById('previousResult').textContent = ''; // Effacer le message précédent
+            enableFeedbackButtons(); // Réactiver les boutons de feedback
+        }
+
+        function giveFeedback(correct) {
+            if (correct) {
+                document.getElementById('btnFailure').disabled = true; // Désactiver le bouton "Perte"
+                document.getElementById('btnSuccess').disabled = true; // Désactiver le bouton "Gagner" après un clic
+                consecutiveLosses = 0; // Réinitialiser les pertes consécutives
+                history[history.length - 1].result = 'Succès';
+                successes += 1;
+                points += 10; // Ajouter des points pour chaque prédiction correcte
+                lastResultWasLoss = false; // Réinitialiser après un gain
+
+                // Notification de réussite
+                alert('Félicitations, vous avez réussi !');
+            } else {
+                document.getElementById('btnSuccess').disabled = true; // Désactiver le bouton "Gagner"
+                document.getElementById('btnFailure').disabled = true; // Désactiver le bouton "Perte" après un clic
+                consecutiveLosses += 1; // Incrémenter les pertes consécutives
+                history[history.length - 1].result = 'Échec';
+                failures += 1; // Ajouter à l'échec
+                lastResultWasLoss = true; // Indiquer que la dernière prédiction était une perte
+
+                // Notification d'échec
+                alert('Dommage, vous avez perdu.');
+            }
+            updateHistory();
+            updateSuccessRate();
+            updatePoints(); // Mettre à jour les points
+
+            if (lastResultWasLoss) {
+                document.getElementById('previousResult').textContent = 'Miser la couleur contraire pour la prochaine fois !';
+            } else {
+                document.getElementById('previousResult').textContent = ''; // Effacer le message après un gain
+            }
+        }
+
+        function correctPrediction() {
+            const correctPrediction = document.getElementById('correctPrediction').value.toLowerCase();
+            const validValues = ['rouge', 'vert', 'egal'];
+
+            if (!validValues.includes(correctPrediction)) {
+                alert('Veuillez entrer "rouge", "vert" ou "egal" uniquement.');
+                return;
+            }
+
+            history[history.length - 1].prediction = correctPrediction;
+            updateHistory();
+            document.getElementById('correctPrediction').value = ''; // Effacer le champ de correction
+        }
+
+        function updateHistory() {
+            const historyElement = document.getElementById('history');
+            historyElement.innerHTML = '';
+            history.forEach((record, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td style="background-color:#f5f5f5;">${record.date}</td><td style="background-color:#f8d7da;">${record.colors}</td><td style="background-color:#d4edda;">${record.prediction}</td><td style="background-color:#fff3cd;">${record.frequentColor}</td><td style="background-color:#f5c6cb;">${record.result}</td>`;
+                historyElement.appendChild(tr);
+            });
+            saveHistoryToLocalStorage(); // Sauvegarder après mise à jour
+            updateStats();
+        }
+
+        function clearHistory() {
+            previousHistory = [...history]; // Sauvegarde de l'historique actuel
+            history = [];
+            successes = 0; // Réinitialiser les réussites
+            failures = 0; // Réinitialiser les pertes
+            points = 0; // Réinitialiser les points
+            updateHistory();
+            updateSuccessRate();
+            updateStats(); // Mettre à jour les statistiques après effacement
+            updatePoints(); // Mettre à jour les points après effacement
+            enableFeedbackButtons(); // Réactiver les boutons de feedback
+
+            // Notification de l'effacement de l'historique
+            alert('Historique effacé avec succès !');
+        }
+
+        function undo() {
+            history = [...previousHistory]; // Restaure l'historique précédent
+            updateHistory();
+            updateSuccessRate();
+            updateStats(); // Mettre à jour les statistiques après restauration
+            updatePoints(); // Mettre à jour les points après restauration
+            enableFeedbackButtons(); // Réactiver les boutons de feedback
+
+            // Notification de la restauration de l'historique
+            alert('Historique restauré avec succès !');
+        }
+
+        function updateSuccessRate() {
+            const successRate = (successes / (successes + failures)) * 100;
+            document.getElementById('successRate').textContent = `Taux de réussite : ${successRate.toFixed(2)}%`;
+        }
+
+        function updatePoints() {
+            document.getElementById('points').textContent = `Points : ${points}`; // Afficher les points
+        }
+
+        function saveHistoryToLocalStorage() {
+            localStorage.setItem('predictionHistory', JSON.stringify(history));
+        }
+
+        function loadHistoryFromLocalStorage() {
+            const storedHistory = localStorage.getItem('predictionHistory');
+            if (storedHistory) {
+                history = JSON.parse(storedHistory);
+                updateHistory();
+                updateSuccessRate();
+                updateStats(); // Mettre à jour les statistiques après chargement
+                updatePoints(); // Mettre à jour les points après chargement
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('successRate').textContent = `Taux de réussite : ${(successes / (successes + failures) * 100).toFixed(2)}%`;
+            document.getElementById('totalPredictions').textContent = `Total des Prédictions : ${history.length}`;
+            document.getElementById('totalSuccesses').textContent = `Total des Réussites : ${successes}`;
+            document.getElementById('totalFailures').textContent = `Total des Pertes : ${failures}`;
+        }
+
+        function enableFeedbackButtons() {
+            document.getElementById('btnSuccess').disabled = false;
+            document.getElementById('btnFailure').disabled = false;
+        }
+
+        // Fonction pour copier l'historique dans le presse-papiers
+        function copyHistory() {
+            const historyText = history.map(record => `${record.date} - ${record.colors} - ${record.prediction} - ${record.frequentColor} - ${record.result}`).join('\n');
+            const el = document.createElement('textarea');
+            el.value = historyText;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            alert('Historique copié dans le presse-papiers!');
+        }
+
+        // Fonction pour exporter l'historique en fichier texte
+        function exportHistory() {
+            const historyText = history.map(record => `${record.date} - ${record.colors} - ${record.prediction} - ${record.frequentColor} - ${record.result}`).join('\n');
+            const blob = new Blob([historyText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'historique.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Fonction pour enlever les accents des entrées
+        function removeAccents(input) {
+            const accentsMap = {
+                'á': 'a', 'à': 'a', 'â': 'a', 'ä': 'a', 'ã': 'a', 'å': 'a', 'æ': 'ae', 'ç': 'c',
+                'é': 'e', 'è': 'e', 'ê': 'e', 'ë': 'e', 'í': 'i', 'ì': 'i', 'î': 'i', 'ï': 'i',
+                'ñ': 'n', 'ó': 'o', 'ò': 'o', 'ô': 'o', 'ö': 'o', 'õ': 'o', 'ø': 'o', 'ú': 'u',
+                'ù': 'u', 'û': 'u', 'ü': 'u', 'ý': 'y', 'ÿ': 'y', 'Á': 'A', 'À': 'A', 'Â': 'A',
+                'Ä': 'A', 'Ã': 'A', 'Å': 'A', 'Æ': 'AE', 'Ç': 'C', 'É': 'E', 'È': 'E', 'Ê': 'E',
+                'Ë': 'E', 'Í': 'I', 'Ì': 'I', 'Î': 'I', 'Ï': 'I', 'Ñ': 'N', 'Ó': 'O', 'Ò': 'O',
+                'Ô': 'O', 'Ö': 'O', 'Õ': 'O', 'Ø': 'O', 'Ú': 'U', 'Ù': 'U', 'Û': 'U', 'Ü': 'U',
+                'Ý': 'Y'
+            };
+            input.value = input.value.split('').map(char => accentsMap[char] || char).join('');
+        }
+
+        // Afficher un tutoriel au démarrage
+        function showTutorial() {
+            alert("Bienvenue dans le Jeu de Prédiction de Couleurs Élite!\n\n1. Entrez trois couleurs : rouge ou vert.\n2. Ajoutez la couleur la plus récurrente parmi vos choix.\n3. Appuyez sur 'Prédire' pour voir le résultat.\n\nBonne chance!");
+        }
+    </script>
+</body>
+</html>
