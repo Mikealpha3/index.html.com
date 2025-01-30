@@ -210,6 +210,26 @@
             position: relative;
             margin-top: 10px; /* Ajouter de la marge pour positionner au-dessus du tableau */
         }
+        .overlay {
+            display: none; /* Masquer par défaut */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+            justify-content: center;
+            align-items: center;
+            z-index: 9999; /* Par-dessus tout */
+        }
+        .overlay-message {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.5em;
+            color: #333;
+        }
         /* Style de la barre de défilement */
         ::-webkit-scrollbar {
             width: 16px; /* Augmenter la largeur de la barre de défilement */
@@ -233,7 +253,7 @@
         <div class="timer-container">
             <div id="timer" class="timer">05:00</div>
             <div class="buttons">
-                <button class="timer-button" id="startButton" onclick="startTimer()">Démarrer</button>
+                <button class="timer-button" id="startButton" onclick="userStartTimer()">Démarrer</button>
             </div>
         </div>
         <div class="date-selector">
@@ -248,7 +268,7 @@
             <button class="btn-success" onclick="appendColor('V')">V</button>
         </div>
         <div class="action-buttons">
-            <button class="btn-predict" onclick="predictColor()">Prédire</button>
+            <button class="btn-predict" onclick="predictColor()" id="predictButton">Prédire</button>
             <button class="btn-clear" onclick="clearFields()">Effacer</button>
         </div>
         <div style="display: flex; align-items: center; gap: 20px;">
@@ -302,6 +322,13 @@
         </div>
     </div>
 
+    <div class="overlay" id="overlay">
+        <div class="overlay-message">
+            Vous devez attendre l'expiration du minuteur pour voir les prédictions.
+            <p id="timeRemaining"></p> <!-- Afficher le temps restant ici -->
+        </div>
+    </div>
+
     <script>
         let history = [];
         let previousHistory = [];
@@ -310,16 +337,24 @@
         let failures = 0; // Ajout du compteur de points
         let points = 0; // Ajout du compteur de points
         let lastResultWasLoss = false; // Indicateur de la dernière prédiction perdue
-
         let timer;
         let totalSeconds = 300; // 5 minutes = 300 secondes
+        let userStartedTimer = false; // Indicateur pour savoir si c'est l'utilisateur qui a démarré le minuteur
+        let timerActive = false; // Indicateur pour savoir si le minuteur est actif
+
+        function userStartTimer() {
+            userStartedTimer = true; // Indiquer que c'est l'utilisateur qui a démarré le minuteur
+            startTimer();
+        }
 
         function startTimer() {
+            timerActive = true;
             document.getElementById('startButton').disabled = true;
             timer = setInterval(setTime, 1000);
         }
 
         function stopTimer() {
+            timerActive = false;
             clearInterval(timer);
             document.getElementById('startButton').disabled = false;
         }
@@ -332,8 +367,11 @@
 
                 document.getElementById('timer').innerText =
                     ("0" + minutes).slice(-2) + ":" + ("0" + seconds).slice(-2);
+                document.getElementById('timeRemaining').innerText =
+                    `Temps restant : ${("0" + minutes).slice(-2)}:${("0" + seconds).slice(-2)}`; // Mettre à jour le temps restant dans le message d'attente
             } else {
                 stopTimer();
+                hideOverlay();
                 alert("Le temps est écoulé !");
                 resetTimer();
             }
@@ -342,12 +380,9 @@
         function resetTimer() {
             totalSeconds = 300;
             document.getElementById('timer').innerText = "05:00";
+            document.getElementById('timeRemaining').innerText = ""; // Réinitialiser le temps restant
+            document.getElementById('predictButton').disabled = false; // Réactiver le bouton prédire après l'expiration du minuteur
         }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            loadHistoryFromLocalStorage();
-            showTutorial(); // Afficher le tutoriel au démarrage
-        });
 
         function validateInput() {
             const input = document.getElementById('colorInput');
@@ -362,6 +397,11 @@
         }
 
         function predictColor() {
+            if (!userStartedTimer && timerActive) {
+                showOverlay();
+                return;
+            }
+
             const colorInput = document.getElementById('colorInput').value.toUpperCase();
             const validColors = ['R', 'V'];
 
@@ -408,8 +448,8 @@
                 document.getElementById('previousResult').textContent = ''; // Effacer le message précédent
             }
 
-            // Ajouter automatiquement à l'historique même si la prédiction existe déjà
-            previousHistory = [...history]; // Sauvegarde de l'historique actuel
+                       // Ajouter automatiquement à l'historique même si la prédiction existe déjà
+                       previousHistory = [...history]; // Sauvegarde de l'historique actuel
             history.push({ colors: lastColors.join(', '), prediction: nextColor, frequentColor: mostFrequentColor, result: '', date: document.getElementById('dateInput').value || new Date().toLocaleDateString() });
 
             const predictionResult = document.getElementById('predictionResult');
@@ -457,6 +497,12 @@
                 history[history.length - 1].result = 'Échec';
                 failures += 1; // Ajouter à l'échec
                 lastResultWasLoss = true; // Indiquer que la dernière prédiction était une perte
+
+                // Activer le minuteur et bloquer l'accès à la prédiction
+                userStartedTimer = false; // Indiquer que ce n'est pas l'utilisateur qui a démarré le minuteur
+                startTimer();
+                disableButtons(); // Désactiver tous les boutons sauf la barre de défilement
+                showOverlay(); // Afficher le message d'attente
 
                 // Notification d'échec
                 alert('Dommage, vous avez perdu.');
@@ -562,6 +608,13 @@
             document.getElementById('btnFailure').disabled = false;
         }
 
+        function disableButtons() {
+            document.querySelectorAll('button').forEach(button => {
+                button.disabled = true;
+            });
+            document.getElementById('startButton').disabled = false; // Garder le bouton de démarrage activé
+        }
+
         // Fonction pour copier l'historique dans le presse-papiers
         function copyHistory() {
             const historyText = history.map(record => `${record.date} - ${record.colors} - ${record.prediction} - ${record.frequentColor} - ${record.result}`).join('\n');
@@ -586,8 +639,8 @@
             URL.revokeObjectURL(url);
         }
 
-        // Fonction pour enlever les accents des entrées
-        function removeAccents(input) {
+               // Fonction pour enlever les accents des entrées
+               function removeAccents(input) {
             const accentsMap = {
                 'á': 'a', 'à': 'a', 'â': 'a', 'ä': 'a', 'ã': 'a', 'å': 'a', 'æ': 'ae', 'ç': 'c',
                 'é': 'e', 'è': 'e', 'ê': 'e', 'ë': 'e', 'í': 'i', 'ì': 'i', 'î': 'i', 'ï': 'i',
@@ -605,6 +658,22 @@
         function showTutorial() {
             alert("Bienvenue dans le Jeu de Prédiction de Couleurs Élite!\n\n1. Entrez trois couleurs : rouge ou vert.\n2. Ajoutez la couleur la plus récurrente parmi vos choix.\n3. Appuyez sur 'Prédire' pour voir le résultat.\n\nBonne chance!");
         }
+
+        function showOverlay() {
+            document.getElementById('overlay').style.display = 'flex';
+            document.querySelectorAll('button').forEach(button => button.disabled = true); // Désactiver tous les boutons sauf la barre de défilement
+            document.getElementById('startButton').disabled = false; // Garder le bouton de démarrage activé
+        }
+
+        function hideOverlay() {
+            document.getElementById('overlay').style.display = 'none';
+            document.querySelectorAll('button').forEach(button => button.disabled = false); // Réactiver tous les boutons
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadHistoryFromLocalStorage();
+            showTutorial(); // Afficher le tutoriel au démarrage
+        });
     </script>
 </body>
 </html>
