@@ -33,46 +33,6 @@
             text-align: center;
             margin-bottom: 20px;
         }
-        .timer-container {
-            text-align: center;
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-            border: 2px solid #007bff; /* Ajouter une bordure bleue */
-            position: relative; /* Pour positionner le bouton de restauration */
-        }
-        .timer {
-            font-size: 2em;
-            margin-bottom: 10px;
-            color: #000000; /* Couleur du texte noire */
-            animation: dash 1s linear infinite; /* Animation des pointillés */
-        }
-        @keyframes dash {
-            0% { border-right: 2px solid transparent; }
-            50% { border-right: 2px solid black; }
-            100% { border-right: 2px solid transparent; }
-        }
-        .buttons {
-            display: flex;
-            justify-content: center;
-        }
-        .timer-button {
-            padding: 10px 20px;
-            font-size: 1em;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .timer-button:hover {
-            background-color: #dddddd;
-        }
-        .timer-button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
         label {
             margin: 5px 0;
             font-weight: bold;
@@ -230,6 +190,34 @@
             font-size: 1.5em;
             color: #333;
         }
+        .patterns {
+            position: absolute;
+            right: 20px;
+            bottom: 7.5cm; /* Ajuster la hauteur à 7.5 cm */
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            animation: slideIn 1s ease-out;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .patterns h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .patterns p {
+            margin: 5px 0;
+            color: #555;
+        }
         /* Style de la barre de défilement */
         ::-webkit-scrollbar {
             width: 16px; /* Augmenter la largeur de la barre de défilement */
@@ -250,12 +238,6 @@
 <body>
     <div class="container">
         <h1>Prédiction de Couleurs Élite</h1>
-        <div class="timer-container">
-            <div id="timer" class="timer">05:00</div>
-            <div class="buttons">
-                <button class="timer-button" id="startButton" onclick="userStartTimer()">Démarrer</button>
-            </div>
-        </div>
         <div class="date-selector">
             <label for="dateInput">Date :</label>
             <input type="date" id="dateInput" class="color-input">
@@ -273,9 +255,18 @@
         </div>
         <div style="display: flex; align-items: center; gap: 20px;">
             <select id="mostFrequentColor">
-                <option value="rouge">Rouge</option>
-                <option value="vert">Vert</option>
-                <option value="egal">Égal</option>
+                <option value="50% rouge">50% Rouge</option>
+                <option value="50% vert">50% Vert</option>
+                <option value="60% rouge">60% Rouge</option>
+                <option value="60% vert">60% Vert</option>
+                <option value="70% rouge">70% Rouge</option>
+                <option value="70% vert">70% Vert</option>
+                <option value="80% rouge">80% Rouge</option>
+                <option value="80% vert">80% Vert</option>
+                <option value="90% rouge">90% Rouge</option>
+                <option value="90% vert">90% Vert</option>
+                <option value="100% rouge">100% Rouge</option>
+                <option value="100% vert">100% Vert</option>
             </select>
         </div>
         <div class="history-header">
@@ -320,15 +311,22 @@
             <p id="totalFailures">Total des Pertes : 0</p>
             <p id="points">Points : 0</p>
         </div>
-    </div>
-
-    <div class="overlay" id="overlay">
-        <div class="overlay-message">
-            Vous devez attendre l'expiration du minuteur pour voir les prédictions.
-            <p id="timeRemaining"></p> <!-- Afficher le temps restant ici -->
+        <div class="patterns">
+            <h3>Motifs à 95% de succès</h3>
+            <p>RRV ➔ R</p>
+            <p>VRR ➔ R</p>
+            <p>VRR ➔ V</p>
+            <p>RRV ➔ R</p>
+            <p>VRR ➔ R</p>
+            <p>VRR ➔ R</p>
+            <p>RRV ➔ V</p>
         </div>
     </div>
-
+    <div class="overlay" id="overlay">
+        <div class="overlay-message">
+            Vous devez attendre l'expiration du minuteur pour voir les prédictions. Temps restant : <span id="overlay-timer">05:00</span> 🤖🤖🤖
+        </div>
+    </div>
     <script>
         let history = [];
         let previousHistory = [];
@@ -339,24 +337,16 @@
         let lastResultWasLoss = false; // Indicateur de la dernière prédiction perdue
         let timer;
         let totalSeconds = 300; // 5 minutes = 300 secondes
-        let userStartedTimer = false; // Indicateur pour savoir si c'est l'utilisateur qui a démarré le minuteur
         let timerActive = false; // Indicateur pour savoir si le minuteur est actif
-
-        function userStartTimer() {
-            userStartedTimer = true; // Indiquer que c'est l'utilisateur qui a démarré le minuteur
-            startTimer();
-        }
 
         function startTimer() {
             timerActive = true;
-            document.getElementById('startButton').disabled = true;
             timer = setInterval(setTime, 1000);
         }
 
         function stopTimer() {
             timerActive = false;
             clearInterval(timer);
-            document.getElementById('startButton').disabled = false;
         }
 
         function setTime() {
@@ -365,10 +355,8 @@
                 let minutes = Math.floor(totalSeconds / 60);
                 let seconds = totalSeconds % 60;
 
-                document.getElementById('timer').innerText =
+                document.getElementById('overlay-timer').innerText =
                     ("0" + minutes).slice(-2) + ":" + ("0" + seconds).slice(-2);
-                document.getElementById('timeRemaining').innerText =
-                    `Temps restant : ${("0" + minutes).slice(-2)}:${("0" + seconds).slice(-2)}`; // Mettre à jour le temps restant dans le message d'attente
             } else {
                 stopTimer();
                 hideOverlay();
@@ -379,8 +367,7 @@
 
         function resetTimer() {
             totalSeconds = 300;
-            document.getElementById('timer').innerText = "05:00";
-            document.getElementById('timeRemaining').innerText = ""; // Réinitialiser le temps restant
+            document.getElementById('overlay-timer').innerText = "05:00";
             document.getElementById('predictButton').disabled = false; // Réactiver le bouton prédire après l'expiration du minuteur
         }
 
@@ -397,11 +384,6 @@
         }
 
         function predictColor() {
-            if (!userStartedTimer && timerActive) {
-                showOverlay();
-                return;
-            }
-
             const colorInput = document.getElementById('colorInput').value.toUpperCase();
             const validColors = ['R', 'V'];
 
@@ -429,8 +411,13 @@
                 nextColor = 'rouge';
             } else if (lastColors[lastColors.length - 1] === 'rouge' && lastColors.includes('vert')) {
                 nextColor = 'vert';
-            } else if (mostFrequentColor === 'egal') {
-                nextColor = lastColors[lastColors.length - 1] === 'rouge' ? 'vert' : 'rouge';
+            } else if (mostFrequentColor.includes('%')) {
+                const percent = parseInt(mostFrequentColor.split('%')[0]);
+                if (Math.random() * 100 < percent) {
+                    nextColor = mostFrequentColor.includes('rouge') ? 'rouge' : 'vert';
+                } else {
+                    nextColor = mostFrequentColor.includes('rouge') ? 'vert' : 'rouge';
+                }
             } else {
                 nextColor = mostFrequentColor; // Utiliser la couleur la plus récurrente pour la prédiction
             }
@@ -448,8 +435,8 @@
                 document.getElementById('previousResult').textContent = ''; // Effacer le message précédent
             }
 
-                       // Ajouter automatiquement à l'historique même si la prédiction existe déjà
-                       previousHistory = [...history]; // Sauvegarde de l'historique actuel
+            // Ajouter automatiquement à l'historique même si la prédiction existe déjà
+            previousHistory = [...history]; // Sauvegarde de l'historique actuel
             history.push({ colors: lastColors.join(', '), prediction: nextColor, frequentColor: mostFrequentColor, result: '', date: document.getElementById('dateInput').value || new Date().toLocaleDateString() });
 
             const predictionResult = document.getElementById('predictionResult');
@@ -472,7 +459,7 @@
 
         function clearFields() {
             document.getElementById('colorInput').value = '';
-            document.getElementById('mostFrequentColor').value = 'rouge';
+            document.getElementById('mostFrequentColor').value = '50% rouge';
             document.getElementById('predictionResult').textContent = '';
             document.getElementById('previousResult').textContent = ''; // Effacer le message précédent
             enableFeedbackButtons(); // Réactiver les boutons de feedback
@@ -480,29 +467,26 @@
 
         function giveFeedback(correct) {
             if (correct) {
-                document.getElementById('btnFailure').disabled = true; // Désactiver le bouton "Perte"
-                document.getElementById('btnSuccess').disabled = true; // Désactiver le bouton "Gagner" après un clic
-                consecutiveLosses = 0; // Réinitialiser les pertes consécutives
                 history[history.length - 1].result = 'Succès';
                 successes += 1;
                 points += 10; // Ajouter des points pour chaque prédiction correcte
                 lastResultWasLoss = false; // Réinitialiser après un gain
+                consecutiveLosses = 0; // Réinitialiser les pertes consécutives
 
                 // Notification de réussite
                 alert('Félicitations, vous avez réussi !');
             } else {
-                document.getElementById('btnSuccess').disabled = true; // Désactiver le bouton "Gagner"
-                document.getElementById('btnFailure').disabled = true; // Désactiver le bouton "Perte" après un clic
-                consecutiveLosses += 1; // Incrémenter les pertes consécutives
                 history[history.length - 1].result = 'Échec';
                 failures += 1; // Ajouter à l'échec
                 lastResultWasLoss = true; // Indiquer que la dernière prédiction était une perte
+                consecutiveLosses += 1; // Incrémenter les pertes consécutives
 
-                // Activer le minuteur et bloquer l'accès à la prédiction
-                userStartedTimer = false; // Indiquer que ce n'est pas l'utilisateur qui a démarré le minuteur
-                startTimer();
-                disableButtons(); // Désactiver tous les boutons sauf la barre de défilement
-                showOverlay(); // Afficher le message d'attente
+                // Activer le minuteur uniquement après deux pertes consécutives
+                if (consecutiveLosses >= 2) {
+                    startTimer();
+                    showOverlay(); // Afficher le message d'attente
+                    consecutiveLosses = 0; // Réinitialiser les pertes consécutives après activation du minuteur
+                }
 
                 // Notification d'échec
                 alert('Dommage, vous avez perdu.');
@@ -520,10 +504,10 @@
 
         function correctPrediction() {
             const correctPrediction = document.getElementById('correctPrediction').value.toLowerCase();
-            const validValues = ['rouge', 'vert', 'egal'];
+            const validValues = ['rouge', 'vert', '50%'];
 
             if (!validValues.includes(correctPrediction)) {
-                alert('Veuillez entrer "rouge", "vert" ou "egal" uniquement.');
+                alert('Veuillez entrer "rouge", "vert" ou "50%" uniquement.');
                 return;
             }
 
@@ -608,11 +592,15 @@
             document.getElementById('btnFailure').disabled = false;
         }
 
-        function disableButtons() {
-            document.querySelectorAll('button').forEach(button => {
-                button.disabled = true;
-            });
-            document.getElementById('startButton').disabled = false; // Garder le bouton de démarrage activé
+        function showOverlay() {
+            document.getElementById('overlay').style.display = 'flex';
+            document.querySelectorAll('button').forEach(button => button.disabled = true); // Désactiver tous les boutons sauf la barre de défilement
+            document.getElementById('predictButton').disabled = true; // Désactiver le bouton de prédiction
+        }
+
+        function hideOverlay() {
+            document.getElementById('overlay').style.display = 'none';
+            document.querySelectorAll('button').forEach(button => button.disabled = false); // Réactiver tous les boutons
         }
 
         // Fonction pour copier l'historique dans le presse-papiers
@@ -639,17 +627,15 @@
             URL.revokeObjectURL(url);
         }
 
-               // Fonction pour enlever les accents des entrées
-               function removeAccents(input) {
+              // Fonction pour enlever les accents des entrées
+              function removeAccents(input) {
             const accentsMap = {
                 'á': 'a', 'à': 'a', 'â': 'a', 'ä': 'a', 'ã': 'a', 'å': 'a', 'æ': 'ae', 'ç': 'c',
                 'é': 'e', 'è': 'e', 'ê': 'e', 'ë': 'e', 'í': 'i', 'ì': 'i', 'î': 'i', 'ï': 'i',
                 'ñ': 'n', 'ó': 'o', 'ò': 'o', 'ô': 'o', 'ö': 'o', 'õ': 'o', 'ø': 'o', 'ú': 'u',
-                'ù': 'u', 'û': 'u', 'ü': 'u', 'ý': 'y', 'ÿ': 'y', 'Á': 'A', 'À': 'A', 'Â': 'A',
-                'Ä': 'A', 'Ã': 'A', 'Å': 'A', 'Æ': 'AE', 'Ç': 'C', 'É': 'E', 'È': 'E', 'Ê': 'E',
-                'Ë': 'E', 'Í': 'I', 'Ì': 'I', 'Î': 'I', 'Ï': 'I', 'Ñ': 'N', 'Ó': 'O', 'Ò': 'O',
-                'Ô': 'O', 'Ö': 'O', 'Õ': 'O', 'Ø': 'O', 'Ú': 'U', 'Ù': 'U', 'Û': 'U', 'Ü': 'U',
-                'Ý': 'Y'
+                'ù': 'u', 'û': 'u', 'ü': 'u', 'ý': 'y', 'ÿ': 'y', 'Á': 'A', 'À': 'A', 'Â': 'A', 'Ä': 'A', 'Ã': 'A', 'Å': 'A', 'Æ': 'AE', 'Ç': 'C', 'É': 'E', 'È': 'E', 'Ê': 'E',
+                'Ë': 'E', 'Í': 'I', 'Ì': 'I', 'Î': 'I', 'Ï': 'I', 'Ñ': 'N', 'Ó': 'O', 'Ò': 'O', 'Ô': 'O',
+                'Ö': 'O', 'Õ': 'O', 'Ø': 'O', 'Ú': 'U', 'Ù': 'U', 'Û': 'U', 'Ü': 'U', 'Ý': 'Y'
             };
             input.value = input.value.split('').map(char => accentsMap[char] || char).join('');
         }
@@ -657,17 +643,6 @@
         // Afficher un tutoriel au démarrage
         function showTutorial() {
             alert("Bienvenue dans le Jeu de Prédiction de Couleurs Élite!\n\n1. Entrez trois couleurs : rouge ou vert.\n2. Ajoutez la couleur la plus récurrente parmi vos choix.\n3. Appuyez sur 'Prédire' pour voir le résultat.\n\nBonne chance!");
-        }
-
-        function showOverlay() {
-            document.getElementById('overlay').style.display = 'flex';
-            document.querySelectorAll('button').forEach(button => button.disabled = true); // Désactiver tous les boutons sauf la barre de défilement
-            document.getElementById('startButton').disabled = false; // Garder le bouton de démarrage activé
-        }
-
-        function hideOverlay() {
-            document.getElementById('overlay').style.display = 'none';
-            document.querySelectorAll('button').forEach(button => button.disabled = false); // Réactiver tous les boutons
         }
 
         document.addEventListener('DOMContentLoaded', () => {
