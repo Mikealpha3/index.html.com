@@ -28,6 +28,15 @@
             overflow-y: auto; /* Ajouter un défilement interne si nécessaire */
             position: relative; /* Permettre l'utilisation de la position absolue pour le minuteur */
         }
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .user-profile {
+            margin-right: 20px;
+        }
         h1 {
             color: #5b5b5b;
             text-align: center;
@@ -41,7 +50,7 @@
         }
         .action-buttons, .right-buttons {
             display: flex;
-            justify-content: flex-start;
+            justify-content: center;
             gap: 10px;
             margin: 10px 0;
         }
@@ -96,7 +105,7 @@
             border: 2px solid #aaa;
             border-radius: 5px;
             margin-bottom: 10px;
-            width: 120px; /* Ajuster la largeur pour plus de visibilité */
+            width: 150px; /* Ajuster la largeur pour plus de visibilité */
             text-align: center;
             font-size: 18px;
             color: #444;
@@ -111,7 +120,7 @@
             border-radius: 5px;
             margin-bottom: 10px;
             font-size: 18px;
-            width: auto;
+            width: 150px; /* Ajuster la largeur */
             color: #444;
             background-color: #fff; /* Couleur de fond blanc */
         }
@@ -164,11 +173,63 @@
         .date-selector {
             display: flex;
             align-items: center;
-            gap: 20px;
+            justify-content: center;
+            gap: 5px; /* Réduire l'écart */
         }
-        .undo-button {
+        .progress-bar-container {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+            width: 100%;
+        }
+        .progress-bar {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 20px;
+            margin-right: 10px;
+        }
+        .progress-bar-fill {
+            width: 50%; /* Remplissage de la barre de progression, ajustable */
+            background-color: #4caf50;
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        .patterns {
+            margin-bottom: 20px; /* Écart pour ne pas cacher les boutons */
+        }
+        .tips {
+            margin-bottom: 20px;
+        }
+        .global-stats {
+            margin-bottom: 20px;
+        }
+        .info-tooltip {
             position: relative;
-            margin-top: 10px; /* Ajouter de la marge pour positionner au-dessus du tableau */
+            display: inline-block;
+            cursor: pointer;
+            color: #007bff; /* Couleur bleu pour les infobulles */
+        }
+        .info-tooltip .tooltip-text {
+            visibility: hidden;
+            width: 200px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 5px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%; /* Positionner l'infobulle au-dessus */
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .info-tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
         }
         .overlay {
             display: none; /* Masquer par défaut */
@@ -190,16 +251,6 @@
             font-size: 1.5em;
             color: #333;
         }
-        .patterns {
-            position: absolute;
-            right: 20px;
-            bottom: 7.5cm; /* Ajuster la hauteur à 7.5 cm */
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            animation: slideIn 1s ease-out;
-        }
         @keyframes slideIn {
             from {
                 opacity: 0;
@@ -209,14 +260,6 @@
                 opacity: 1;
                 transform: translateY(0);
             }
-        }
-        .patterns h3 {
-            margin-top: 0;
-            color: #333;
-        }
-        .patterns p {
-            margin: 5px 0;
-            color: #555;
         }
         /* Style de la barre de défilement */
         ::-webkit-scrollbar {
@@ -237,23 +280,20 @@
 </head>
 <body>
     <div class="container">
-        <h1>Prédiction de Couleurs Élite</h1>
-        <div class="date-selector">
+        <div class="header">
+            <h1>Prédiction de Couleurs Élite</h1>
+            <div class="user-profile">
+                <strong>Profil d'utilisateur</strong>
+                <p id="userName">Nom : Utilisateur</p>
+            </div>
+        </div>
+        <div id="userLevelSection"></div> <!-- Section pour choisir le niveau après avoir entré le nom -->
+        <div class="date-selector" style="justify-content: flex-start; gap: 5px;">
             <label for="dateInput">Date :</label>
             <input type="date" id="dateInput" class="color-input">
         </div>
-        <div style="display: flex; align-items: center; gap: 20px;">
+        <div style="display: flex; align-items: center; gap: 20px; justify-content: center;">
             <input type="text" id="colorInput" class="color-input" maxlength="3" oninput="validateInput()" placeholder="Ajouter les Couleurs (ex: RVV)">
-        </div>
-        <div class="action-buttons">
-            <button class="btn-success" onclick="appendColor('R')">R</button>
-            <button class="btn-success" onclick="appendColor('V')">V</button>
-        </div>
-        <div class="action-buttons">
-            <button class="btn-predict" onclick="predictColor()" id="predictButton">Prédire</button>
-            <button class="btn-clear" onclick="clearFields()">Effacer</button>
-        </div>
-        <div style="display: flex; align-items: center; gap: 20px;">
             <select id="mostFrequentColor">
                 <option value="50% rouge">50% Rouge</option>
                 <option value="50% vert">50% Vert</option>
@@ -268,6 +308,31 @@
                 <option value="100% rouge">100% Rouge</option>
                 <option value="100% vert">100% Vert</option>
             </select>
+        </div>
+        <div class="action-buttons">
+            <button class="btn-success" onclick="appendColor('R')">R</button>
+            <button class="btn-success" onclick="appendColor('V')">V</button>
+        </div>
+        <div class="action-buttons">
+            <button class="btn-predict" onclick="predictColor()" id="predictButton">Prédire</button>
+            <button class="btn-clear" onclick="clearFields()">Effacer</button>
+        </div>
+        <div class="progress-bar-container">
+            <div class="progress-bar">
+                <div class="progress-bar-fill" id="progressBarFill" style="width: 50%; background-color: #4caf50;"></div>
+            </div>
+            <span id="progressPercentage">50%</span>
+        </div>
+        <p id="predictionResult"></p> <!-- Prédiction au-dessus des motifs -->
+        <div class="patterns">
+            <h3>Motifs à 95% de succès</h3>
+            <p>RRV ➔ R</p>
+            <p>VRR ➔ R</p>
+            <p>VRR ➔ V</p>
+            <p>RRV ➔ R</p>
+            <p>VRR ➔ R</p>
+            <p>VRR ➔ R</p>
+            <p>RRV ➔ V</p>
         </div>
         <div class="history-header">
             <h2>Historique</h2>
@@ -291,7 +356,6 @@
                 </tbody>
             </table>
         </div>
-        <p id="predictionResult"></p>
         <p id="previousResult"></p> <!-- Message pour les résultats précédents -->
         <div style="display: flex; align-items: center; gap: 20px;">
             <label for="correctPrediction" style="margin-bottom: 0;">Prédiction Incorrecte :</label>
@@ -310,16 +374,6 @@
             <p id="totalSuccesses">Total des Réussites : 0</p>
             <p id="totalFailures">Total des Pertes : 0</p>
             <p id="points">Points : 0</p>
-        </div>
-        <div class="patterns">
-            <h3>Motifs à 95% de succès</h3>
-            <p>RRV ➔ R</p>
-            <p>VRR ➔ R</p>
-            <p>VRR ➔ V</p>
-            <p>RRV ➔ R</p>
-            <p>VRR ➔ R</p>
-            <p>VRR ➔ R</p>
-            <p>RRV ➔ V</p>
         </div>
     </div>
     <div class="overlay" id="overlay">
@@ -369,6 +423,41 @@
             totalSeconds = 300;
             document.getElementById('overlay-timer').innerText = "05:00";
             document.getElementById('predictButton').disabled = false; // Réactiver le bouton prédire après l'expiration du minuteur
+        }
+
+        function validateUserName() {
+            const input = prompt("Veuillez entrer votre nom (minuscules uniquement) :");
+            if (input) {
+                document.getElementById('userName').textContent = `Nom : ${input.toLowerCase()}`;
+                showUserLevelOptions(); // Afficher les options de niveau après avoir entré le nom
+            }
+        }
+
+        function showUserLevelOptions() {
+            const userLevelSection = document.getElementById('userLevelSection');
+            userLevelSection.innerHTML = `
+                <p>Veuillez choisir votre niveau :</p>
+                <label>
+                    <input type="radio" name="userLevel" value="Débutant"> Débutant
+                </label><br>
+                <label>
+                    <input type="radio" name="userLevel" value="Intermédiaire"> Intermédiaire
+                </label><br>
+                <label>
+                    <input type="radio" name="userLevel" value="Avancé"> Avancé
+                </label><br>
+                <button onclick="submitUserLevel()">Confirmer</button>
+            `;
+        }
+
+        function submitUserLevel() {
+            const selectedLevel = document.querySelector('input[name="userLevel"]:checked');
+            if (selectedLevel) {
+                document.getElementById('userLevel').textContent = `Niveau : ${selectedLevel.value}`;
+                document.getElementById('userLevelSection').innerHTML = ''; // Effacer les options après confirmation
+            } else {
+                alert('Veuillez choisir un niveau.');
+            }
         }
 
         function validateInput() {
@@ -473,6 +562,9 @@
                 lastResultWasLoss = false; // Réinitialiser après un gain
                 consecutiveLosses = 0; // Réinitialiser les pertes consécutives
 
+                // Mise à jour de la barre de progression
+                updateProgressBar(10);
+
                 // Notification de réussite
                 alert('Félicitations, vous avez réussi !');
             } else {
@@ -480,6 +572,9 @@
                 failures += 1; // Ajouter à l'échec
                 lastResultWasLoss = true; // Indiquer que la dernière prédiction était une perte
                 consecutiveLosses += 1; // Incrémenter les pertes consécutives
+
+                // Mise à jour de la barre de progression
+                updateProgressBar(-10);
 
                 // Activer le minuteur uniquement après deux pertes consécutives
                 if (consecutiveLosses >= 2) {
@@ -499,6 +594,25 @@
                 document.getElementById('previousResult').textContent = 'Miser la couleur contraire pour la prochaine fois !';
             } else {
                 document.getElementById('previousResult').textContent = ''; // Effacer le message après un gain
+            }
+        }
+
+        function updateProgressBar(change) {
+            const progressBarFill = document.getElementById('progressBarFill');
+            const progressPercentage = document.getElementById('progressPercentage');
+            let currentWidth = parseInt(progressBarFill.style.width);
+            let newWidth = currentWidth + change;
+
+            if (newWidth < 0) newWidth = 0;
+            if (newWidth > 100) newWidth = 100;
+
+            progressBarFill.style.width = newWidth + '%';
+            progressPercentage.textContent = newWidth + '%';
+
+            if (newWidth < 20) {
+                progressBarFill.style.backgroundColor = 'red';
+            } else {
+                progressBarFill.style.backgroundColor = '#4caf50';
             }
         }
 
@@ -627,8 +741,8 @@
             URL.revokeObjectURL(url);
         }
 
-              // Fonction pour enlever les accents des entrées
-              function removeAccents(input) {
+        // Fonction pour enlever les accents des entrées
+        function removeAccents(input) {
             const accentsMap = {
                 'á': 'a', 'à': 'a', 'â': 'a', 'ä': 'a', 'ã': 'a', 'å': 'a', 'æ': 'ae', 'ç': 'c',
                 'é': 'e', 'è': 'e', 'ê': 'e', 'ë': 'e', 'í': 'i', 'ì': 'i', 'î': 'i', 'ï': 'i',
@@ -645,9 +759,16 @@
             alert("Bienvenue dans le Jeu de Prédiction de Couleurs Élite!\n\n1. Entrez trois couleurs : rouge ou vert.\n2. Ajoutez la couleur la plus récurrente parmi vos choix.\n3. Appuyez sur 'Prédire' pour voir le résultat.\n\nBonne chance!");
         }
 
+        // Notification pour demander le nom et le niveau de l'utilisateur
+        function askUserProfile() {
+            validateUserName();
+            showUserLevelOptions();
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             loadHistoryFromLocalStorage();
             showTutorial(); // Afficher le tutoriel au démarrage
+            askUserProfile(); // Demander le nom et le niveau de l'utilisateur
         });
     </script>
 </body>
