@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f0f8ff; /* Fond bleu clair */
+            background-color: #f0f8ff;
             color: #333;
             margin: 0;
             padding: 0;
@@ -15,7 +15,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            overflow: hidden; /* Empêcher le défilement */
+            overflow: hidden;
         }
         .container {
             background-color: white;
@@ -25,8 +25,8 @@
             max-width: 800px;
             width: 100%;
             height: 95vh;
-            overflow-y: auto; /* Ajouter un défilement interne si nécessaire */
-            position: relative; /* Permettre l'utilisation de la position absolue pour le minuteur */
+            overflow-y: auto;
+            position: relative;
         }
         .header {
             width: 100%;
@@ -46,7 +46,7 @@
             margin: 5px 0;
             font-weight: bold;
             display: inline-block;
-            width: 180px; /* Align labels with inputs */
+            width: 180px;
         }
         .action-buttons, .right-buttons {
             display: flex;
@@ -60,69 +60,96 @@
             border: none;
             cursor: pointer;
             border-radius: 5px;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
             font-size: 16px;
-            margin-right: 10px; /* Ajouter un écart entre les boutons */
+            margin-right: 10px;
         }
         .btn-predict {
-            background-color: #28a745; /* Vert */
+            background-color: #28a745;
         }
         .btn-predict:hover {
             background-color: #218838;
         }
         .btn-clear {
-            background-color: #dc3545; /* Rouge */
+            background-color: #dc3545;
         }
         .btn-clear:hover {
             background-color: #c82333;
         }
         .btn-history, .btn-undo {
-            background-color: #007bff; /* Bleu */
+            background-color: #007bff;
         }
         .btn-history:hover, .btn-undo:hover {
             background-color: #0056b3;
         }
         .btn-success {
-            background-color: #28a745; /* Vert */
+            background-color: #28a745;
         }
         .btn-success:hover {
             background-color: #218838;
         }
         .btn-failure {
-            background-color: #dc3545; /* Rouge */
+            background-color: #dc3545;
         }
         .btn-failure:hover {
             background-color: #c82333;
         }
         .btn-copy, .btn-export {
-            background-color: #ffc107; /* Jaune */
+            background-color: #ffc107;
         }
         .btn-copy:hover, .btn-export:hover {
             background-color: #e0a800;
         }
-        .color-input {
+        .color-input, .level-selection, #mostFrequentColor {
             padding: 10px;
             border: 2px solid #aaa;
             border-radius: 5px;
             margin-bottom: 10px;
-            width: 150px; /* Ajuster la largeur pour plus de visibilité */
+            width: 150px;
             text-align: center;
             font-size: 18px;
             color: #444;
-            background-color: #fff; /* Couleur de fond blanc */
+            background-color: #fff;
         }
         .color-input::placeholder {
-            color: #888; /* Couleur du placeholder */
+            color: #888;
         }
-        select {
-            padding: 10px;
-            border: 2px solid #aaa;
-            border-radius: 5px;
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             margin-bottom: 10px;
-            font-size: 18px;
-            width: 150px; /* Ajuster la largeur */
-            color: #444;
-            background-color: #fff; /* Couleur de fond blanc */
+        }
+        .level-popup, .level-info-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border: 2px solid #aaa;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            z-index: 10000;
+            width: 300px;
+        }
+        .level-popup h2, .level-info-popup h2 {
+            margin-top: 0;
+        }
+        .level-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .level-buttons label {
+            cursor: pointer;
+        }
+        .btn-confirm {
+            background-color: #007bff;
+        }
+        .btn-confirm:hover {
+            background-color: #0056b3;
         }
         table {
             width: 100%;
@@ -136,14 +163,14 @@
             text-align: center;
         }
         th {
-            background-color: #f0f0f0; /* Arrière-plan gris clair */
+            background-color: #f0f0f0;
         }
         #historyContainer {
             max-height: 200px;
             overflow-y: auto;
         }
         .highlight {
-            background-color: yellow; /* Couleur de surlignage temporaire */
+            background-color: yellow;
         }
         .feedback-buttons {
             display: flex;
@@ -151,7 +178,7 @@
             margin: 20px 0;
         }
         .feedback-buttons button {
-            width: 30%; /* Ajuster la largeur des boutons */
+            width: 30%;
         }
         .stats {
             margin-top: 20px;
@@ -174,7 +201,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 5px; /* Réduire l'écart */
+            gap: 5px;
+            margin-bottom: 20px;
         }
         .progress-bar-container {
             display: flex;
@@ -191,13 +219,13 @@
             margin-right: 10px;
         }
         .progress-bar-fill {
-            width: 50%; /* Remplissage de la barre de progression, ajustable */
+            width: 0%;
             background-color: #4caf50;
             height: 100%;
             transition: width 0.3s ease;
         }
         .patterns {
-            margin-bottom: 20px; /* Écart pour ne pas cacher les boutons */
+            margin-bottom: 20px;
         }
         .tips {
             margin-bottom: 20px;
@@ -209,7 +237,7 @@
             position: relative;
             display: inline-block;
             cursor: pointer;
-            color: #007bff; /* Couleur bleu pour les infobulles */
+            color: #007bff;
         }
         .info-tooltip .tooltip-text {
             visibility: hidden;
@@ -221,7 +249,7 @@
             padding: 5px;
             position: absolute;
             z-index: 1;
-            bottom: 125%; /* Positionner l'infobulle au-dessus */
+            bottom: 125%;
             left: 50%;
             margin-left: -100px;
             opacity: 0;
@@ -232,16 +260,16 @@
             opacity: 1;
         }
         .overlay {
-            display: none; /* Masquer par défaut */
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5); /* Fond semi-transparent */
+            background: rgba(0, 0, 0, 0.5);
             justify-content: center;
             align-items: center;
-            z-index: 9999; /* Par-dessus tout */
+            z-index: 9999;
         }
         .overlay-message {
             background: white;
@@ -251,30 +279,36 @@
             font-size: 1.5em;
             color: #333;
         }
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .btn-level {
+            position: absolute;
+            left: 10px;
+            top: 8cm; /* Ajusté pour être à 8 cm au-dessus de la barre de progression */
         }
-        /* Style de la barre de défilement */
-        ::-webkit-scrollbar {
-            width: 16px; /* Augmenter la largeur de la barre de défilement */
-        }
-        ::-webkit-scrollbar-track {
-            background: #e1e1e1;
+        .level-info-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border: 2px solid #aaa;
             border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            z-index: 10000;
+            width: 300px;
         }
-        ::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 10px;
+        .level-info-popup h2 {
+            margin-top: 0;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #555;
+        .level-info-popup .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 20px; /* Ajuster pour ajouter de l'écart avec "Niveau" */
+            background-color: red; /* Couleur rouge pour la croix de fermeture */
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -285,15 +319,17 @@
             <div class="user-profile">
                 <strong>Profil d'utilisateur</strong>
                 <p id="userName">Nom : Utilisateur</p>
+                <p id="userLevel">Niveau : </p> <!-- Ajout de l'affichage du niveau -->
             </div>
         </div>
-        <div id="userLevelSection"></div> <!-- Section pour choisir le niveau après avoir entré le nom -->
-        <div class="date-selector" style="justify-content: flex-start; gap: 5px;">
-            <label for="dateInput">Date :</label>
+        <div class="input-container">
+            <label for="dateInput" style="margin-left: 30px;">Date :</label>
             <input type="date" id="dateInput" class="color-input">
         </div>
-        <div style="display: flex; align-items: center; gap: 20px; justify-content: center;">
+        <div class="input-container">
             <input type="text" id="colorInput" class="color-input" maxlength="3" oninput="validateInput()" placeholder="Ajouter les Couleurs (ex: RVV)">
+        </div>
+        <div class="input-container">
             <select id="mostFrequentColor">
                 <option value="50% rouge">50% Rouge</option>
                 <option value="50% vert">50% Vert</option>
@@ -317,11 +353,12 @@
             <button class="btn-predict" onclick="predictColor()" id="predictButton">Prédire</button>
             <button class="btn-clear" onclick="clearFields()">Effacer</button>
         </div>
+        <button class="btn-level" onclick="showLevelInfo()">Voir son Niveau</button>
         <div class="progress-bar-container">
             <div class="progress-bar">
-                <div class="progress-bar-fill" id="progressBarFill" style="width: 50%; background-color: #4caf50;"></div>
+                <div class="progress-bar-fill" id="progressBarFill" style="width: 0%; background-color: #4caf50;"></div>
             </div>
-            <span id="progressPercentage">50%</span>
+            <span id="progressPercentage">0%</span>
         </div>
         <p id="predictionResult"></p> <!-- Prédiction au-dessus des motifs -->
         <div class="patterns">
@@ -333,67 +370,88 @@
             <p>VRR ➔ R</p>
             <p>VRR ➔ R</p>
             <p>RRV ➔ V</p>
-        </div>
-        <div class="history-header">
-            <h2>Historique</h2>
-            <div>
-                <button class="btn-copy" onclick="copyHistory()">Copier</button>
-                <button class="btn-export" onclick="exportHistory()">Exporter</button>
+            <div class="history-header">
+                <h2>Historique</h2>
+                <div>
+                    <button class="btn-copy" onclick="copyHistory()">Copier</button>
+                    <button class="btn-export" onclick="exportHistory()">Exporter</button>
+                </div>
+            </div>
+            <div id="historyContainer" class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>COULEURS</th>
+                            <th>PRÉDICTION</th>
+                            <th>POURCENTAGE DE COULEUR</th>
+                            <th>RÉSULTAT</th>
+                        </tr>
+                    </thead>
+                    <tbody id="history">
+                    </tbody>
+                </table>
+            </div>
+            <div class="level-popup" id="levelPopup">
+                <h2>Choisissez votre Niveau</h2>
+                <div class="level-buttons">
+                    <label><input type="radio" name="level" value="debutant"> Débutant</label>
+                    <label><input type="radio" name="level" value="intermediaire" disabled> Intermédiaire</label>
+                    <label><input type="radio" name="level" value="avance" disabled> Avancé</label>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn-confirm" onclick="confirmLevel()">Confirmer</button>
+                </div>
+            </div>
+            <p id="previousResult"></p> <!-- Message pour les résultats précédents -->
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <label for="correctPrediction" style="margin-bottom: 0;">Prédiction Incorrecte :</label>
+                <input type="text" id="correctPrediction" class="color-input" placeholder="Couleur Correcte" maxlength="5">
+                <button class="btn-success" onclick="correctPrediction()">Corriger</button>
+                <button class="btn-undo" onclick="undo()">Marche Arrière</button> <!-- Bouton déplacé à droite de "Corriger" -->
+            </div>
+            <div class="feedback-buttons">
+                <button class="btn-success" id="btnSuccess" onclick="giveFeedback(true)">Gagner ✅</button>
+                <button class="btn-failure" id="btnFailure" onclick="giveFeedback(false)">Perte ❌</button>
+                <button class="btn-history" onclick="clearHistory()">Effacer l'Historique</button>
+            </div>
+            <div class="stats">
+                <p id="successRate"></p>
+                <p id="totalPredictions">Total des Prédictions : 0</p>
+                <p id="totalSuccesses">Total des Réussites : 0</p>
+                <p id="totalFailures">Total des Pertes : 0</p>
+                <p id="points">Points : 0</p>
+                <p id="dailyPoints">Points du jour : 0</p> <!-- Ajout des points du jour -->
             </div>
         </div>
-        <div id="historyContainer" class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>COULEURS</th>
-                        <th>PRÉDICTION</th>
-                        <th>COULEUR RÉCURRENTE</th>
-                        <th>RÉSULTAT</th>
-                    </tr>
-                </thead>
-                <tbody id="history">
-                </tbody>
-            </table>
+    
+        <div class="overlay" id="overlay">
+            <div class="overlay-message">
+                Vous devez attendre l'expiration du minuteur pour voir les prédictions. Temps restant : <span id="overlay-timer">05:00</span> 🤖🤖🤖
+            </div>
         </div>
-        <p id="previousResult"></p> <!-- Message pour les résultats précédents -->
-        <div style="display: flex; align-items: center; gap: 20px;">
-            <label for="correctPrediction" style="margin-bottom: 0;">Prédiction Incorrecte :</label>
-            <input type="text" id="correctPrediction" class="color-input" placeholder="Couleur Correcte" maxlength="5">
-            <button class="btn-success" onclick="correctPrediction()">Corriger</button>
-            <button class="btn-undo" onclick="undo()">Marche Arrière</button> <!-- Bouton déplacé à droite de "Corriger" -->
+    
+        <div class="level-info-popup" id="levelInfoPopup">
+            <button class="close-btn" onclick="hideLevelInfo()">X</button>
+            <h2>Information de Niveau</h2>
+            <p id="currentPoints">Points actuels : 0</p>
+            <p>Points nécessaires pour le niveau Intermédiaire : 3000</p>
+            <p>Points nécessaires pour le niveau Avancé : 10000</p>
         </div>
-        <div class="feedback-buttons">
-            <button class="btn-success" id="btnSuccess" onclick="giveFeedback(true)">Gagner ✅</button>
-            <button class="btn-failure" id="btnFailure" onclick="giveFeedback(false)">Perte ❌</button>
-            <button class="btn-history" onclick="clearHistory()">Effacer l'Historique</button>
-        </div>
-        <div class="stats">
-            <p id="successRate"></p>
-            <p id="totalPredictions">Total des Prédictions : 0</p>
-            <p id="totalSuccesses">Total des Réussites : 0</p>
-            <p id="totalFailures">Total des Pertes : 0</p>
-            <p id="points">Points : 0</p>
-        </div>
-    </div>
-    <div class="overlay" id="overlay">
-        <div class="overlay-message">
-            Vous devez attendre l'expiration du minuteur pour voir les prédictions. Temps restant : <span id="overlay-timer">05:00</span> 🤖🤖🤖
-        </div>
-    </div>
-    <script>
-        let history = [];
-        let previousHistory = [];
-        let consecutiveLosses = 0;
-        let successes = 0;
-        let failures = 0; // Ajout du compteur de points
-        let points = 0; // Ajout du compteur de points
-        let lastResultWasLoss = false; // Indicateur de la dernière prédiction perdue
-        let timer;
-        let totalSeconds = 300; // 5 minutes = 300 secondes
-        let timerActive = false; // Indicateur pour savoir si le minuteur est actif
-
-        function startTimer() {
+    
+        <script>
+            let history = [];
+            let previousHistory = [];
+            let consecutiveLosses = 0;
+            let successes = 0;
+            let failures = 0; // Ajout du compteur de points
+            let points = localStorage.getItem('totalPoints') ? parseInt(localStorage.getItem('totalPoints')) : 0; // Ajout du compteur de points qui ne s'efface pas
+            let dailyPoints = localStorage.getItem('dailyPoints') ? parseInt(localStorage.getItem('dailyPoints')) : 0; // Ajout des points du jour
+            let lastResultWasLoss = false; // Indicateur de la dernière prédiction perdue
+            let timer;
+            let totalSeconds = 300; // 5 minutes = 300 secondes
+            let timerActive = false; // Indicateur pour savoir si le minuteur est actif
+            function startTimer() {
             timerActive = true;
             timer = setInterval(setTime, 1000);
         }
@@ -426,37 +484,15 @@
         }
 
         function validateUserName() {
-            const input = prompt("Veuillez entrer votre nom (minuscules uniquement) :");
-            if (input) {
-                document.getElementById('userName').textContent = `Nom : ${input.toLowerCase()}`;
-                showUserLevelOptions(); // Afficher les options de niveau après avoir entré le nom
-            }
-        }
-
-        function showUserLevelOptions() {
-            const userLevelSection = document.getElementById('userLevelSection');
-            userLevelSection.innerHTML = `
-                <p>Veuillez choisir votre niveau :</p>
-                <label>
-                    <input type="radio" name="userLevel" value="Débutant"> Débutant
-                </label><br>
-                <label>
-                    <input type="radio" name="userLevel" value="Intermédiaire"> Intermédiaire
-                </label><br>
-                <label>
-                    <input type="radio" name="userLevel" value="Avancé"> Avancé
-                </label><br>
-                <button onclick="submitUserLevel()">Confirmer</button>
-            `;
-        }
-
-        function submitUserLevel() {
-            const selectedLevel = document.querySelector('input[name="userLevel"]:checked');
-            if (selectedLevel) {
-                document.getElementById('userLevel').textContent = `Niveau : ${selectedLevel.value}`;
-                document.getElementById('userLevelSection').innerHTML = ''; // Effacer les options après confirmation
+            const savedUserName = localStorage.getItem('userName');
+            if (!savedUserName) {
+                const input = prompt("Veuillez entrer votre nom (minuscules uniquement) :");
+                if (input) {
+                    localStorage.setItem('userName', input.toLowerCase());
+                    document.getElementById('userName').textContent = `Nom : ${input.toLowerCase()}`;
+                }
             } else {
-                alert('Veuillez choisir un niveau.');
+                document.getElementById('userName').textContent = `Nom : ${savedUserName}`;
             }
         }
 
@@ -486,13 +522,20 @@
                 return;
             }
 
+            if (history.length > 0 && !history[history.length - 1].result) {
+                alert('Veuillez marquer la dernière prédiction comme gagnée ou perdue avant d\'effectuer une nouvelle prédiction.');
+                return;
+            }
+
             const lastColors = colorInput.split('').map(char => char === 'R' ? 'rouge' : 'vert');
             const mostFrequentColor = document.getElementById('mostFrequentColor').value.toLowerCase();
 
             let nextColor;
 
             // Algorithme de prédiction basé sur les motifs fournis et la couleur la plus récurrente
-            if (lastColors.every(color => color === 'vert')) {
+            if (mostFrequentColor.includes('%') && parseInt(mostFrequentColor.split('%')[0]) >= 70) {
+                nextColor = mostFrequentColor.includes('rouge') ? 'rouge' : 'vert';
+            } else if (lastColors.every(color => color === 'vert')) {
                 nextColor = 'vert';
             } else if (lastColors.every(color => color === 'rouge')) {
                 nextColor = 'rouge';
@@ -518,7 +561,7 @@
                 if (previousResult.result === 'Échec') {
                     document.getElementById('previousResult').textContent = 'Cette prédiction existe déjà dans l\'historique avec résultat Échec. Essayez de miser la couleur contraire.';
                 } else {
-                    document.getElementById('previousResult').textContent = `Prédiction : ${previousResult.prediction}, Résultat : ${previousResult.result}, Couleur Récurrente : ${previousResult.frequentColor}`;
+                    document.getElementById('previousResult').textContent = `Prédiction : ${previousResult.prediction}, Résultat : ${previousResult.result}, Pourcentage de Couleur : ${previousResult.frequentColor}`;
                 }
             } else {
                 document.getElementById('previousResult').textContent = ''; // Effacer le message précédent
@@ -540,9 +583,8 @@
             // Notification de confirmation de la prédiction
             alert('Prédiction ajoutée avec succès !');
         }
-
         function displayPreviousResult(previousResult) {
-            const resultMessage = `Cette prédiction existe déjà dans l'historique. Prédiction : ${previousResult.prediction}, Résultat : ${previousResult.result}, Couleur Récurrente : ${previousResult.frequentColor}`;
+            const resultMessage = `Cette prédiction existe déjà dans l'historique. Prédiction : ${previousResult.prediction}, Résultat : ${previousResult.result}, Pourcentage de Couleur : ${previousResult.frequentColor}`;
             document.getElementById('previousResult').textContent = resultMessage;
         }
 
@@ -555,10 +597,17 @@
         }
 
         function giveFeedback(correct) {
+            const lastHistoryItem = history[history.length - 1];
+            if (lastHistoryItem.result !== '') {
+                alert('Vous ne pouvez pas donner de feedback plus d\'une fois pour chaque prédiction.');
+                return;
+            }
+
             if (correct) {
-                history[history.length - 1].result = 'Succès';
+                lastHistoryItem.result = 'Succès';
                 successes += 1;
                 points += 10; // Ajouter des points pour chaque prédiction correcte
+                dailyPoints += 10; // Ajouter des points du jour pour chaque prédiction correcte
                 lastResultWasLoss = false; // Réinitialiser après un gain
                 consecutiveLosses = 0; // Réinitialiser les pertes consécutives
 
@@ -568,13 +617,10 @@
                 // Notification de réussite
                 alert('Félicitations, vous avez réussi !');
             } else {
-                history[history.length - 1].result = 'Échec';
+                lastHistoryItem.result = 'Échec';
                 failures += 1; // Ajouter à l'échec
                 lastResultWasLoss = true; // Indiquer que la dernière prédiction était une perte
                 consecutiveLosses += 1; // Incrémenter les pertes consécutives
-
-                // Mise à jour de la barre de progression
-                updateProgressBar(-10);
 
                 // Activer le minuteur uniquement après deux pertes consécutives
                 if (consecutiveLosses >= 2) {
@@ -595,6 +641,8 @@
             } else {
                 document.getElementById('previousResult').textContent = ''; // Effacer le message après un gain
             }
+            updateLevelButtons(); // Mettre à jour les boutons de niveau en fonction des points
+            updateDailyPoints(); // Mettre à jour les points du jour
         }
 
         function updateProgressBar(change) {
@@ -609,8 +657,12 @@
             progressBarFill.style.width = newWidth + '%';
             progressPercentage.textContent = newWidth + '%';
 
-            if (newWidth < 20) {
+            if (newWidth >= 10 && newWidth <= 20) {
                 progressBarFill.style.backgroundColor = 'red';
+            } else if (newWidth >= 30 && newWidth <= 50) {
+                progressBarFill.style.backgroundColor = 'blue';
+            } else if (newWidth >= 60 && newWidth <= 100) {
+                progressBarFill.style.backgroundColor = 'green';
             } else {
                 progressBarFill.style.backgroundColor = '#4caf50';
             }
@@ -635,7 +687,7 @@
             historyElement.innerHTML = '';
             history.forEach((record, index) => {
                 const tr = document.createElement('tr');
-                tr.innerHTML = `<td style="background-color:#f5f5f5;">${record.date}</td><td style="background-color:#f8d7da;">${record.colors}</td><td style="background-color:#d4edda;">${record.prediction}</td><td style="background-color:#fff3cd;">${record.frequentColor}</td><td style="background-color:#f5c6cb;">${record.result}</td>`;
+                tr.innerHTML = `<td style="background-color:#f5f5f5; text-align: center;">${record.date}</td><td style="background-color:#f8d7da;">${record.colors}</td><td style="background-color:#d4edda;">${record.prediction}</td><td style="background-color:#fff3cd;">${record.frequentColor}</td><td style="background-color:#f5c6cb;">${record.result}</td>`;
                 historyElement.appendChild(tr);
             });
             saveHistoryToLocalStorage(); // Sauvegarder après mise à jour
@@ -647,11 +699,13 @@
             history = [];
             successes = 0; // Réinitialiser les réussites
             failures = 0; // Réinitialiser les pertes
-            points = 0; // Réinitialiser les points
+            dailyPoints = 0; // Réinitialiser les points du jour
             updateHistory();
             updateSuccessRate();
             updateStats(); // Mettre à jour les statistiques après effacement
             updatePoints(); // Mettre à jour les points après effacement
+            updateProgressBar(-100); // Réinitialiser la barre de progression
+
             enableFeedbackButtons(); // Réactiver les boutons de feedback
 
             // Notification de l'effacement de l'historique
@@ -669,7 +723,6 @@
             // Notification de la restauration de l'historique
             alert('Historique restauré avec succès !');
         }
-
         function updateSuccessRate() {
             const successRate = (successes / (successes + failures)) * 100;
             document.getElementById('successRate').textContent = `Taux de réussite : ${successRate.toFixed(2)}%`;
@@ -677,6 +730,12 @@
 
         function updatePoints() {
             document.getElementById('points').textContent = `Points : ${points}`; // Afficher les points
+            localStorage.setItem('totalPoints', points); // Sauvegarder les points dans le localStorage
+        }
+
+        function updateDailyPoints() {
+            document.getElementById('dailyPoints').textContent = `Points du jour : ${dailyPoints}`; // Afficher les points du jour
+            localStorage.setItem('dailyPoints', dailyPoints); // Sauvegarder les points du jour dans le localStorage
         }
 
         function saveHistoryToLocalStorage() {
@@ -691,6 +750,7 @@
                 updateSuccessRate();
                 updateStats(); // Mettre à jour les statistiques après chargement
                 updatePoints(); // Mettre à jour les points après chargement
+                updateDailyPoints(); // Mettre à jour les points du jour après chargement
             }
         }
 
@@ -759,16 +819,59 @@
             alert("Bienvenue dans le Jeu de Prédiction de Couleurs Élite!\n\n1. Entrez trois couleurs : rouge ou vert.\n2. Ajoutez la couleur la plus récurrente parmi vos choix.\n3. Appuyez sur 'Prédire' pour voir le résultat.\n\nBonne chance!");
         }
 
-        // Notification pour demander le nom et le niveau de l'utilisateur
-        function askUserProfile() {
-            validateUserName();
-            showUserLevelOptions();
+        function showLevelPopup() {
+            const savedLevel = localStorage.getItem('userLevel');
+            if (!savedLevel) {
+                document.getElementById('levelPopup').style.display = 'block';
+            } else {
+                document.getElementById('userLevel').textContent = `Niveau : ${savedLevel}`;
+            }
+        }
+
+        function confirmLevel() {
+            const selectedLevel = document.querySelector('input[name="level"]:checked');
+            if (selectedLevel) {
+                const level = selectedLevel.value.charAt(0).toUpperCase() + selectedLevel.value.slice(1);
+                localStorage.setItem('userLevel', level);
+                document.getElementById('userLevel').textContent = `Niveau : ${level}`;
+                alert(`Niveau sélectionné : ${level}`);
+                document.getElementById('levelPopup').style.display = 'none';
+            } else {
+                alert("Veuillez choisir un niveau avant de confirmer.");
+            }
+        }
+        function showLevelInfo() {
+            document.getElementById('levelInfoPopup').style.display = 'block';
+            document.getElementById('currentPoints').textContent = `Points actuels : ${points}`;
+        }
+
+        function hideLevelInfo() {
+            document.getElementById('levelInfoPopup').style.display = 'none';
+        }
+
+        function updateLevelButtons() {
+            const intermediateButton = document.querySelector('input[value="intermediaire"]');
+            const advancedButton = document.querySelector('input[value="avance"]');
+
+            if (points >= 3000) {
+                intermediateButton.disabled = false;
+            } else {
+                intermediateButton.disabled = true;
+            }
+
+            if (points >= 10000) {
+                advancedButton.disabled = false;
+            } else {
+                advancedButton.disabled = true;
+            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             loadHistoryFromLocalStorage();
             showTutorial(); // Afficher le tutoriel au démarrage
-            askUserProfile(); // Demander le nom et le niveau de l'utilisateur
+            validateUserName(); // Demander le nom de l'utilisateur au démarrage
+            showLevelPopup(); // Afficher la notification de sélection de niveau au démarrage
+            updateLevelButtons(); // Mettre à jour les boutons de niveau en fonction des points
         });
     </script>
 </body>
