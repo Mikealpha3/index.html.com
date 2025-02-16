@@ -33,7 +33,6 @@
             font-size: 24px; /* Taille de l'icône */
             color: blue; /* Couleur de l'icône */
              margin-right: 10px; /* Espace entre l'icône et le texte */
-        
         }
         .header {
             width: 100%;
@@ -587,6 +586,12 @@
             }
 
             const previousResult = history.find(record => record.colors === lastColors.join(', '));
+
+            // Interdire les prédictions avec VVR ou RRV en cas de perte
+            if (lastResultWasLoss && (colorInput === 'VVR' || colorInput === 'RRV')) {
+                document.getElementById('previousResult').textContent = 'Prédiction interdite après une perte. Changez la séquence de couleurs.';
+                return;
+            }
 
             if (previousResult) {
                 if (previousResult.result === 'Échec') {
