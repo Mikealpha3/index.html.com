@@ -834,25 +834,24 @@
         function showLevelPopup() {
             const savedLevel = localStorage.getItem('userLevel');
             if (!savedLevel) {
-                document.getElementById('levelPopup').style.display = 'block';
+        document.getElementById('levelPopup').style.display = 'block'; // Affiche la popup si aucun niveau n'est sauvegardé
             } else {
-                document.getElementById('userLevelSpan').textContent = `${savedLevel}`;
+        document.getElementById('userLevelSpan').textContent = savedLevel; // Affiche le niveau sauvegardé
             }
         }
 
         function confirmLevel() {
             const selectedLevel = document.querySelector('input[name="level"]:checked');
             if (selectedLevel) {
-                const level = selectedLevel.value.charAt(0).toUpperCase() + selectedLevel.value.slice(1);
-                localStorage.setItem('userLevel', level);
-                document.getElementById('userLevelSpan').textContent = `${level}`;
-                alert(`Niveau sélectionné : ${level}`);
-                document.getElementById('levelPopup').style.display = 'none';
+             const level = selectedLevel.value.charAt(0).toUpperCase() + selectedLevel.value.slice(1); // Formate le niveau (ex: "débutant" -> "Débutant")
+             localStorage.setItem('userLevel', level); // Sauvegarde le niveau dans le localStorage
+             document.getElementById('userLevelSpan').textContent = level; // Met à jour l'affichage du niveau
+             alert(`Niveau sélectionné : ${level}`);
+             document.getElementById('levelPopup').style.display = 'none'; // Cache la popup
             } else {
-                alert("Veuillez choisir un niveau avant de confirmer.");
+             alert("Veuillez choisir un niveau avant de confirmer.");
             }
         }
-
         function showLevelInfo() {
             document.getElementById('levelInfoPopup').style.display = 'block';
             document.getElementById('currentPoints').textContent = `Points actuels : ${points}`;
