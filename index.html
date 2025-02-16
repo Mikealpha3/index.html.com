@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prédiction de Couleurs Élite</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -27,6 +28,12 @@
             height: 95vh;
             overflow-y: auto;
             position: relative;
+        }
+        .fas {
+            font-size: 24px; /* Taille de l'icône */
+            color: blue; /* Couleur de l'icône */
+             margin-right: 10px; /* Espace entre l'icône et le texte */
+        
         }
         .header {
             width: 100%;
@@ -100,7 +107,7 @@
         .btn-copy:hover, .btn-export:hover {
             background-color: #e0a800;
         }
-        .color-input, .level-selection, #mostFrequentColor {
+        .color-input, .series-input, .level-selection, #colorPercentage {
             padding: 10px;
             border: 2px solid #aaa;
             border-radius: 5px;
@@ -111,7 +118,7 @@
             color: #444;
             background-color: #fff;
         }
-        .color-input::placeholder {
+        .color-input::placeholder, .series-input::placeholder {
             color: #888;
         }
         .input-container {
@@ -166,8 +173,8 @@
             background-color: #f0f0f0;
         }
         #historyContainer {
-            max-height: 200px;
-            overflow-y: auto;
+            max-height: 300px;
+            overflow-y: auto; /* Ajout de la barre de défilement */
         }
         .highlight {
             background-color: yellow;
@@ -280,9 +287,15 @@
             color: #333;
         }
         .btn-level {
-            position: absolute;
-            left: 10px;
-            top: 8cm; /* Ajusté pour être à 8 cm au-dessus de la barre de progression */
+              position: absolute;
+              left: 10px;
+              top: 12cm;
+             background-color: green; /* Couleur de fond */
+             color: white; /* Couleur du texte */
+             padding: 10px 20px; /* Taille du bouton */
+             border: none; /* Pas de bordure */
+             border-radius: 5px; /* Coins arrondis */
+             cursor: pointer; /* Curseur en main */
         }
         .level-info-popup {
             display: none;
@@ -304,8 +317,8 @@
         .level-info-popup .close-btn {
             position: absolute;
             top: 10px;
-            right: 20px; /* Ajuster pour ajouter de l'écart avec "Niveau" */
-            background-color: red; /* Couleur rouge pour la croix de fermeture */
+            right: 0px;
+            background-color: red;
             border: none;
             font-size: 18px;
             cursor: pointer;
@@ -317,9 +330,10 @@
         <div class="header">
             <h1>Prédiction de Couleurs Élite</h1>
             <div class="user-profile">
+                <i class="fas fa-user"></i> <!-- Icône de profil -->
                 <strong>Profil d'utilisateur</strong>
                 <p id="userName">Nom : Utilisateur</p>
-                <p id="userLevel">Niveau : </p> <!-- Ajout de l'affichage du niveau -->
+                <p id="userLevel">Niveau : <span id="userLevelSpan"></span></p>
             </div>
         </div>
         <div class="input-container">
@@ -327,23 +341,13 @@
             <input type="date" id="dateInput" class="color-input">
         </div>
         <div class="input-container">
-            <input type="text" id="colorInput" class="color-input" maxlength="3" oninput="validateInput()" placeholder="Ajouter les Couleurs (ex: RVV)">
+            <input type="text" id="colorInput" class="color-input" maxlength="3" placeholder="Ajouter les Couleurs (ex: RVV)" readonly>
         </div>
         <div class="input-container">
-            <select id="mostFrequentColor">
-                <option value="50% rouge">50% Rouge</option>
-                <option value="50% vert">50% Vert</option>
-                <option value="60% rouge">60% Rouge</option>
-                <option value="60% vert">60% Vert</option>
-                <option value="70% rouge">70% Rouge</option>
-                <option value="70% vert">70% Vert</option>
-                <option value="80% rouge">80% Rouge</option>
-                <option value="80% vert">80% Vert</option>
-                <option value="90% rouge">90% Rouge</option>
-                <option value="90% vert">90% Vert</option>
-                <option value="100% rouge">100% Rouge</option>
-                <option value="100% vert">100% Vert</option>
-            </select>
+            <input type="text" id="seriesInput" class="series-input" maxlength="10" oninput="autoFillColors()" placeholder="Entrer une série de couleurs">
+        </div>
+        <div class="input-container">
+            <input type="text" id="colorPercentage" class="color-input" readonly placeholder="Pourcentage de couleurs">
         </div>
         <div class="action-buttons">
             <button class="btn-success" onclick="appendColor('R')">R</button>
@@ -360,98 +364,102 @@
             </div>
             <span id="progressPercentage">0%</span>
         </div>
-        <p id="predictionResult"></p> <!-- Prédiction au-dessus des motifs -->
+        <p id="predictionResult"></p>
         <div class="patterns">
             <h3>Motifs à 95% de succès</h3>
             <p>RRV ➔ R</p>
             <p>VRR ➔ R</p>
-            <p>VRR ➔ V</p>
+            <p>VRV ➔ V</p>
             <p>RRV ➔ R</p>
             <p>VRR ➔ R</p>
-            <p>VRR ➔ R</p>
+            <p>VRV ➔ V</p>
             <p>RRV ➔ V</p>
-            <div class="history-header">
-                <h2>Historique</h2>
-                <div>
-                    <button class="btn-copy" onclick="copyHistory()">Copier</button>
-                    <button class="btn-export" onclick="exportHistory()">Exporter</button>
-                </div>
-            </div>
-            <div id="historyContainer" class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>COULEURS</th>
-                            <th>PRÉDICTION</th>
-                            <th>POURCENTAGE DE COULEUR</th>
-                            <th>RÉSULTAT</th>
-                        </tr>
-                    </thead>
-                    <tbody id="history">
-                    </tbody>
-                </table>
-            </div>
-            <div class="level-popup" id="levelPopup">
-                <h2>Choisissez votre Niveau</h2>
-                <div class="level-buttons">
-                    <label><input type="radio" name="level" value="debutant"> Débutant</label>
-                    <label><input type="radio" name="level" value="intermediaire" disabled> Intermédiaire</label>
-                    <label><input type="radio" name="level" value="avance" disabled> Avancé</label>
-                </div>
-                <div class="action-buttons">
-                    <button class="btn-confirm" onclick="confirmLevel()">Confirmer</button>
-                </div>
-            </div>
-            <p id="previousResult"></p> <!-- Message pour les résultats précédents -->
-            <div style="display: flex; align-items: center; gap: 20px;">
-                <label for="correctPrediction" style="margin-bottom: 0;">Prédiction Incorrecte :</label>
-                <input type="text" id="correctPrediction" class="color-input" placeholder="Couleur Correcte" maxlength="5">
-                <button class="btn-success" onclick="correctPrediction()">Corriger</button>
-                <button class="btn-undo" onclick="undo()">Marche Arrière</button> <!-- Bouton déplacé à droite de "Corriger" -->
-            </div>
-            <div class="feedback-buttons">
-                <button class="btn-success" id="btnSuccess" onclick="giveFeedback(true)">Gagner ✅</button>
-                <button class="btn-failure" id="btnFailure" onclick="giveFeedback(false)">Perte ❌</button>
-                <button class="btn-history" onclick="clearHistory()">Effacer l'Historique</button>
-            </div>
-            <div class="stats">
-                <p id="successRate"></p>
-                <p id="totalPredictions">Total des Prédictions : 0</p>
-                <p id="totalSuccesses">Total des Réussites : 0</p>
-                <p id="totalFailures">Total des Pertes : 0</p>
-                <p id="points">Points : 0</p>
-                <p id="dailyPoints">Points du jour : 0</p> <!-- Ajout des points du jour -->
+        </div>
+        <div class="history-header">
+            <h2>Historique</h2>
+            <div>
+                <button class="btn-copy" onclick="copyHistory()">Copier</button>
+                <button class="btn-export" onclick="exportHistory()">Exporter</button>
             </div>
         </div>
-    
-        <div class="overlay" id="overlay">
-            <div class="overlay-message">
-                Vous devez attendre l'expiration du minuteur pour voir les prédictions. Temps restant : <span id="overlay-timer">05:00</span> 🤖🤖🤖
+        <div id="historyContainer" class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Couleurs</th>
+                        <th>Prédiction</th>
+                        <th>Pourcentage de Couleurs</th>
+                        <th>Résultat</th>
+                    </tr>
+                </thead>
+                <tbody id="history">
+                </tbody>
+            </table>
+        </div>
+        <div class="level-popup" id="levelPopup">
+            <h2>Choisissez votre Niveau</h2>
+            <div class="level-buttons">
+                <label><input type="radio" name="level" value="débutant"> Débutant</label>
+                <label><input type="radio" name="level" value="intermédiaire" disabled> Intermédiaire</label>
+                <label><input type="radio" name="level" value="avancé" disabled> Avancé</label>
+            </div>
+            <div class="action-buttons">
+                <button class="btn-confirm" onclick="confirmLevel()">Confirmer</button>
             </div>
         </div>
-    
-        <div class="level-info-popup" id="levelInfoPopup">
-            <button class="close-btn" onclick="hideLevelInfo()">X</button>
-            <h2>Information de Niveau</h2>
-            <p id="currentPoints">Points actuels : 0</p>
-            <p>Points nécessaires pour le niveau Intermédiaire : 3000</p>
-            <p>Points nécessaires pour le niveau Avancé : 10000</p>
+        <p id="previousResult"></p>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <label for="correctPrediction" style="margin-bottom: 0;">Prédiction Incorrecte :</label>
+            <input type="text" id="correctPrediction" class="color-input" placeholder="Couleur Correcte" maxlength="5">
+            <button class="btn-success" onclick="correctPrediction()">Corriger</button>
+            <button class="btn-undo" onclick="undo()">Marche Arrière</button>
         </div>
-    
-        <script>
-            let history = [];
-            let previousHistory = [];
-            let consecutiveLosses = 0;
-            let successes = 0;
-            let failures = 0; // Ajout du compteur de points
-            let points = localStorage.getItem('totalPoints') ? parseInt(localStorage.getItem('totalPoints')) : 0; // Ajout du compteur de points qui ne s'efface pas
-            let dailyPoints = localStorage.getItem('dailyPoints') ? parseInt(localStorage.getItem('dailyPoints')) : 0; // Ajout des points du jour
-            let lastResultWasLoss = false; // Indicateur de la dernière prédiction perdue
-            let timer;
-            let totalSeconds = 300; // 5 minutes = 300 secondes
-            let timerActive = false; // Indicateur pour savoir si le minuteur est actif
-            function startTimer() {
+        <div class="feedback-buttons">
+            <button class="btn-success" id="btnSuccess" onclick="giveFeedback(true)">Gagner ✅</button>
+            <button class="btn-failure" id="btnFailure" onclick="giveFeedback(false)">Perte ❌</button>
+            <button class="btn-history" onclick="clearHistory()">Effacer l'Historique</button>
+        </div>
+        <div class="stats">
+            <p id="successRate"></p>
+            <p id="totalPredictions">Total des Prédictions : 0</p>
+            <p id="totalSuccesses">Total des Réussites : 0</p>
+            <p id="totalFailures">Total des Pertes : 0</p>
+            <p id="points">Points : 0</p>
+        </div>
+    </div>
+    <div class="overlay" id="overlay">
+        <div class="overlay-message">
+            Vous devez attendre l'expiration du minuteur pour voir les prédictions. Temps restant : <span id="overlay-timer">05:00</span> 🤖🤖🤖
+        </div>
+    </div>
+    <div class="level-info-popup" id="levelInfoPopup">
+        <button class="close-btn" onclick="hideLevelInfo()">X</button>
+        <h2>Information de Niveau</h2>
+        <p id="currentPoints">Points actuels : 0</p>
+        <p>Points nécessaires pour le niveau Intermédiaire : 3000</p>
+        <p>Points nécessaires pour le niveau Avancé : 10000</p>
+    </div>
+    <script>
+        let history = [];
+        let previousHistory = [];
+        let consecutiveLosses = 0;
+        let successes = 0;
+        let failures = 0;
+        let points = localStorage.getItem('totalPoints') ? parseInt(localStorage.getItem('totalPoints')) : 0;
+        let lastResultWasLoss = false;
+        let timer;
+        let totalSeconds = 300;
+        let timerActive = false;
+        const maxPredictions = 60;
+        const today = new Date().toLocaleDateString();
+        const lastAccessDate = localStorage.getItem('lastAccessDate');
+        if (lastAccessDate && lastAccessDate !== today) {
+            localStorage.setItem('previousDailyPoints', dailyPoints);
+        }
+        localStorage.setItem('lastAccessDate', today);
+
+        function startTimer() {
             timerActive = true;
             timer = setInterval(setTime, 1000);
         }
@@ -480,7 +488,7 @@
         function resetTimer() {
             totalSeconds = 300;
             document.getElementById('overlay-timer').innerText = "05:00";
-            document.getElementById('predictButton').disabled = false; // Réactiver le bouton prédire après l'expiration du minuteur
+            document.getElementById('predictButton').disabled = false;
         }
 
         function validateUserName() {
@@ -502,13 +510,38 @@
         }
 
         function appendColor(color) {
-            const input = document.getElementById('colorInput');
-            if (input.value.length < 3) {
+            const input = document.getElementById('seriesInput');
+            if (input.value.length < 10) {
                 input.value += color;
+                autoFillColors();
+            }
+        }
+
+        function autoFillColors() {
+            const seriesInput = document.getElementById('seriesInput').value.toUpperCase();
+            const validColors = ['R', 'V'];
+
+            if (seriesInput.length === 10 && seriesInput.split('').every(char => validColors.includes(char))) {
+                const colorCount = seriesInput.split('').reduce((count, char) => {
+                    count[char] = (count[char] || 0) + 1;
+                    return count;
+                }, {});
+
+                const redPercentage = (colorCount['R'] || 0) * 10;
+                const greenPercentage = (colorCount['V'] || 0) * 10;
+
+                const mostFrequentColor = redPercentage >= greenPercentage ? `${redPercentage}% Rouge` : `${greenPercentage}% Vert`;
+                document.getElementById('colorPercentage').value = mostFrequentColor;
+                document.getElementById('colorInput').value = seriesInput.slice(-3);
             }
         }
 
         function predictColor() {
+            if (history.length >= maxPredictions) {
+                alert('Vous avez atteint la limite de 60 prédictions.');
+                return;
+            }
+
             const colorInput = document.getElementById('colorInput').value.toUpperCase();
             const validColors = ['R', 'V'];
 
@@ -528,11 +561,10 @@
             }
 
             const lastColors = colorInput.split('').map(char => char === 'R' ? 'rouge' : 'vert');
-            const mostFrequentColor = document.getElementById('mostFrequentColor').value.toLowerCase();
+            const mostFrequentColor = document.getElementById('colorPercentage').value.toLowerCase();
 
             let nextColor;
 
-            // Algorithme de prédiction basé sur les motifs fournis et la couleur la plus récurrente
             if (mostFrequentColor.includes('%') && parseInt(mostFrequentColor.split('%')[0]) >= 70) {
                 nextColor = mostFrequentColor.includes('rouge') ? 'rouge' : 'vert';
             } else if (lastColors.every(color => color === 'vert')) {
@@ -551,10 +583,9 @@
                     nextColor = mostFrequentColor.includes('rouge') ? 'vert' : 'rouge';
                 }
             } else {
-                nextColor = mostFrequentColor; // Utiliser la couleur la plus récurrente pour la prédiction
+                nextColor = mostFrequentColor;
             }
 
-            // Vérifier si la prédiction existe déjà dans l'historique
             const previousResult = history.find(record => record.colors === lastColors.join(', '));
 
             if (previousResult) {
@@ -564,25 +595,21 @@
                     document.getElementById('previousResult').textContent = `Prédiction : ${previousResult.prediction}, Résultat : ${previousResult.result}, Pourcentage de Couleur : ${previousResult.frequentColor}`;
                 }
             } else {
-                document.getElementById('previousResult').textContent = ''; // Effacer le message précédent
+                document.getElementById('previousResult').textContent = '';
             }
 
-            // Ajouter automatiquement à l'historique même si la prédiction existe déjà
-            previousHistory = [...history]; // Sauvegarde de l'historique actuel
+            previousHistory = [...history];
             history.push({ colors: lastColors.join(', '), prediction: nextColor, frequentColor: mostFrequentColor, result: '', date: document.getElementById('dateInput').value || new Date().toLocaleDateString() });
 
             const predictionResult = document.getElementById('predictionResult');
             predictionResult.textContent = "Prédiction : " + nextColor;
 
-            // Effacer les champs après la prédiction
             document.getElementById('colorInput').value = '';
-
             updateHistory();
             enableFeedbackButtons();
-
-            // Notification de confirmation de la prédiction
             alert('Prédiction ajoutée avec succès !');
         }
+
         function displayPreviousResult(previousResult) {
             const resultMessage = `Cette prédiction existe déjà dans l'historique. Prédiction : ${previousResult.prediction}, Résultat : ${previousResult.result}, Pourcentage de Couleur : ${previousResult.frequentColor}`;
             document.getElementById('previousResult').textContent = resultMessage;
@@ -590,10 +617,11 @@
 
         function clearFields() {
             document.getElementById('colorInput').value = '';
-            document.getElementById('mostFrequentColor').value = '50% rouge';
+            document.getElementById('seriesInput').value = '';
+            document.getElementById('colorPercentage').value = '';
             document.getElementById('predictionResult').textContent = '';
-            document.getElementById('previousResult').textContent = ''; // Effacer le message précédent
-            enableFeedbackButtons(); // Réactiver les boutons de feedback
+            document.getElementById('previousResult').textContent = '';
+            enableFeedbackButtons();
         }
 
         function giveFeedback(correct) {
@@ -606,43 +634,36 @@
             if (correct) {
                 lastHistoryItem.result = 'Succès';
                 successes += 1;
-                points += 10; // Ajouter des points pour chaque prédiction correcte
-                dailyPoints += 10; // Ajouter des points du jour pour chaque prédiction correcte
-                lastResultWasLoss = false; // Réinitialiser après un gain
-                consecutiveLosses = 0; // Réinitialiser les pertes consécutives
+                points += 10;
+                lastResultWasLoss = false;
+                consecutiveLosses = 0;
 
-                // Mise à jour de la barre de progression
-                updateProgressBar(10);
-
-                // Notification de réussite
+                updateProgressBar(5);
                 alert('Félicitations, vous avez réussi !');
             } else {
                 lastHistoryItem.result = 'Échec';
-                failures += 1; // Ajouter à l'échec
-                lastResultWasLoss = true; // Indiquer que la dernière prédiction était une perte
-                consecutiveLosses += 1; // Incrémenter les pertes consécutives
+                failures += 1;
+                lastResultWasLoss = true;
+                consecutiveLosses += 1;
 
-                // Activer le minuteur uniquement après deux pertes consécutives
                 if (consecutiveLosses >= 2) {
                     startTimer();
-                    showOverlay(); // Afficher le message d'attente
-                    consecutiveLosses = 0; // Réinitialiser les pertes consécutives après activation du minuteur
+                    showOverlay();
+                    consecutiveLosses = 0;
                 }
 
-                // Notification d'échec
                 alert('Dommage, vous avez perdu.');
             }
             updateHistory();
             updateSuccessRate();
-            updatePoints(); // Mettre à jour les points
-
+            updatePoints();
+            clearFields(); // Effacer les champs de saisie automatiquement
             if (lastResultWasLoss) {
                 document.getElementById('previousResult').textContent = 'Miser la couleur contraire pour la prochaine fois !';
             } else {
-                document.getElementById('previousResult').textContent = ''; // Effacer le message après un gain
+                document.getElementById('previousResult').textContent = '';
             }
-            updateLevelButtons(); // Mettre à jour les boutons de niveau en fonction des points
-            updateDailyPoints(); // Mettre à jour les points du jour
+            updateLevelButtons();
         }
 
         function updateProgressBar(change) {
@@ -670,16 +691,16 @@
 
         function correctPrediction() {
             const correctPrediction = document.getElementById('correctPrediction').value.toLowerCase();
-            const validValues = ['rouge', 'vert', '50%'];
+            const validValues = ['rouge', 'vert'];
 
             if (!validValues.includes(correctPrediction)) {
-                alert('Veuillez entrer "rouge", "vert" ou "50%" uniquement.');
+                alert('Veuillez entrer "rouge" ou "vert" uniquement.');
                 return;
             }
 
             history[history.length - 1].prediction = correctPrediction;
             updateHistory();
-            document.getElementById('correctPrediction').value = ''; // Effacer le champ de correction
+            document.getElementById('correctPrediction').value = '';
         }
 
         function updateHistory() {
@@ -690,52 +711,43 @@
                 tr.innerHTML = `<td style="background-color:#f5f5f5; text-align: center;">${record.date}</td><td style="background-color:#f8d7da;">${record.colors}</td><td style="background-color:#d4edda;">${record.prediction}</td><td style="background-color:#fff3cd;">${record.frequentColor}</td><td style="background-color:#f5c6cb;">${record.result}</td>`;
                 historyElement.appendChild(tr);
             });
-            saveHistoryToLocalStorage(); // Sauvegarder après mise à jour
+            saveHistoryToLocalStorage();
             updateStats();
         }
 
         function clearHistory() {
-            previousHistory = [...history]; // Sauvegarde de l'historique actuel
+            previousHistory = [...history];
             history = [];
-            successes = 0; // Réinitialiser les réussites
-            failures = 0; // Réinitialiser les pertes
-            dailyPoints = 0; // Réinitialiser les points du jour
+            successes = 0;
+            failures = 0;
+            points = 0;
             updateHistory();
             updateSuccessRate();
-            updateStats(); // Mettre à jour les statistiques après effacement
-            updatePoints(); // Mettre à jour les points après effacement
-            updateProgressBar(-100); // Réinitialiser la barre de progression
-
-            enableFeedbackButtons(); // Réactiver les boutons de feedback
-
-            // Notification de l'effacement de l'historique
+            updateStats();
+            updatePoints();
+            updateProgressBar(-100);
+            enableFeedbackButtons();
             alert('Historique effacé avec succès !');
         }
 
         function undo() {
-            history = [...previousHistory]; // Restaure l'historique précédent
+            history = [...previousHistory];
             updateHistory();
             updateSuccessRate();
-            updateStats(); // Mettre à jour les statistiques après restauration
-            updatePoints(); // Mettre à jour les points après restauration
-            enableFeedbackButtons(); // Réactiver les boutons de feedback
-
-            // Notification de la restauration de l'historique
+            updateStats();
+            updatePoints();
+            enableFeedbackButtons();
             alert('Historique restauré avec succès !');
         }
+
         function updateSuccessRate() {
             const successRate = (successes / (successes + failures)) * 100;
             document.getElementById('successRate').textContent = `Taux de réussite : ${successRate.toFixed(2)}%`;
         }
 
         function updatePoints() {
-            document.getElementById('points').textContent = `Points : ${points}`; // Afficher les points
-            localStorage.setItem('totalPoints', points); // Sauvegarder les points dans le localStorage
-        }
-
-        function updateDailyPoints() {
-            document.getElementById('dailyPoints').textContent = `Points du jour : ${dailyPoints}`; // Afficher les points du jour
-            localStorage.setItem('dailyPoints', dailyPoints); // Sauvegarder les points du jour dans le localStorage
+            document.getElementById('points').textContent = `Points : ${points}`;
+            localStorage.setItem('totalPoints', points);
         }
 
         function saveHistoryToLocalStorage() {
@@ -748,9 +760,8 @@
                 history = JSON.parse(storedHistory);
                 updateHistory();
                 updateSuccessRate();
-                updateStats(); // Mettre à jour les statistiques après chargement
-                updatePoints(); // Mettre à jour les points après chargement
-                updateDailyPoints(); // Mettre à jour les points du jour après chargement
+                updateStats();
+                updatePoints();
             }
         }
 
@@ -768,16 +779,15 @@
 
         function showOverlay() {
             document.getElementById('overlay').style.display = 'flex';
-            document.querySelectorAll('button').forEach(button => button.disabled = true); // Désactiver tous les boutons sauf la barre de défilement
-            document.getElementById('predictButton').disabled = true; // Désactiver le bouton de prédiction
+            document.querySelectorAll('button').forEach(button => button.disabled = true);
+            document.getElementById('predictButton').disabled = true;
         }
 
         function hideOverlay() {
             document.getElementById('overlay').style.display = 'none';
-            document.querySelectorAll('button').forEach(button => button.disabled = false); // Réactiver tous les boutons
+            document.querySelectorAll('button').forEach(button => button.disabled = false);
         }
 
-        // Fonction pour copier l'historique dans le presse-papiers
         function copyHistory() {
             const historyText = history.map(record => `${record.date} - ${record.colors} - ${record.prediction} - ${record.frequentColor} - ${record.result}`).join('\n');
             const el = document.createElement('textarea');
@@ -789,7 +799,6 @@
             alert('Historique copié dans le presse-papiers!');
         }
 
-        // Fonction pour exporter l'historique en fichier texte
         function exportHistory() {
             const historyText = history.map(record => `${record.date} - ${record.colors} - ${record.prediction} - ${record.frequentColor} - ${record.result}`).join('\n');
             const blob = new Blob([historyText], { type: 'text/plain' });
@@ -801,7 +810,6 @@
             URL.revokeObjectURL(url);
         }
 
-        // Fonction pour enlever les accents des entrées
         function removeAccents(input) {
             const accentsMap = {
                 'á': 'a', 'à': 'a', 'â': 'a', 'ä': 'a', 'ã': 'a', 'å': 'a', 'æ': 'ae', 'ç': 'c',
@@ -814,9 +822,8 @@
             input.value = input.value.split('').map(char => accentsMap[char] || char).join('');
         }
 
-        // Afficher un tutoriel au démarrage
         function showTutorial() {
-            alert("Bienvenue dans le Jeu de Prédiction de Couleurs Élite!\n\n1. Entrez trois couleurs : rouge ou vert.\n2. Ajoutez la couleur la plus récurrente parmi vos choix.\n3. Appuyez sur 'Prédire' pour voir le résultat.\n\nBonne chance!");
+            alert("Bienvenue dans le Jeu de Prédiction de Couleurs Élite!\n\n1. Entrez une série de 10 couleurs : rouge ou vert.\n2. La couleur la plus récurrente et les trois dernières couleurs seront automatiquement renseignées.\n3. Appuyez sur 'Prédire' pour voir le résultat.\n\nBonne chance!");
         }
 
         function showLevelPopup() {
@@ -824,7 +831,7 @@
             if (!savedLevel) {
                 document.getElementById('levelPopup').style.display = 'block';
             } else {
-                document.getElementById('userLevel').textContent = `Niveau : ${savedLevel}`;
+                document.getElementById('userLevelSpan').textContent = `${savedLevel}`;
             }
         }
 
@@ -833,13 +840,14 @@
             if (selectedLevel) {
                 const level = selectedLevel.value.charAt(0).toUpperCase() + selectedLevel.value.slice(1);
                 localStorage.setItem('userLevel', level);
-                document.getElementById('userLevel').textContent = `Niveau : ${level}`;
+                document.getElementById('userLevelSpan').textContent = `${level}`;
                 alert(`Niveau sélectionné : ${level}`);
                 document.getElementById('levelPopup').style.display = 'none';
             } else {
                 alert("Veuillez choisir un niveau avant de confirmer.");
             }
         }
+
         function showLevelInfo() {
             document.getElementById('levelInfoPopup').style.display = 'block';
             document.getElementById('currentPoints').textContent = `Points actuels : ${points}`;
@@ -850,8 +858,8 @@
         }
 
         function updateLevelButtons() {
-            const intermediateButton = document.querySelector('input[value="intermediaire"]');
-            const advancedButton = document.querySelector('input[value="avance"]');
+            const intermediateButton = document.querySelector('input[value="intermédiaire"]');
+            const advancedButton = document.querySelector('input[value="avancé"]');
 
             if (points >= 3000) {
                 intermediateButton.disabled = false;
@@ -868,10 +876,10 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             loadHistoryFromLocalStorage();
-            showTutorial(); // Afficher le tutoriel au démarrage
-            validateUserName(); // Demander le nom de l'utilisateur au démarrage
-            showLevelPopup(); // Afficher la notification de sélection de niveau au démarrage
-            updateLevelButtons(); // Mettre à jour les boutons de niveau en fonction des points
+            showTutorial();
+            validateUserName();
+            showLevelPopup();
+            updateLevelButtons();
         });
     </script>
 </body>
