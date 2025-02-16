@@ -6,6 +6,46 @@
     <title>Prédiction de Couleurs Élite</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* Styles pour la popup de notification */
+    .notification-popup {
+    display: none; /* Cache la popup par défaut */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    }
+
+    .notification-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .notification-buttons button {
+    padding: 10px 20px;
+    margin: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    }
+
+    .notification-buttons button:first-child {
+    background-color: #28a745; /* Vert pour "Oui" */
+    color: white;
+    }
+
+    .notification-buttons button:last-child {
+    background-color: #dc3545; /* Rouge pour "Non" */
+    color: white;
+    }
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f0f8ff;
@@ -324,6 +364,17 @@
         }
     </style>
 </head>
+<!-- Popup de notification -->
+<div class="notification-popup" id="notificationPopup">
+    <div class="notification-content">
+        <h2>Vérification des informations</h2>
+        <p>Voyez-vous votre nom et votre niveau affichés à l'écran ?</p>
+        <div class="notification-buttons">
+            <button onclick="handleNotificationResponse(true)">Oui</button>
+            <button onclick="handleNotificationResponse(false)">Non</button>
+        </div>
+    </div>
+</div>
 <body>
     <div class="container">
         <div class="header">
@@ -440,6 +491,43 @@
         <p>Points nécessaires pour le niveau Avancé : 10000</p>
     </div>
     <script>
+        // Fonction pour afficher la popup de notification
+function showNotificationPopup() {
+    const savedName = localStorage.getItem('userName');
+    const savedLevel = localStorage.getItem('userLevel');
+
+    // Vérifie si le nom et le niveau sont déjà sauvegardés
+    if (savedName && savedLevel) {
+        // Affiche la popup de notification
+        document.getElementById('notificationPopup').style.display = 'flex';
+    }
+}
+
+// Fonction pour gérer la réponse de l'utilisateur
+function handleNotificationResponse(isConfirmed) {
+    if (isConfirmed) {
+        // Si l'utilisateur confirme, on cache la popup
+        document.getElementById('notificationPopup').style.display = 'none';
+    } else {
+        // Si l'utilisateur n'est pas satisfait, on lui permet de resaisir ses informations
+        localStorage.removeItem('userName');
+        localStorage.removeItem('userLevel');
+        document.getElementById('notificationPopup').style.display = 'none';
+        validateUserName(); // Redemande le nom
+        showLevelPopup(); // Redemande le niveau
+      }
+      }
+
+       // Appelle la fonction showNotificationPopup() au chargement de la page
+        document.addEventListener('DOMContentLoaded', () => {
+         loadHistoryFromLocalStorage();
+         showTutorial();
+         validateUserName();
+         showLevelPopup();
+         updateLevelButtons();
+         showNotificationPopup(); // Affiche la popup de notification
+     });
+        
         let history = [];
         let previousHistory = [];
         let consecutiveLosses = 0;
@@ -834,24 +922,25 @@
         function showLevelPopup() {
             const savedLevel = localStorage.getItem('userLevel');
             if (!savedLevel) {
-        document.getElementById('levelPopup').style.display = 'block'; // Affiche la popup si aucun niveau n'est sauvegardé
+                document.getElementById('levelPopup').style.display = 'block';
             } else {
-        document.getElementById('userLevelSpan').textContent = savedLevel; // Affiche le niveau sauvegardé
+                document.getElementById('userLevelSpan').textContent = `${savedLevel}`;
             }
         }
 
         function confirmLevel() {
             const selectedLevel = document.querySelector('input[name="level"]:checked');
             if (selectedLevel) {
-             const level = selectedLevel.value.charAt(0).toUpperCase() + selectedLevel.value.slice(1); // Formate le niveau (ex: "débutant" -> "Débutant")
-             localStorage.setItem('userLevel', level); // Sauvegarde le niveau dans le localStorage
-             document.getElementById('userLevelSpan').textContent = level; // Met à jour l'affichage du niveau
-             alert(`Niveau sélectionné : ${level}`);
-             document.getElementById('levelPopup').style.display = 'none'; // Cache la popup
+                const level = selectedLevel.value.charAt(0).toUpperCase() + selectedLevel.value.slice(1);
+                localStorage.setItem('userLevel', level);
+                document.getElementById('userLevelSpan').textContent = `${level}`;
+                alert(`Niveau sélectionné : ${level}`);
+                document.getElementById('levelPopup').style.display = 'none';
             } else {
-             alert("Veuillez choisir un niveau avant de confirmer.");
+                alert("Veuillez choisir un niveau avant de confirmer.");
             }
         }
+
         function showLevelInfo() {
             document.getElementById('levelInfoPopup').style.display = 'block';
             document.getElementById('currentPoints').textContent = `Points actuels : ${points}`;
