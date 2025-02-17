@@ -299,7 +299,7 @@
             left: 50%;
             margin-left: -100px;
             opacity: 0;
-            transition: opacity 0.3s;
+            transition:        opacity 0.3s;
         }
         .info-tooltip:hover .tooltip-text {
             visibility: visible;
@@ -492,42 +492,42 @@
     </div>
     <script>
         // Fonction pour afficher la popup de notification
-function showNotificationPopup() {
-    const savedName = localStorage.getItem('userName');
-    const savedLevel = localStorage.getItem('userLevel');
+        function showNotificationPopup() {
+            const savedName = localStorage.getItem('userName');
+            const savedLevel = localStorage.getItem('userLevel');
 
-    // Vérifie si le nom et le niveau sont déjà sauvegardés
-    if (savedName && savedLevel) {
-        // Affiche la popup de notification
-        document.getElementById('notificationPopup').style.display = 'flex';
-    }
-}
+                     // Vérifie si le nom et le niveau sont déjà sauvegardés
+                     if (savedName && savedLevel) {
+                // Affiche la popup de notification
+                document.getElementById('notificationPopup').style.display = 'flex';
+            }
+        }
 
-// Fonction pour gérer la réponse de l'utilisateur
-function handleNotificationResponse(isConfirmed) {
-    if (isConfirmed) {
-        // Si l'utilisateur confirme, on cache la popup
-        document.getElementById('notificationPopup').style.display = 'none';
-    } else {
-        // Si l'utilisateur n'est pas satisfait, on lui permet de resaisir ses informations
-        localStorage.removeItem('userName');
-        localStorage.removeItem('userLevel');
-        document.getElementById('notificationPopup').style.display = 'none';
-        validateUserName(); // Redemande le nom
-        showLevelPopup(); // Redemande le niveau
-      }
-      }
+        // Fonction pour gérer la réponse de l'utilisateur
+        function handleNotificationResponse(isConfirmed) {
+            if (isConfirmed) {
+                // Si l'utilisateur confirme, on cache la popup
+                document.getElementById('notificationPopup').style.display = 'none';
+            } else {
+                // Si l'utilisateur n'est pas satisfait, on lui permet de resaisir ses informations
+                localStorage.removeItem('userName');
+                localStorage.removeItem('userLevel');
+                document.getElementById('notificationPopup').style.display = 'none';
+                validateUserName(); // Redemande le nom
+                showLevelPopup(); // Redemande le niveau
+            }
+        }
 
-       // Appelle la fonction showNotificationPopup() au chargement de la page
+        // Appelle la fonction showNotificationPopup() au chargement de la page
         document.addEventListener('DOMContentLoaded', () => {
-         loadHistoryFromLocalStorage();
-         showTutorial();
-         validateUserName();
-         showLevelPopup();
-         updateLevelButtons();
-         showNotificationPopup(); // Affiche la popup de notification
-     });
-        
+            loadHistoryFromLocalStorage();
+            showTutorial();
+            validateUserName();
+            showLevelPopup();
+            updateLevelButtons();
+            showNotificationPopup(); // Affiche la popup de notification
+        });
+
         let history = [];
         let previousHistory = [];
         let consecutiveLosses = 0;
@@ -675,8 +675,8 @@ function handleNotificationResponse(isConfirmed) {
 
             const previousResult = history.find(record => record.colors === lastColors.join(', '));
 
-            // Interdire les prédictions avec VVR ou RRV en cas de perte
-            if (lastResultWasLoss && (colorInput === 'VVR' || colorInput === 'RRV')) {
+            // Interdire les prédictions avec VVR, RRV et RVV en cas de perte
+            if (lastResultWasLoss && (colorInput === 'VVR' || colorInput === 'RRV' || colorInput === 'RVV')) {
                 document.getElementById('previousResult').textContent = 'Prédiction interdite après une perte. Changez la séquence de couleurs.';
                 return;
             }
