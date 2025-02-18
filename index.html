@@ -7,45 +7,46 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         /* Styles pour la popup de notification */
-    .notification-popup {
-    display: none; /* Cache la popup par défaut */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    justify-content: center;
-    align-items: center;
-    z-index: 10000;
-    }
+        .notification-popup {
+            display: none; /* Cache la popup par défaut */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
 
-    .notification-content {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    }
+        .notification-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
 
-    .notification-buttons button {
-    padding: 10px 20px;
-    margin: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    }
+        .notification-buttons button {
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
 
-    .notification-buttons button:first-child {
-    background-color: #28a745; /* Vert pour "Oui" */
-    color: white;
-    }
+        .notification-buttons button:first-child {
+            background-color: #28a745; /* Vert pour "Oui" */
+            color: white;
+        }
 
-    .notification-buttons button:last-child {
-    background-color: #dc3545; /* Rouge pour "Non" */
-    color: white;
-    }
+        .notification-buttons button:last-child {
+            background-color: #dc3545; /* Rouge pour "Non" */
+            color: white;
+        }
+
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f0f8ff;
@@ -58,6 +59,7 @@
             min-height: 100vh;
             overflow: hidden;
         }
+
         .container {
             background-color: white;
             border-radius: 15px;
@@ -69,37 +71,44 @@
             overflow-y: auto;
             position: relative;
         }
+
         .fas {
             font-size: 24px; /* Taille de l'icône */
             color: blue; /* Couleur de l'icône */
-             margin-right: 10px; /* Espace entre l'icône et le texte */
+            margin-right: 10px; /* Espace entre l'icône et le texte */
         }
+
         .header {
             width: 100%;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
+
         .user-profile {
             margin-right: 20px;
         }
+
         h1 {
             color: #5b5b5b;
             text-align: center;
             margin-bottom: 20px;
         }
+
         label {
             margin: 5px 0;
             font-weight: bold;
             display: inline-block;
             width: 180px;
         }
+
         .action-buttons, .right-buttons {
             display: flex;
             justify-content: center;
             gap: 10px;
             margin: 10px 0;
         }
+
         button {
             padding: 10px 20px;
             color: white;
@@ -110,42 +119,55 @@
             font-size: 16px;
             margin-right: 10px;
         }
+
         .btn-predict {
             background-color: #28a745;
         }
+
         .btn-predict:hover {
             background-color: #218838;
         }
+
         .btn-clear {
             background-color: #dc3545;
         }
+
         .btn-clear:hover {
             background-color: #c82333;
         }
+
         .btn-history, .btn-undo {
             background-color: #007bff;
         }
+
         .btn-history:hover, .btn-undo:hover {
             background-color: #0056b3;
         }
+
         .btn-success {
             background-color: #28a745;
         }
+
         .btn-success:hover {
             background-color: #218838;
         }
+
         .btn-failure {
             background-color: #dc3545;
         }
+
         .btn-failure:hover {
             background-color: #c82333;
         }
+
         .btn-copy, .btn-export {
             background-color: #ffc107;
         }
+
         .btn-copy:hover, .btn-export:hover {
             background-color: #e0a800;
         }
+
         .color-input, .series-input, .level-selection, #colorPercentage {
             padding: 10px;
             border: 2px solid #aaa;
@@ -157,15 +179,18 @@
             color: #444;
             background-color: #fff;
         }
+
         .color-input::placeholder, .series-input::placeholder {
             color: #888;
         }
+
         .input-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             margin-bottom: 10px;
         }
+
         .level-popup, .level-info-popup {
             display: none;
             position: fixed;
@@ -180,69 +205,85 @@
             z-index: 10000;
             width: 300px;
         }
+
         .level-popup h2, .level-info-popup h2 {
             margin-top: 0;
         }
+
         .level-buttons {
             display: flex;
             flex-direction: column;
             gap: 10px;
         }
+
         .level-buttons label {
             cursor: pointer;
         }
+
         .btn-confirm {
             background-color: #007bff;
         }
+
         .btn-confirm:hover {
             background-color: #0056b3;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
             font-size: 16px;
         }
+
         th, td {
             border: 1px solid #ddd;
             padding: 12px;
             text-align: center;
         }
+
         th {
             background-color: #f0f0f0;
         }
+
         #historyContainer {
             max-height: 300px;
             overflow-y: auto; /* Ajout de la barre de défilement */
         }
+
         .highlight {
             background-color: yellow;
         }
+
         .feedback-buttons {
             display: flex;
             justify-content: space-around;
             margin: 20px 0;
         }
+
         .feedback-buttons button {
             width: 30%;
         }
+
         .stats {
             margin-top: 20px;
             font-size: 18px;
             text-align: left;
         }
+
         .bottom-buttons {
             display: flex;
             justify-content: flex-end;
             gap: 10px;
             margin: 20px 0;
         }
+
         .history-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-top: 20px;
         }
+
         .date-selector {
             display: flex;
             align-items: center;
@@ -250,12 +291,14 @@
             gap: 5px;
             margin-bottom: 20px;
         }
+
         .progress-bar-container {
             display: flex;
             align-items: center;
             margin-top: 20px;
             width: 100%;
         }
+
         .progress-bar {
             width: 100%;
             background-color: #e0e0e0;
@@ -264,27 +307,33 @@
             height: 20px;
             margin-right: 10px;
         }
+
         .progress-bar-fill {
             width: 0%;
             background-color: #4caf50;
             height: 100%;
             transition: width 0.3s ease;
         }
+
         .patterns {
             margin-bottom: 20px;
         }
+
         .tips {
             margin-bottom: 20px;
         }
+
         .global-stats {
             margin-bottom: 20px;
         }
+
         .info-tooltip {
             position: relative;
             display: inline-block;
             cursor: pointer;
             color: #007bff;
         }
+
         .info-tooltip .tooltip-text {
             visibility: hidden;
             width: 200px;
@@ -299,12 +348,14 @@
             left: 50%;
             margin-left: -100px;
             opacity: 0;
-            transition:        opacity 0.3s;
+            transition: opacity 0.3s;
         }
+
         .info-tooltip:hover .tooltip-text {
             visibility: visible;
             opacity: 1;
         }
+
         .overlay {
             display: none;
             position: fixed;
@@ -317,6 +368,7 @@
             align-items: center;
             z-index: 9999;
         }
+
         .overlay-message {
             background: white;
             padding: 20px;
@@ -325,17 +377,19 @@
             font-size: 1.5em;
             color: #333;
         }
+
         .btn-level {
-              position: absolute;
-              left: 10px;
-              top: 12cm;
-             background-color: green; /* Couleur de fond */
-             color: white; /* Couleur du texte */
-             padding: 10px 20px; /* Taille du bouton */
-             border: none; /* Pas de bordure */
-             border-radius: 5px; /* Coins arrondis */
-             cursor: pointer; /* Curseur en main */
+            position: absolute;
+            left: 10px;
+            top: 12cm;
+            background-color: green; /* Couleur de fond */
+            color: white; /* Couleur du texte */
+            padding: 10px 20px; /* Taille du bouton */
+            border: none; /* Pas de bordure */
+            border-radius: 5px; /* Coins arrondis */
+            cursor: pointer; /* Curseur en main */
         }
+
         .level-info-popup {
             display: none;
             position: fixed;
@@ -350,9 +404,11 @@
             z-index: 10000;
             width: 300px;
         }
+
         .level-info-popup h2 {
             margin-top: 0;
         }
+
         .level-info-popup .close-btn {
             position: absolute;
             top: 10px;
@@ -487,7 +543,7 @@
         <button class="close-btn" onclick="hideLevelInfo()">X</button>
         <h2>Information de Niveau</h2>
         <p id="currentPoints">Points actuels : 0</p>
-        <p>Points nécessaires pour le niveau Intermédiaire : 3000</p>
+        <p>Points nécessaires pour le niveau Intermédiaire : 1000</p>
         <p>Points nécessaires pour le niveau Avancé : 10000</p>
     </div>
     <script>
@@ -496,8 +552,8 @@
             const savedName = localStorage.getItem('userName');
             const savedLevel = localStorage.getItem('userLevel');
 
-                     // Vérifie si le nom et le niveau sont déjà sauvegardés
-                     if (savedName && savedLevel) {
+            // Vérifie si le nom et le niveau sont déjà sauvegardés
+            if (savedName && savedLevel) {
                 // Affiche la popup de notification
                 document.getElementById('notificationPopup').style.display = 'flex';
             }
@@ -518,14 +574,51 @@
             }
         }
 
+        // Fonction pour sauvegarder les statistiques dans le localStorage
+        function saveStatsToLocalStorage() {
+            localStorage.setItem('totalPredictions', history.length);
+            localStorage.setItem('totalSuccesses', successes);
+            localStorage.setItem('totalFailures', failures);
+        }
+
+        // Fonction pour charger les statistiques depuis le localStorage
+        function loadStatsFromLocalStorage() {
+            const storedTotalPredictions = localStorage.getItem('totalPredictions');
+            const storedTotalSuccesses = localStorage.getItem('totalSuccesses');
+            const storedTotalFailures = localStorage.getItem('totalFailures');
+
+            if (storedTotalPredictions) {
+                history.length = parseInt(storedTotalPredictions);
+            }
+            if (storedTotalSuccesses) {
+                successes = parseInt(storedTotalSuccesses);
+            }
+            if (storedTotalFailures) {
+                failures = parseInt(storedTotalFailures);
+            }
+        }
+
+        // Appelle les fonctions de sauvegarde des statistiques avant de quitter la page
+        window.addEventListener('beforeunload', (event) => {
+            saveStatsToLocalStorage();
+
+            // Affiche une confirmation pour quitter l'application
+            event.preventDefault();
+            event.returnValue = 'Voulez-vous vraiment quitter l\'application ?';
+        });
+
         // Appelle la fonction showNotificationPopup() au chargement de la page
         document.addEventListener('DOMContentLoaded', () => {
             loadHistoryFromLocalStorage();
+            loadStatsFromLocalStorage();
             showTutorial();
             validateUserName();
             showLevelPopup();
             updateLevelButtons();
             showNotificationPopup(); // Affiche la popup de notification
+            updateStats();
+            updateSuccessRate();
+            updatePoints();
         });
 
         let history = [];
@@ -538,11 +631,10 @@
         let timer;
         let totalSeconds = 300;
         let timerActive = false;
-        const maxPredictions = 60;
         const today = new Date().toLocaleDateString();
         const lastAccessDate = localStorage.getItem('lastAccessDate');
         if (lastAccessDate && lastAccessDate !== today) {
-            localStorage.setItem('previousDailyPoints', dailyPoints);
+            localStorage.setItem('previousDailyPoints', points);
         }
         localStorage.setItem('lastAccessDate', today);
 
@@ -624,11 +716,6 @@
         }
 
         function predictColor() {
-            if (history.length >= maxPredictions) {
-                alert('Vous avez atteint la limite de 60 prédictions.');
-                return;
-            }
-
             const colorInput = document.getElementById('colorInput').value.toUpperCase();
             const validColors = ['R', 'V'];
 
@@ -675,8 +762,19 @@
 
             const previousResult = history.find(record => record.colors === lastColors.join(', '));
 
-            // Interdire les prédictions avec VVR, RRV et RVV en cas de perte
-            if (lastResultWasLoss && (colorInput === 'VVR' || colorInput === 'RRV' || colorInput === 'RVV')) {
+            // Inverser les résultats pour certains motifs en cas de perte
+            const motifsInverses = {
+                'RRR': 'vert',
+                'RVV': 'vert',
+                'VRR': 'rouge'
+            };
+
+            if (lastResultWasLoss && motifsInverses[colorInput]) {
+                nextColor = motifsInverses[colorInput];
+            }
+
+            // Interdire les prédictions VVR et RRV en cas de perte
+            if (lastResultWasLoss && (colorInput === 'VVR' || colorInput === 'RRV')) {
                 document.getElementById('previousResult').textContent = 'Prédiction interdite après une perte. Changez la séquence de couleurs.';
                 return;
             }
@@ -731,8 +829,15 @@
                 lastResultWasLoss = false;
                 consecutiveLosses = 0;
 
-                updateProgressBar(5);
+                updateProgressBar(1); // Augmente la barre de progression de 1%
+
                 alert('Félicitations, vous avez réussi !');
+
+                // Vérifie si la barre de progression est à 100%
+                if (parseInt(document.getElementById('progressPercentage').textContent) === 100) {
+                    alert('Félicitations, vous avez atteint 100% ! 🥳🥳🤩🤩');
+                    document.querySelector('input[value="intermédiaire"]').disabled = false;
+                }
             } else {
                 lastHistoryItem.result = 'Échec';
                 failures += 1;
@@ -771,11 +876,13 @@
             progressBarFill.style.width = newWidth + '%';
             progressPercentage.textContent = newWidth + '%';
 
-            if (newWidth >= 10 && newWidth <= 20) {
+            if (newWidth >= 1 && newWidth <= 25) {
                 progressBarFill.style.backgroundColor = 'red';
-            } else if (newWidth >= 30 && newWidth <= 50) {
+            } else if (newWidth >= 26 && newWidth <= 45) {
+                progressBarFill.style.backgroundColor = 'yellow';
+            } else if (newWidth >= 46 && newWidth <= 76) {
                 progressBarFill.style.backgroundColor = 'blue';
-            } else if (newWidth >= 60 && newWidth <= 100) {
+            } else if (newWidth >= 77 && newWidth <= 100) {
                 progressBarFill.style.backgroundColor = 'green';
             } else {
                 progressBarFill.style.backgroundColor = '#4caf50';
@@ -893,7 +1000,7 @@
         }
 
         function exportHistory() {
-            const historyText = history.map(record => `${record.date} - ${record.colors} - ${record.prediction} - ${record.frequentColor} - ${record.result}`).join('\n');
+            const historyText = history.map(record => `${record.date} - ${record.colors} - ${record.prediction} - ${record.frequentColor}            - ${record.result}`).join('\n');
             const blob = new Blob([historyText], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -954,7 +1061,7 @@
             const intermediateButton = document.querySelector('input[value="intermédiaire"]');
             const advancedButton = document.querySelector('input[value="avancé"]');
 
-            if (points >= 3000) {
+            if (points >= 1000) {
                 intermediateButton.disabled = false;
             } else {
                 intermediateButton.disabled = true;
@@ -973,6 +1080,7 @@
             validateUserName();
             showLevelPopup();
             updateLevelButtons();
+            updateLevelInfo();
         });
     </script>
 </body>
