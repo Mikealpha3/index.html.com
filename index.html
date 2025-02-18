@@ -579,6 +579,7 @@
             localStorage.setItem('totalPredictions', history.length);
             localStorage.setItem('totalSuccesses', successes);
             localStorage.setItem('totalFailures', failures);
+            localStorage.setItem('progress', progressBarFill.style.width); // Sauvegarder la barre de progression
         }
 
         // Fonction pour charger les statistiques depuis le localStorage
@@ -586,6 +587,7 @@
             const storedTotalPredictions = localStorage.getItem('totalPredictions');
             const storedTotalSuccesses = localStorage.getItem('totalSuccesses');
             const storedTotalFailures = localStorage.getItem('totalFailures');
+            const storedProgress = localStorage.getItem('progress'); // Charger la barre de progression
 
             if (storedTotalPredictions) {
                 history.length = parseInt(storedTotalPredictions);
@@ -595,6 +597,10 @@
             }
             if (storedTotalFailures) {
                 failures = parseInt(storedTotalFailures);
+            }
+            if (storedProgress) {
+                document.getElementById('progressBarFill').style.width = storedProgress;
+                document.getElementById('progressPercentage').textContent = storedProgress;
             }
         }
 
@@ -837,6 +843,11 @@
                 if (parseInt(document.getElementById('progressPercentage').textContent) === 100) {
                     alert('Félicitations, vous avez atteint 100% ! 🥳🥳🤩🤩');
                     document.querySelector('input[value="intermédiaire"]').disabled = false;
+
+                    // Réinitialise la barre de progression et commence à 2%
+                    updateProgressBar(-98);
+                    updateProgressBar(2);
+                    saveStatsToLocalStorage(); // Sauvegarder la barre de progression mise à jour
                 }
             } else {
                 lastHistoryItem.result = 'Échec';
@@ -1000,7 +1011,7 @@
         }
 
         function exportHistory() {
-            const historyText = history.map(record => `${record.date} - ${record.colors} - ${record.prediction} - ${record.frequentColor}            - ${record.result}`).join('\n');
+            const historyText = history.map(record => `${record.date} - ${record.colors} - ${record.prediction} - ${record.frequentColor} - ${record.result}`).join('\n');
             const blob = new Blob([historyText], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -1023,7 +1034,10 @@
         }
 
         function showTutorial() {
-            alert("Bienvenue dans le Jeu de Prédiction de Couleurs Élite!\n\n1. Entrez une série de 10 couleurs : rouge ou vert.\n2. La couleur la plus récurrente et les trois dernières couleurs seront automatiquement renseignées.\n3. Appuyez sur 'Prédire' pour voir le résultat.\n\nBonne chance!");
+            if (!localStorage.getItem('tutorialShown')) {
+                alert("Bienvenue dans le Jeu de Prédiction de Couleurs Élite!\n\n1. Entrez une série de 10 couleurs : rouge ou vert.\n2. La couleur la plus récurrente et les trois dernières couleurs seront automatiquement renseignées.\n3. Appuyez sur 'Prédire' pour voir le résultat.\n\nBonne chance!");
+                localStorage.setItem('tutorialShown', true);
+            }
         }
 
         function showLevelPopup() {
@@ -1076,11 +1090,12 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             loadHistoryFromLocalStorage();
-            showTutorial();
+            loadStatsFromLocalStorage();
+            showTutorial(); // Affiche le tutoriel de bienvenue une seule fois
             validateUserName();
             showLevelPopup();
             updateLevelButtons();
-            updateLevelInfo();
+            showNotificationPopup(); // Affiche la popup de notification
         });
     </script>
 </body>
