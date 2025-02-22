@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prédiction de Couleurs Élite</title>
+    <title>📈Signal bot 97 Trx 📈</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
     <style>
         /* Styles pour la popup de notification */
         .notification-popup {
@@ -356,7 +357,7 @@
             opacity: 1;
         }
 
-        .overlay {
+        /*.overlay {
             display: none;
             position: fixed;
             top: 0;
@@ -376,7 +377,7 @@
             text-align: center;
             font-size: 1.5em;
             color: #333;
-        }
+        }*/
 
         .btn-level {
             position: absolute;
@@ -418,7 +419,33 @@
             font-size: 18px;
             cursor: pointer;
         }
-    </style>
+        .last-six {
+    margin-top: 20px;
+}
+
+.last-six h2 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.prediction-item {
+    background-color: #f5f5f5;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.prediction-item p {
+    margin: 5px 0;
+}
+
+.blink {
+    animation: blink-animation 0s infinite;
+    background-color: #036bfd;
+}
+</style>
 </head>
 <!-- Popup de notification -->
 <div class="notification-popup" id="notificationPopup">
@@ -434,7 +461,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Prédiction de Couleurs Élite</h1>
+            <h1>📈Signal bot 97 Trx 📈</h1>
             <div class="user-profile">
                 <i class="fas fa-user"></i> <!-- Icône de profil -->
                 <strong>Profil d'utilisateur</strong>
@@ -481,6 +508,12 @@
             <p>VRV ➔ V</p>
             <p>RRV ➔ V</p>
         </div>
+        <!-- Section pour afficher les six dernières prédictions -->
+<div id="lastSixPredictions" class="last-six">
+    <h2>Prédiction des 6 Dernières Couleurs</h2>
+    <div id="lastSixList"></div>
+</div>
+
         <div class="history-header">
             <h2>Historique</h2>
             <div>
@@ -492,6 +525,7 @@
             <table>
                 <thead>
                     <tr>
+                        <th>Numéro</th>
                         <th>Date</th>
                         <th>Couleurs</th>
                         <th>Prédiction</th>
@@ -502,7 +536,8 @@
                 <tbody id="history">
                 </tbody>
             </table>
-        </div>
+          
+       </div>
         <div class="level-popup" id="levelPopup">
             <h2>Choisissez votre Niveau</h2>
             <div class="level-buttons">
@@ -533,11 +568,7 @@
             <p id="totalFailures">Total des Pertes : 0</p>
             <p id="points">Points : 0</p>
         </div>
-    </div>
-    <div class="overlay" id="overlay">
-        <div class="overlay-message">
-            Vous devez attendre l'expiration du minuteur pour voir les prédictions. Temps restant : <span id="overlay-timer">05:00</span> 🤖🤖🤖
-        </div>
+        
     </div>
     <div class="level-info-popup" id="levelInfoPopup">
         <button class="close-btn" onclick="hideLevelInfo()">X</button>
@@ -634,7 +665,7 @@
         let failures = 0;
         let points = localStorage.getItem('totalPoints') ? parseInt(localStorage.getItem('totalPoints')) : 0;
         let lastResultWasLoss = false;
-        let timer;
+       /* let timer;
         let totalSeconds = 300;
         let timerActive = false;
         const today = new Date().toLocaleDateString();
@@ -644,7 +675,7 @@
         }
         localStorage.setItem('lastAccessDate', today);
 
-        function startTimer() {
+        /*function startTimer() {
             timerActive = true;
             timer = setInterval(setTime, 1000);
         }
@@ -674,7 +705,7 @@
             totalSeconds = 300;
             document.getElementById('overlay-timer').innerText = "05:00";
             document.getElementById('predictButton').disabled = false;
-        }
+        }*/
 
         function validateUserName() {
             const savedUserName = localStorage.getItem('userName');
@@ -722,95 +753,91 @@
         }
 
         function predictColor() {
-            const colorInput = document.getElementById('colorInput').value.toUpperCase();
-            const validColors = ['R', 'V'];
+    // Valider les couleurs
+    const colorInput = document.getElementById('colorInput').value.toUpperCase();
+    const validColors = ['R', 'V'];
 
-            if (colorInput === 'VRV' || colorInput === 'RVR') {
-                document.getElementById('previousResult').textContent = 'Prédiction Indécise';
-                return;
-            }
+    if (colorInput === 'VRV' || colorInput === 'RVR') {
+        document.getElementById('previousResult').textContent = 'Prédiction Indécise';
+        return;
+    }
 
-            if (colorInput.length !== 3 || !colorInput.split('').every(char => validColors.includes(char))) {
-                alert('Veuillez entrer une séquence de trois couleurs, utilisant uniquement "R" ou "V".');
-                return;
-            }
+    if (colorInput.length !== 3 || !colorInput.split('').every(char => validColors.includes(char))) {
+        alert('Veuillez entrer une séquence de trois couleurs, utilisant uniquement "R" ou "V".');
+        return;
+    }
 
-            if (history.length > 0 && !history[history.length - 1].result) {
-                alert('Veuillez marquer la dernière prédiction comme gagnée ou perdue avant d\'effectuer une nouvelle prédiction.');
-                return;
-            }
+    if (history.length > 0 && !history[history.length - 1].result) {
+        alert('Veuillez marquer la dernière prédiction comme gagnée ou perdue avant d\'effectuer une nouvelle prédiction.');
+        return;
+    }
 
-            const lastColors = colorInput.split('').map(char => char === 'R' ? 'rouge' : 'vert');
-            const mostFrequentColor = document.getElementById('colorPercentage').value.toLowerCase();
+    const lastColors = colorInput.split('').map(char => char === 'R' ? 'rouge' : 'vert');
+    const mostFrequentColor = document.getElementById('colorPercentage').value.toLowerCase();
+    let nextColor;
 
-            let nextColor;
-
-            if (mostFrequentColor.includes('%') && parseInt(mostFrequentColor.split('%')[0]) >= 70) {
-                nextColor = mostFrequentColor.includes('rouge') ? 'rouge' : 'vert';
-            } else if (lastColors.every(color => color === 'vert')) {
-                nextColor = 'vert';
-            } else if (lastColors.every(color => color === 'rouge')) {
-                nextColor = 'rouge';
-            } else if (lastColors[lastColors.length - 1] === 'vert' && lastColors.includes('rouge')) {
-                nextColor = 'rouge';
-            } else if (lastColors[lastColors.length - 1] === 'rouge' && lastColors.includes('vert')) {
-                nextColor = 'vert';
-            } else if (mostFrequentColor.includes('%')) {
-                const percent = parseInt(mostFrequentColor.split('%')[0]);
-                if (Math.random() * 100 < percent) {
-                    nextColor = mostFrequentColor.includes('rouge') ? 'rouge' : 'vert';
-                } else {
-                    nextColor = mostFrequentColor.includes('rouge') ? 'vert' : 'rouge';
-                }
-            } else {
-                nextColor = mostFrequentColor;
-            }
-
-            const previousResult = history.find(record => record.colors === lastColors.join(', '));
-
-            // Inverser les résultats pour certains motifs en cas de perte
-            const motifsInverses = {
-                'RRR': 'vert',
-                'RVV': 'vert',
-                'VRR': 'rouge'
-            };
-
-            if (lastResultWasLoss && motifsInverses[colorInput]) {
-                nextColor = motifsInverses[colorInput];
-            }
-
-            // Interdire les prédictions VVR et RRV en cas de perte
-            if (lastResultWasLoss && (colorInput === 'VVR' || colorInput === 'RRV')) {
-                document.getElementById('previousResult').textContent = 'Prédiction interdite après une perte. Changez la séquence de couleurs.';
-                return;
-            }
-
-            if (previousResult) {
-                if (previousResult.result === 'Échec') {
-                    document.getElementById('previousResult').textContent = 'Cette prédiction existe déjà dans l\'historique avec résultat Échec. Essayez de miser la couleur contraire.';
-                } else {
-                    document.getElementById('previousResult').textContent = `Prédiction : ${previousResult.prediction}, Résultat : ${previousResult.result}, Pourcentage de Couleur : ${previousResult.frequentColor}`;
-                }
-            } else {
-                document.getElementById('previousResult').textContent = '';
-            }
-
-            previousHistory = [...history];
-            history.push({ colors: lastColors.join(', '), prediction: nextColor, frequentColor: mostFrequentColor, result: '', date: document.getElementById('dateInput').value || new Date().toLocaleDateString() });
-
-            const predictionResult = document.getElementById('predictionResult');
-            predictionResult.textContent = "Prédiction : " + nextColor;
-
-            document.getElementById('colorInput').value = '';
-            updateHistory();
-            enableFeedbackButtons();
-            alert('Prédiction ajoutée avec succès !');
+    if (mostFrequentColor.includes('%') && parseInt(mostFrequentColor.split('%')[0]) >= 70) {
+        nextColor = mostFrequentColor.includes('rouge') ? 'rouge' : 'vert';
+    } else if (lastColors.every(color => color === 'vert')) {
+        nextColor = 'vert';
+    } else if (lastColors.every(color => color === 'rouge')) {
+        nextColor = 'rouge';
+    } else if (lastColors[lastColors.length - 1] === 'vert' && lastColors.includes('rouge')) {
+        nextColor = 'rouge';
+    } else if (lastColors[lastColors.length - 1] === 'rouge' && lastColors.includes('vert')) {
+        nextColor = 'vert';
+    } else if (mostFrequentColor.includes('%')) {
+        const percent = parseInt(mostFrequentColor.split('%')[0]);
+        if (Math.random() * 100 < percent) {
+            nextColor = mostFrequentColor.includes('rouge') ? 'rouge' : 'vert';
+        } else {
+            nextColor = mostFrequentColor.includes('rouge') ? 'vert' : 'rouge';
         }
+    } else {
+        nextColor = mostFrequentColor;
+    }
+
+    const previousResult = history.find(record => record.colors === lastColors.join(', '));
+    if (previousResult) {
+        if (previousResult.result === 'Échec') {
+            document.getElementById('previousResult').textContent = 'Cette prédiction existe déjà dans l\'historique avec résultat Échec. Essayez de miser la couleur contraire.';
+        } else {
+            document.getElementById('previousResult').textContent = `Prédiction : ${previousResult.prediction}, Résultat : ${previousResult.result}, Pourcentage de Couleur : ${previousResult.frequentColor}`;
+        }
+    } else {
+        document.getElementById('previousResult').textContent = '';
+    }
+
+    previousHistory = [...history];
+    history.push({ colors: lastColors.join(', '), prediction: nextColor, frequentColor: mostFrequentColor, result: '', date: document.getElementById('dateInput').value || new Date().toLocaleDateString() });
+
+    const predictionResult = document.getElementById('predictionResult');
+    predictionResult.textContent = "Prédiction : " + nextColor;
+
+    document.getElementById('colorInput').value = '';
+
+    // Appeler updateHistory avec le motif en cours
+    updateHistory(colorInput);
+    enableFeedbackButtons();
+    alert('Prédiction ajoutée avec succès !');
+}
+
 
         function displayPreviousResult(previousResult) {
-            const resultMessage = `Cette prédiction existe déjà dans l'historique. Prédiction : ${previousResult.prediction}, Résultat : ${previousResult.result}, Pourcentage de Couleur : ${previousResult.frequentColor}`;
-            document.getElementById('previousResult').textContent = resultMessage;
-        }
+    const lastPrediction = history.length > 1 ? history[history.length - 2] : null; // Récupérer la dernière prédiction avant la plus récente
+
+    // Vérifier si la prédiction précédente a échoué et si la prédiction actuelle est différente
+    if (lastPrediction && lastPrediction.result === 'Échec' && lastPrediction.prediction !== previousResult.prediction) {
+        document.getElementById('previousResult').textContent = 'Cette prédiction a échoué auparavant. Vous avez misé la couleur contraire.';
+    } else if (previousResult.result === 'Échec' && previousResult.prediction === lastPrediction.prediction) {
+        document.getElementById('previousResult').textContent = 'Cette situation a échoué auparavant avec la même prédiction. Essayez de miser la couleur contraire.';
+    } else {
+        const resultMessage = `Cette prédiction existe déjà dans l'historique. Prédiction : ${previousResult.prediction}, Résultat : ${previousResult.result}, Pourcentage de Couleur : ${previousResult.frequentColor}`;
+        document.getElementById('previousResult').textContent = resultMessage;
+    }
+}
+
+
 
         function clearFields() {
             document.getElementById('colorInput').value = '';
@@ -822,58 +849,42 @@
         }
 
         function giveFeedback(correct) {
-            const lastHistoryItem = history[history.length - 1];
-            if (lastHistoryItem.result !== '') {
-                alert('Vous ne pouvez pas donner de feedback plus d\'une fois pour chaque prédiction.');
-                return;
-            }
+    const lastHistoryItem = history[history.length - 1];
+    if (lastHistoryItem.result !== '') {
+        alert('Vous ne pouvez pas donner de feedback plus d\'une fois pour chaque prédiction.');
+        return;
+    }
 
-            if (correct) {
-                lastHistoryItem.result = 'Succès';
-                successes += 1;
-                points += 10;
-                lastResultWasLoss = false;
-                consecutiveLosses = 0;
+    if (correct) {
+        lastHistoryItem.result = 'Succès';
+        successes += 1;
+        points += 10;
+        lastResultWasLoss = false;
+        consecutiveLosses = 0;
 
-                updateProgressBar(1); // Augmente la barre de progression de 1%
+        updateProgressBar(1); // Augmente la barre de progression de 1%
 
-                alert('Félicitations, vous avez réussi !');
+        alert('Félicitations, vous avez réussi !');
+    } else {
+        lastHistoryItem.result = 'Échec';
+        failures += 1;
+        lastResultWasLoss = true;
+        consecutiveLosses += 1;
 
-                // Vérifie si la barre de progression est à 100%
-                if (parseInt(document.getElementById('progressPercentage').textContent) === 100) {
-                    alert('Félicitations, vous avez atteint 100% ! 🥳🥳🤩🤩');
-                    document.querySelector('input[value="intermédiaire"]').disabled = false;
+        alert('Dommage, vous avez perdu.');
+    }
 
-                    // Réinitialise la barre de progression et commence à 2%
-                    updateProgressBar(-98);
-                    updateProgressBar(2);
-                    saveStatsToLocalStorage(); // Sauvegarder la barre de progression mise à jour
-                }
-            } else {
-                lastHistoryItem.result = 'Échec';
-                failures += 1;
-                lastResultWasLoss = true;
-                consecutiveLosses += 1;
-
-                if (consecutiveLosses >= 2) {
-                    startTimer();
-                    showOverlay();
-                    consecutiveLosses = 0;
-                }
-
-                alert('Dommage, vous avez perdu.');
-            }
-            updateHistory();
-            updateSuccessRate();
-            updatePoints();
-            clearFields(); // Effacer les champs de saisie automatiquement
-            if (lastResultWasLoss) {
-                document.getElementById('previousResult').textContent = 'Miser la couleur contraire pour la prochaine fois !';
-            } else {
-                document.getElementById('previousResult').textContent = '';
-            }
-            updateLevelButtons();
-        }
+    updateHistory(); // Met à jour l'historique et applique/arrête le clignotement
+    updateSuccessRate();
+    updatePoints();
+    clearFields(); // Effacer les champs de saisie automatiquement
+    if (lastResultWasLoss) {
+        document.getElementById('previousResult').textContent = 'Miser la couleur contraire pour la prochaine fois !';
+    } else {
+        document.getElementById('previousResult').textContent = '';
+    }
+    updateLevelButtons();
+}
 
         function updateProgressBar(change) {
             const progressBarFill = document.getElementById('progressBarFill');
@@ -913,20 +924,46 @@
             updateHistory();
             document.getElementById('correctPrediction').value = '';
         }
-
         function updateHistory() {
-            const historyElement = document.getElementById('history');
-            historyElement.innerHTML = '';
-            history.forEach((record, index) => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td style="background-color:#f5f5f5; text-align: center;">${record.date}</td><td style="background-color:#f8d7da;">${record.colors}</td><td style="background-color:#d4edda;">${record.prediction}</td><td style="background-color:#fff3cd;">${record.frequentColor}</td><td style="background-color:#f5c6cb;">${record.result}</td>`;
-                historyElement.appendChild(tr);
-            });
-            saveHistoryToLocalStorage();
-            updateStats();
+    const historyElement = document.getElementById('history');
+    historyElement.innerHTML = '';
+    history.forEach((record, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td style="background-color:#f5f5f5; text-align: center;">${index + 1}</td><td style="background-color:#f5f5f5; text-align: center;">${record.date}</td><td style="background-color:#f8d7da;">${record.colors}</td><td style="background-color:#d4edda;">${record.prediction}</td><td style="background-color:#fff3cd;">${record.frequentColor}</td><td style="background-color:#f5c6cb;">${record.result}</td>`;
+        historyElement.appendChild(tr);
+    });
+
+    // Afficher les six dernières prédictions récentes
+    const lastSixPredictions = history.slice(-6);
+    const lastSixListElement = document.getElementById('lastSixList');
+    lastSixListElement.innerHTML = ''; // Effacer le contenu précédent
+
+    // Récupérer tous les motifs de l'historique
+    const allMotifs = history.map(record => record.colors);
+
+    lastSixPredictions.forEach((record, index) => {
+        const conseil = record.result === 'Échec' ? `Conseil : Misez sur ${record.prediction === 'rouge' ? 'vert' : 'rouge'}` : '';
+        const div = document.createElement('div');
+        div.classList.add('prediction-item');
+
+        // Vérifier si le motif est déjà présent dans l'historique
+        if (allMotifs.includes(record.colors)) {
+            div.classList.add('blink'); // Ajouter la classe de clignotement
         }
 
-        function clearHistory() {
+        div.innerHTML = `
+            <p>Prédiction ${index + 1} :</p>
+            <p>Résultat : ${record.result}</p>
+            <p>Statut : ${record.prediction}</p>
+            <p>${conseil}</p>
+        `;
+        lastSixListElement.appendChild(div);
+    });
+
+    saveHistoryToLocalStorage();
+    updateStats();
+}
+            function clearHistory() {
             previousHistory = [...history];
             history = [];
             successes = 0;
@@ -942,14 +979,47 @@
         }
 
         function undo() {
-            history = [...previousHistory];
-            updateHistory();
-            updateSuccessRate();
-            updateStats();
-            updatePoints();
-            enableFeedbackButtons();
-            alert('Historique restauré avec succès !');
+    if (previousHistory.length === 0) {
+        alert('Aucune action à restaurer.');
+        return;
+    }
+
+    // Restaurer l'historique précédent
+    history = [...previousHistory];
+
+    // Recalculer les réussites, les échecs et les points à partir de l'historique restauré
+    successes = 0;
+    failures = 0;
+    points = 0;
+
+    history.forEach(record => {
+        if (record.result === 'Succès') {
+            successes += 1;
+            points += 10;
+        } else if (record.result === 'Échec') {
+            failures += 1;
         }
+    });
+
+    // Mettre à jour l'interface utilisateur
+    updateHistory();
+    updateSuccessRate();
+    updatePoints();
+    updateProgressBar(successes);
+
+    // Effacer les champs de saisie
+    document.getElementById('colorInput').value = '';
+    document.getElementById('seriesInput').value = '';
+    document.getElementById('colorPercentage').value = '';
+    document.getElementById('predictionResult').textContent = '';
+    document.getElementById('previousResult').textContent = '';
+
+    // Réactiver les boutons de feedback
+    enableFeedbackButtons();
+
+    alert('Historique restauré avec succès !');
+}
+
 
         function updateSuccessRate() {
             const successRate = (successes / (successes + failures)) * 100;
@@ -966,8 +1036,8 @@
         }
 
         function loadHistoryFromLocalStorage() {
-            const storedHistory = localStorage.getItem('predictionHistory');
-            if (storedHistory) {
+                const storedHistory = localStorage.getItem('predictionHistory');
+                if (storedHistory) {
                 history = JSON.parse(storedHistory);
                 updateHistory();
                 updateSuccessRate();
@@ -1011,14 +1081,14 @@
         }
 
         function exportHistory() {
-            const historyText = history.map(record => `${record.date} - ${record.colors} - ${record.prediction} - ${record.frequentColor} - ${record.result}`).join('\n');
-            const blob = new Blob([historyText], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'historique.txt';
-            a.click();
-            URL.revokeObjectURL(url);
+          const { jsPDF } = window.jspdf;
+          const doc = new jsPDF();
+
+    const historyText = history.map((record, index) => 
+        `${index + 1}. Date : ${record.date}, Couleurs : ${record.colors}, Prédiction : ${record.prediction}, Pourcentage de Couleur : ${record.frequentColor}, Résultat : ${record.result}`).join('\n\n');
+
+    doc.text(historyText, 10, 10);
+    doc.save('historique.pdf');
         }
 
         function removeAccents(input) {
