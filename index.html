@@ -443,7 +443,7 @@
 
 .blink {
     animation: blink-animation 0s infinite;
-    background-color: #036bfd;
+    background-color: #0378fd;
 }
 </style>
 </head>
@@ -912,24 +912,36 @@
         }
 
         function correctPrediction() {
-            const correctPrediction = document.getElementById('correctPrediction').value.toLowerCase();
-            const validValues = ['rouge', 'vert'];
+         const correctPrediction = document.getElementById('correctPrediction').value.toLowerCase();
+          const validValues = ['rouge', 'vert'];
+ 
+         if (!validValues.includes(correctPrediction)) {
+        alert('Veuillez entrer "rouge" ou "vert" uniquement.');
+        return;
+    }
 
-            if (!validValues.includes(correctPrediction)) {
-                alert('Veuillez entrer "rouge" ou "vert" uniquement.');
-                return;
-            }
+    // Ajouter le champ "modified" à l'objet de l'historique
+    history[history.length - 1].prediction = correctPrediction;
+    history[history.length - 1].modified = true; // Ajouter cette ligne
 
-            history[history.length - 1].prediction = correctPrediction;
-            updateHistory();
-            document.getElementById('correctPrediction').value = '';
-        }
+    updateHistory();
+    document.getElementById('correctPrediction').value = '';
+    }
         function updateHistory() {
     const historyElement = document.getElementById('history');
     historyElement.innerHTML = '';
     history.forEach((record, index) => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td style="background-color:#f5f5f5; text-align: center;">${index + 1}</td><td style="background-color:#f5f5f5; text-align: center;">${record.date}</td><td style="background-color:#f8d7da;">${record.colors}</td><td style="background-color:#d4edda;">${record.prediction}</td><td style="background-color:#fff3cd;">${record.frequentColor}</td><td style="background-color:#f5c6cb;">${record.result}</td>`;
+        // Ajouter "(modified)" si la prédiction a été modifiée
+        const predictionText = record.modified ? `${record.prediction} (modified)` : record.prediction;
+        tr.innerHTML = `
+            <td style="background-color:#f5f5f5; text-align: center;">${index + 1}</td>
+            <td style="background-color:#f5f5f5; text-align: center;">${record.date}</td>
+            <td style="background-color:#f8d7da;">${record.colors}</td>
+            <td style="background-color:#d4edda;">${predictionText}</td>
+            <td style="background-color:#fff3cd;">${record.frequentColor}</td>
+            <td style="background-color:#f5c6cb;">${record.result}</td>
+        `;
         historyElement.appendChild(tr);
     });
 
@@ -958,12 +970,12 @@
             <p>${conseil}</p>
         `;
         lastSixListElement.appendChild(div);
-    });
+        });
 
-    saveHistoryToLocalStorage();
-    updateStats();
-}
-            function clearHistory() {
+            saveHistoryToLocalStorage();
+            updateStats();
+        }    
+           function clearHistory() {
             previousHistory = [...history];
             history = [];
             successes = 0;
@@ -1036,8 +1048,8 @@
         }
 
         function loadHistoryFromLocalStorage() {
-                const storedHistory = localStorage.getItem('predictionHistory');
-                if (storedHistory) {
+            const storedHistory = localStorage.getItem('predictionHistory');
+            if (storedHistory) {
                 history = JSON.parse(storedHistory);
                 updateHistory();
                 updateSuccessRate();
@@ -1081,8 +1093,8 @@
         }
 
         function exportHistory() {
-          const { jsPDF } = window.jspdf;
-          const doc = new jsPDF();
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
 
     const historyText = history.map((record, index) => 
         `${index + 1}. Date : ${record.date}, Couleurs : ${record.colors}, Prédiction : ${record.prediction}, Pourcentage de Couleur : ${record.frequentColor}, Résultat : ${record.result}`).join('\n\n');
