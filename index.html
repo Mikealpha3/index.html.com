@@ -751,51 +751,204 @@
             }
         }
 
-        function predictColor() {
+        const patterns = {
+    // Alternance simple
+    "VRVR": "rouge",
+    "RVRV": "vert",
+    "VRV": "rouge",
+    "RVR": "vert",
+    // Alternance double
+    "VVRR": "vert",
+    "RRVV": "rouge",
+    // Alternance triple
+    "VVVRRR": "rouge",
+    "RRRVVV": "vert",
+    // Alternance complexe
+    "VRVRVR": "rouge",
+    "RVRVRV": "vert",
+    "VRRVRR": "rouge",
+    "VVRRVV": "vert",
+    "RVRRVR": "rouge",
+    "VVRRVVV": "rouge",
+    // Nouveaux motifs
+    "RRVRV": "rouge",
+    "VVRVR": "vert",
+    "VRRRV": "rouge",
+    "RVVRV": "vert",
+    "VVVRV": "rouge",
+    "RRRVR": "vert",
+    "VRRRRV": "rouge",
+    "RVVVVV": "vert",
+    "VRRR": "rouge",
+    "RRRVV": "vert",
+    "RRRVVV": "rouge",
+    "RVVV": "rouge",
+    "VVRRR": "rouge",
+    "RRRRRVVVV": "vert",
+    "RRVV": "rouge",
+    "VVRR": "vert",
+    "RRVR": "vert",
+    "VRV": "rouge",
+    "VVRR": "rouge",
+    "RRVVV": "rouge",
+    "VVVRR": "rouge",
+    "VVRR": "vert",
+    "RVVVVV": "rouge",
+    "VVRRVV": "vert",
+    "RVVV": "rouge",
+    "RRVRV": "vert",
+    "VVRVVVVV": "rouge",
+    "VVVVVR": "vert",
+    "RVVVR": "rouge",
+    "RVVVR": "vert",
+    "VVVRRR": "vert",
+    "RRRVVV": "rouge",
+    "RVRR": "vert",
+    "RRVR": "vert",
+    "RRRV": "rouge",
+    "VRRR": "rouge",
+    "VRRRR": "rouge",
+    "VRRRRR": "rouge",
+    "RRRV": "rouge",
+    "VRRR": "vert",
+    "RVR": "vert",
+    "RVR": "vert",
+    "VRRVRR": "rouge",
+    "VVRVV": "rouge",
+    "RVVR": "vert",
+    "VRRRRR": "vert",
+    "RRRV": "rouge",
+    "RRRRRV": "rouge",
+    "RRRRVR": "vert",
+    "RRRVRV": "vert",
+    "VVRVVR": "vert",
+    "RVVR": "vert",
+    "RVRRRR": "rouge",
+    "RRRRRV": "rouge",
+    "RRRRVR": "rouge",
+    "RVRRVV": "rouge",
+    "VVRRR": "vert",
+    "VRRVVR": "vert",
+    "VRRVVRVVR": "rouge",
+    "RRRVVVVVV": "vert",
+    "VVVVVV": "vert",
+    "RVVV": "rouge",
+    "RVVVRVV": "vert",
+    "RVVVRVVV": "rouge",
+    "RVVVR": "rouge",
+    "VRVRRVV": "rouge",
+    "RRVVRR": "rouge",
+    "VVR": "vert",
+    "VVRVV": "rouge",
+    "VVRRRR": "rouge",
+    "VRRVRVV": "rouge",
+    "RVVRV": "rouge",
+    "RRVV": "vert",
+    "RRVVVV": "rouge",
+    "VVVRRR": "rouge",
+    "VVVRR": "rouge",
+    "VRRRRRRR": "rouge",
+    "VRRRR": "rouge",
+    "VRRRRR": "rouge",
+    "VRRR": "vert",
+    "VVRRVR": "vert",
+    "RRVRVV": "vert",
+    "VRVVVRR": "vert",
+    "VVVRRV": "rouge",
+    "RVVVVVRRR": "rouge",
+    "VVVVVRRR": "rouge",
+    "RVVVVVRR": "rouge",
+    "RVVRRRV": "rouge",
+    "RVRVVVVV": "vert",
+    "RVRRVRRV": "vert",
+    "RVRVRVVR": "rouge",
+    "RVRVRVVRR": "vert",
+    "RRRRRR": "rouge",
+    "RRRRRRRV": "rouge",
+    "VRRVVVVRR": "rouge",
+    "VRVRVVVVR": "rouge",
+    "VRRRRRVVV": "vert",
+    "RVVRRRRRV": "vert",
+    "VVRRRRRV": "vert",
+    "RVVRRR": "rouge",
+    "RVVRRVRVV": "rouge",
+    "RRVVRRRRV": "vert",
+    "VVRRRVRRV": "vert",
+    "RRRRRRRRR": "rouge",
+    "RVRRRV": "rouge",
+    "RRRVRRV": "vert",
+    "VVRRVRRRV": "vert",
+    "VRRRVVVRR": "rouge",
+    "VRRVRRRV": "vert",
+    "VRRVRRRVV": "vert",
+    "RVRRVRRRV": "vert",
+    "VRRRVVRRV": "rouge",
+    "RRVVRRRV": "vert",
+    "VRRRVVRRR": "rouge",
+    "VRVRRRVVR": "vert",
+    "VVRRVVVVR": "rouge",
+    "VVVVRRRRR": "vert",
+    "RRVRRRV": "vert",
+    "VVVVRRR": "vert",
+    "RRRRRVVVV": "vert",
+    "VVRRRVVVR": "vert",
+    "VRVVVRRRV": "vert",
+    "RRVVRRRVV": "vert",
+    // Ajout du motif VVV
+    "VVV": "rouge",
+    // Ajout du motif RRR
+    "RRR": "vert"
+};
+function predictColor() {
     // Valider les couleurs
     const colorInput = document.getElementById('colorInput').value.toUpperCase();
     const validColors = ['R', 'V'];
 
-   /* if (colorInput === 'VRV' || colorInput === 'RVR') {
-        document.getElementById('previousResult').textContent = 'Prédiction Indécise';
-        return;
-    }*/
-
-    if (colorInput.length !== 3 || !colorInput.split('').every(char => validColors.includes(char))) {
-        alert('Veuillez entrer une séquence de trois couleurs, utilisant uniquement "R" ou "V".');
+    // Vérifier que la séquence contient uniquement 'R' ou 'V'
+    if (!colorInput.split('').every(char => validColors.includes(char))) {
+        alert('Veuillez entrer une séquence de couleurs, utilisant uniquement "R" ou "V".');
         return;
     }
 
+    // Vérifier si une prédiction précédente n'a pas été marquée
     if (history.length > 0 && !history[history.length - 1].result) {
         alert('Veuillez marquer la dernière prédiction comme gagnée ou perdue avant d\'effectuer une nouvelle prédiction.');
         return;
     }
 
+    // Convertir la séquence en couleurs (rouge/vert)
     const lastColors = colorInput.split('').map(char => char === 'R' ? 'rouge' : 'vert');
-    const mostFrequentColor = document.getElementById('colorPercentage').value.toLowerCase();
-    let nextColor;
 
-    if (mostFrequentColor.includes('%') && parseInt(mostFrequentColor.split('%')[0]) >= 70) {
-        nextColor = mostFrequentColor.includes('rouge') ? 'rouge' : 'vert';
-    } else if (lastColors.every(color => color === 'vert')) {
-        nextColor = 'vert';
-    } else if (lastColors.every(color => color === 'rouge')) {
-        nextColor = 'rouge';
-    } else if (lastColors[lastColors.length - 1] === 'vert' && lastColors.includes('rouge')) {
-        nextColor = 'rouge';
-    } else if (lastColors[lastColors.length - 1] === 'rouge' && lastColors.includes('vert')) {
-        nextColor = 'vert';
-    } else if (mostFrequentColor.includes('%')) {
-        const percent = parseInt(mostFrequentColor.split('%')[0]);
-        if (Math.random() * 100 < percent) {
+    // Vérifier si la séquence correspond à un motif connu
+    let nextColor = patterns[colorInput];
+
+    // Si aucun motif n'est trouvé, utiliser la logique basée sur la fréquence
+    if (!nextColor) {
+        const mostFrequentColor = document.getElementById('colorPercentage').value.toLowerCase();
+
+        if (mostFrequentColor.includes('%') && parseInt(mostFrequentColor.split('%')[0]) >= 70) {
             nextColor = mostFrequentColor.includes('rouge') ? 'rouge' : 'vert';
+        } else if (lastColors.every(color => color === 'vert')) {
+            nextColor = 'vert';
+        } else if (lastColors.every(color => color === 'rouge')) {
+            nextColor = 'rouge';
+        } else if (lastColors[lastColors.length - 1] === 'vert' && lastColors.includes('rouge')) {
+            nextColor = 'rouge';
+        } else if (lastColors[lastColors.length - 1] === 'rouge' && lastColors.includes('vert')) {
+            nextColor = 'vert';
+        } else if (mostFrequentColor.includes('%')) {
+            const percent = parseInt(mostFrequentColor.split('%')[0]);
+            if (Math.random() * 100 < percent) {
+                nextColor = mostFrequentColor.includes('rouge') ? 'rouge' : 'vert';
+            } else {
+                nextColor = mostFrequentColor.includes('rouge') ? 'vert' : 'rouge';
+            }
         } else {
-            nextColor = mostFrequentColor.includes('rouge') ? 'vert' : 'rouge';
+            nextColor = mostFrequentColor;
         }
-    } else {
-        nextColor = mostFrequentColor;
     }
 
+    // Vérifier si cette prédiction existe déjà dans l'historique
     const previousResult = history.find(record => record.colors === lastColors.join(', '));
     if (previousResult) {
         if (previousResult.result === 'Échec') {
@@ -807,22 +960,28 @@
         document.getElementById('previousResult').textContent = '';
     }
 
+    // Ajouter la prédiction à l'historique
     previousHistory = [...history];
-    history.push({ colors: lastColors.join(', '), prediction: nextColor, frequentColor: mostFrequentColor, result: '', date: document.getElementById('dateInput').value || new Date().toLocaleDateString() });
+    history.push({
+        colors: lastColors.join(', '),
+        prediction: nextColor,
+        frequentColor: document.getElementById('colorPercentage').value,
+        result: '',
+        date: document.getElementById('dateInput').value || new Date().toLocaleDateString()
+    });
 
+    // Afficher la prédiction
     const predictionResult = document.getElementById('predictionResult');
     predictionResult.textContent = "Prédiction : " + nextColor;
 
+    // Effacer le champ de saisie
     document.getElementById('colorInput').value = '';
 
-    // Appeler updateHistory avec le motif en cours
-    updateHistory(colorInput);
+    // Mettre à jour l'historique et activer les boutons de feedback
+    updateHistory();
     enableFeedbackButtons();
     alert('Prédiction ajoutée avec succès !');
-}
-
-
-        function displayPreviousResult(previousResult) {
+}        function displayPreviousResult(previousResult) {
     const lastPrediction = history.length > 1 ? history[history.length - 2] : null; // Récupérer la dernière prédiction avant la plus récente
 
     // Vérifier si la prédiction précédente a échoué et si la prédiction actuelle est différente
@@ -834,6 +993,8 @@
         const resultMessage = `Cette prédiction existe déjà dans l'historique. Prédiction : ${previousResult.prediction}, Résultat : ${previousResult.result}, Pourcentage de Couleur : ${previousResult.frequentColor}`;
         document.getElementById('previousResult').textContent = resultMessage;
     }
+    console.log("Séquence de couleurs :", colorInput);
+    console.log("Prédiction associée :", nextColor);
 }
 
 
