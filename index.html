@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>📈Signal bot 97 Trx 📈</title>
+    <title>📈Signal b🤖t 97 Trx 📈</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <style>
         /* Styles pour la popup de notification */
         .notification-popup {
@@ -461,7 +463,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📈Signal bot 97 Trx 📈</h1>
+            <h1>📈Signal b🤖t 97 Trx 📈</h1>
             <div class="user-profile">
                 <i class="fas fa-user"></i> <!-- Icône de profil -->
                 <strong>Profil d'utilisateur</strong>
@@ -498,16 +500,6 @@
             <span id="progressPercentage">0%</span>
         </div>
         <p id="predictionResult"></p>
-        <div class="patterns">            
-            <h3>Motifs à 95% de succès</h3>    
-            <p>RRV ➔ R</p>       
-            <p>VRR ➔ R</p>
-            <p>VRV ➔ V</p>
-            <p>RRV ➔ R</p>
-            <p>VRR ➔ R</p>
-            <p>VRV ➔ V</p>
-            <p>RRV ➔ V</p>
-        </div>
         <!-- Section pour afficher les six dernières prédictions -->
 <div id="lastSixPredictions" class="last-six">
     <h2>Prédiction des 6 Dernières Couleurs</h2>
@@ -577,6 +569,7 @@
         <p>Points nécessaires pour le niveau Avancé : 10000</p>
     </div>
     <script>
+        
         // Fonction pour afficher la popup de notification
         function showNotificationPopup() {
             const savedName = localStorage.getItem('userName');
@@ -961,58 +954,107 @@ const patterns = {
      "RRRRVRVVRV": "rouge",
     "RRRVRVVRVR": "vert",
     "RRVRVVRVRV": "rouge",
-"RVRVVRVRVR": "vert",
-"VRVVRVRVRV": "vert",
-"RVVRVRVRVV": "vert",
-"VVRVRVRVVV": "rouge",
-"VRVRVRVVVR": "vert",
-"RVRVRVVVRV": "vert",
-"VRVRVVVRVV": "rouge",
-"VRVVRVRRRV": "rouge",
-"RVVRVRRRVR": "vert",
-"VVRVRRRVRV": "rouge",
-"VRVRRRVRVR": "rouge",
-"RVRRRVRVRR": "vert",
-"VRRRVRVRRV": "vert",
-"RRRVRVRRVV": "vert",
-"RRVRVRRVVV": "rouge",
-"RVRVRRVVVR": "rouge",
-"VRVRRVVVRR": "rouge",
-"RVRRVVVRRR": "rouge",
-"VRRVVVRRRR": "vert",
-"RRVVVRRRRV": "rouge",
-"RVRRVVVVRR": "rouge",
-"VRRVVVVRRR": "rouge",
-"RRVVVVRRRR": "rouge",
-"RVVVVRRRRR": "vert",
-"VVVVRRRRRV": "vert",
-"VVVRRRRRVV": "rouge",
-"VVRRRRRVVR": "vert",
-"VRRRRRVVRV": "rouge",
-"RRRRRVVRVR": "vert",
-"RRRRVVRVRV": "rouge",
-"RRRVVRVRVR": "rouge",
-"RRVVRVRVRR": "vert",
-"RVVRVRVRRV": "rouge",
-"VVRVRVRRVR": "vert",
-"VRVRVRRVRV": "vert",
-"RVRVRRVRVV": "vert",
-"VRVRRVRVVV": "rouge",
-"RVRRVRVVVR": "vert",
-"VRRVRVVVRV": "vert",
-"RRVRVVVRVV": "rouge",
-"RVRVVVRVVR": "vert",
-"VRVVVRVVRV": "rouge",
-"RVVVRVVRVR": "vert",
-"VVVRVVRVRV": "vert"
-    
+     "RVRVVRVRVR": "vert",
+     "VRVVRVRVRV": "vert",
+     "RVVRVRVRVV": "vert",
+     "VVRVRVRVVV": "rouge",
+     "VRVRVRVVVR": "vert",
+     "RVRVRVVVRV": "vert",
+     "VRVRVVVRVV": "rouge",
+     "VRVVRVRRRV": "rouge",
+     "RVVRVRRRVR": "vert",
+     "VVRVRRRVRV": "rouge",
+     "VRVRRRVRVR": "rouge",
+     "RVRRRVRVRR": "vert",
+     "VRRRVRVRRV": "vert",
+     "RRRVRVRRVV": "vert",
+     "RRVRVRRVVV": "rouge",
+     "RVRVRRVVVR": "rouge",
+     "VRVRRVVVRR": "rouge",
+    "RVRRVVVRRR": "rouge",
+     "VRRVVVRRRR": "vert",
+     "RRVVVRRRRV": "rouge",
+     "RVRRVVVVRR": "rouge",
+     "VRRVVVVRRR": "rouge",
+     "RRVVVVRRRR": "rouge",
+     "RVVVVRRRRR": "vert",
+     "VVVVRRRRRV": "vert",
+     "VVVRRRRRVV": "rouge",
+     "VVRRRRRVVR": "vert",
+     "VRRRRRVVRV": "rouge",
+     "RRRRRVVRVR": "vert",
+     "RRRRVVRVRV": "rouge",
+     "RRRVVRVRVR": "rouge",
+     "RRVVRVRVRR": "vert",
+     "RVVRVRVRRV": "rouge",
+     "VVRVRVRRVR": "vert",
+     "VRVRVRRVRV": "vert",
+     "RVRVRRVRVV": "vert",
+     "VRVRRVRVVV": "rouge",
+     "RVRRVRVVVR": "vert",
+     "VRRVRVVVRV": "vert",
+     "RRVRVVVRVV": "rouge",
+     "RVRVVVRVVR": "vert",
+     "VRVVVRVVRV": "rouge",
+     "RVVVRVVRVR": "vert",
+     "VVVRVVRVRV": "vert",
+     //20 mars 2025 nouvelle motifs. 
+     "RVRVVVVRVV": "vert",
+     "VRVVVVRVVV": "rouge",
+     "VVVVVRRVRR": "vert",
+     "VVVVRRVRRV": "rouge",
+     "VVVRRVRRVR": "rouge",
+     "VVRRVRRVRR": "rouge",
+     "VRRVRRVRRR": "vert",
+     "RRVRRVRRRV": "rouge",
+     "RVRRVRRRVR": "vert",
+     "VRRVRRRVRV": "vert",
+     "RRVRRRVRVV": "vert",
+     "RVRRRVRVVV": "vert",
+     "VRRRVRVVVV": "rouge",
+     "RRRVRVVVVR": "vert",
+     "RRVRVVVVRV": "rouge",
+     "RVRVVVVRVR": "rouge",
+     "VRVVVVRVRV": "vert",
+     "RVVVVRVRVV": "rouge",
+     "VVVVRVRVVR": "rouge",
+     "VVVRVRVVRR": "rouge",
+     "VVRVRVVRRR": "rouge",
+     "VRVRVVRRRR": "vert",
+     "RVRVVRRRRV": "rouge",
+     "VRVRRRVVRV": "rouge",
+     "RVRRRVVRVR": "vert",
+     "VRRRVVRVRV": "vert",
+     "RRRVVRVRVV": "vert",
+    "RRVVRVRVVV": "rouge",
+    "RVVRVRVVVR": "vert"
 };
 function predictColor() {
     const colorInput = document.getElementById('colorInput').value.toUpperCase();
     const validColors = ['R', 'V'];
 
     if (colorInput.length !== 10 || !colorInput.split('').every(char => validColors.includes(char))) {
-        alert('Veuillez entrer une séquence de 10 couleurs, utilisant uniquement "R" ou "V".');
+        Swal.fire({
+  title: 'Séquence de couleurs 🔴🟢',
+  html: `
+    <p>Veuillez entrer une séquence de <strong>10 couleurs</strong>, utilisant uniquement :</p>
+    <ul>
+      <li><strong>"R"</strong> pour Rouge 🔴</li>
+      <li><strong>"V"</strong> pour Vert 🟢</li>
+    </ul>
+  `,
+  icon: 'info',
+  confirmButtonText: 'Compris',
+  confirmButtonColor: '#007bff',
+  background: '#f0f8ff',
+  iconColor: '#007bff',
+  showClass: {
+    popup: 'animate__animated animate__fadeIn'
+  },
+  hideClass: {
+    popup: 'animate__animated animate__fadeOut'
+  }
+});
         return;
     }
 
@@ -1026,7 +1068,17 @@ function predictColor() {
     const frequentColor = redPercentage >= greenPercentage ? `${redPercentage}% Rouge` : `${greenPercentage}% Vert`;
 
     if (history.length > 0 && !history[history.length - 1].result) {
-        alert('Veuillez marquer la dernière prédiction comme gagnée ou perdue avant d\'effectuer une nouvelle prédiction.');
+        Swal.fire({
+  title: 'Action requise ⚠️',
+  html: `
+    <p>Veuillez marquer la dernière prédiction comme <strong>gagnée</strong> ou <strong>perdue</strong> avant d'effectuer une nouvelle prédiction.</p>
+  `,
+  icon: 'warning',
+  confirmButtonText: 'Compris',
+  confirmButtonColor: '#ffc107',
+  background: '#fff3cd',
+  iconColor: '#ffc107',
+});
         return;
     }
 
@@ -1065,7 +1117,21 @@ function predictColor() {
     document.getElementById('colorInput').value = '';
     updateHistory();
     enableFeedbackButtons();
-    alert('Prédiction ajoutée avec succès !');
+    Swal.fire({
+  title: 'Succès ! 🎉',
+  text: 'Prédiction ajoutée avec succès !',
+  icon: 'success',
+  confirmButtonText: 'Continuer',
+  confirmButtonColor: '#28a745',
+  background: '#f0f9f0',
+  iconColor: '#28a745',
+  showClass: {
+    popup: 'animate__animated animate__bounceIn'
+  },
+  hideClass: {
+    popup: 'animate__animated animate__bounceOut'
+  }
+});
     updateStats();
     saveHistoryToLocalStorage();
 }
@@ -1099,23 +1165,61 @@ function displayPreviousResult(previousResult) {
         function giveFeedback(correct) {
     const lastHistoryItem = history[history.length - 1];
     if (lastHistoryItem.result !== '') {
-        alert('Vous ne pouvez pas donner de feedback plus d\'une fois pour chaque prédiction.');
+        Swal.fire({
+  title: 'Attention ! ⚠️',
+  text: 'Vous ne pouvez pas donner de feedback plus d\'une fois pour chaque prédiction.',
+  icon: 'warning',
+  confirmButtonText: 'Compris',
+  confirmButtonColor: '#ffc107',
+  background: '#fff3cd',
+  iconColor: '#ffc107',
+  showClass: {
+    popup: 'animate__animated animate__shakeX'
+  },
+  hideClass: {
+    popup: 'animate__animated animate__fadeOut'
+  }
+});
         return;
     }
 
     if (correct) {
         lastHistoryItem.result = 'Succès';
         successes += 1;
-        alert('Félicitations, vous avez réussi !');
+        Swal.fire({
+  title: 'Félicitations ! 🎉',
+  text: 'Vous avez réussi !',
+  icon: 'success',
+  confirmButtonText: 'Continuer',
+  confirmButtonColor: '#28a745',
+  background: '#f0f9f0',
+  iconColor: '#28a745',
+  showClass: {
+    popup: 'animate__animated animate__bounceIn'
+  },
+  hideClass: {
+    popup: 'animate__animated animate__bounceOut'
+  }
+});
         points += 10;
         lastResultWasLoss = false;
         // Désactiver le mode inversion si la prédiction est correcte
        if (invertedMode) {
     resetPatterns();
+    Swal.fire({
+  title: 'Retour à la normale ! ✅',
+  html: `
+    <p>Les prédictions sont revenues à la normale. Vous pouvez continuer à miser comme d'habitude.</p>
+    <p><strong>Appliquez la martingale pour rattraper vos mises et restez positif.</strong></p>
+    <p>Gardez confiance en la stratégie, tout est sous contrôle.</p>
+  `,
+  icon: 'success',
+  confirmButtonText: 'Compris',
+  confirmButtonColor: '#28a745',
+  background: '#f0f9f0',
+  iconColor: '#28a745',
+});
     }
-    
-
-    alert("Les prédictions sont revenues à la normale. Vous pouvez continuer à miser comme d'habitude.");
         consecutiveLosses = 0;
 
         updateProgressBar(1); // Augmente la barre de progression de 1%
@@ -1123,7 +1227,20 @@ function displayPreviousResult(previousResult) {
     } else {
         lastHistoryItem.result = 'Échec';
         failures += 1;
-        alert('Dommage, vous avez perdu.');
+        Swal.fire({
+  title: 'Dommage, vous avez perdu... 🧐',
+  html: `
+    <p>Nous venons de subir une perte, mais <strong>ne vous inquiétez pas</strong>, cela fait partie de la stratégie.</p>
+    <p><strong>Attention :</strong> Toutes les prédictions seront inversées pour la prochaine tentative.attendez que le bot soit en gain pour miser vos fonds</p>
+    <p>Pour l'instant, nous allons continuer à analyser les motifs sans miser de fonds supplémentaires. Cela nous permet de rester prudents et de préparer la prochaine étape.</p>
+    <p><strong>Gardez confiance, nous sommes sur la bonne voie.</strong></p>
+  `,
+  icon: 'info',
+  confirmButtonText: 'Compris',
+  confirmButtonColor: '#007bff',
+  background: '#f0f8ff',
+  iconColor: '#007bff',
+});
         lastResultWasLoss = true;
         consecutiveLosses += 1;
         // Activer le mode inversion si la prédiction est incorrecte
@@ -1131,7 +1248,6 @@ if (!invertedMode) {
     invertPatterns();
 }
 
-alert("Attention : Toutes les prédictions seront inversées pour la prochaine tentative. Misez sur la couleur contraire !");
 
         
     }
@@ -1249,14 +1365,36 @@ alert("Attention : Toutes les prédictions seront inversées pour la prochaine t
             updatePoints();
             updateProgressBar(-100);
             enableFeedbackButtons();
-            alert('Historique effacé avec succès !');
+            Swal.fire({
+            title: 'Succès ! 🎉',
+            text: 'Historique effacé avec succès !',
+            icon: 'success',
+            confirmButtonText: 'Continuer',
+            confirmButtonColor: '#28a745',
+             background: '#f0f9f0',
+             iconColor: '#28a745',
+             });
         }
 
         function undo() {
     if (previousHistory.length === 0) {
-        alert('Aucune action à restaurer.');
+        Swal.fire({
+        title: 'Information ℹ️',
+        text: 'Aucune action à restaurer.',
+        icon: 'info',
+        confirmButtonText: 'Compris',
+        confirmButtonColor: '#007bff',
+        background: '#f0f8ff',
+        iconColor: '#007bff',
+        showClass: {
+        popup: 'animate__animated animate__fadeIn'
+        },
+        hideClass: {
+        popup: 'animate__animated animate__fadeOut'
+        }
+        });
         return;
-    }
+        }
 
     // Restaurer l'historique précédent
     history = [...previousHistory];
@@ -1291,7 +1429,15 @@ alert("Attention : Toutes les prédictions seront inversées pour la prochaine t
     // Réactiver les boutons de feedback
     enableFeedbackButtons();
 
-    alert('Historique restauré avec succès !');
+    Swal.fire({
+  title: 'Succès ! 🎉',
+  text: 'Historique restauré avec succès !',
+  icon: 'success',
+  confirmButtonText: 'Continuer',
+  confirmButtonColor: '#28a745',
+  background: '#f0f9f0',
+  iconColor: '#28a745',
+});
 }
 
 
@@ -1351,7 +1497,15 @@ alert("Attention : Toutes les prédictions seront inversées pour la prochaine t
             el.select();
             document.execCommand('copy');
             document.body.removeChild(el);
-            alert('Historique copié dans le presse-papiers!');
+            Swal.fire({
+  title: 'Succès ! 📋',
+  text: 'Historique copié dans le presse-papiers !',
+  icon: 'success',
+  confirmButtonText: 'Continuer',
+  confirmButtonColor: '#28a745',
+  background: '#f0f9f0',
+  iconColor: '#28a745',
+});
         }
 
         function exportHistory() {
@@ -1378,12 +1532,61 @@ alert("Attention : Toutes les prédictions seront inversées pour la prochaine t
         }
 
         function showTutorial() {
-            if (!localStorage.getItem('tutorialShown')) {
-                alert("Bienvenue dans le Jeu de Prédiction de Couleurs Élite!\n\n1. Entrez une série de 10 couleurs : rouge ou vert.\n2. La couleur la plus récurrente et les trois dernières couleurs seront automatiquement renseignées.\n3. Appuyez sur 'Prédire' pour voir le résultat.\n\nBonne chance!");
-                localStorage.setItem('tutorialShown', true);
-            }
+    Swal.fire({
+        title: 'Bienvenue sur Signal Bot 97 TRX ! 🤖',
+        html: `
+            <p>Pour maximiser vos profits, suivez ces étapes :</p>
+            <ol>
+                <li>Entrez une série de <strong>10 couleurs</strong> (rouge ou vert).</li>
+                <li>Le bot analysera les tendances et appliquera les règles de prédiction pour optimiser vos gains.</li>
+                <li>Suivez les instructions du bot pour miser intelligemment.</li>
+            </ol>
+            <p><strong>Conseils :</strong></p>
+            <ul>
+                <li>Restez calme et suivez la stratégie.</li>
+                <li>Ne misez pas plus que ce que vous pouvez vous permettre de perdre.</li>
+                <li>Gardez un œil sur les tendances et ajustez vos mises si nécessaire.</li>
+            </ul>
+            <p><strong>Bonne chance et que les gains soient avec vous !</strong> 🚀</p>
+            <br>
+            <label>
+                <input type="checkbox" id="hideTutorial"> Ne plus afficher ce message
+            </label>
+        `,
+        icon: 'info',
+        confirmButtonText: 'Commencer',
+        confirmButtonColor: '#007bff',
+        background: '#f0f8ff',
+        iconColor: '#007bff',
+        showClass: {
+            popup: 'animate__animated animate__fadeIn'
+        },
+        hideClass: {
+            popup: 'animate__animated animate__fadeOut'
+        },
+        didOpen: () => {
+            // Gérer la case à cocher
+            const hideTutorialCheckbox = document.getElementById('hideTutorial');
+            hideTutorialCheckbox.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    localStorage.setItem('hideTutorial', true);
+                } else {
+                    localStorage.removeItem('hideTutorial');
+                }
+            });
         }
+    });
+}
 
+// Vérifier si l'utilisateur a choisi de masquer le tutoriel
+function shouldShowTutorial() {
+    return !localStorage.getItem('hideTutorial');
+}
+
+// Appeler showTutorial() uniquement si shouldShowTutorial() renvoie true
+if (shouldShowTutorial()) {
+    showTutorial();
+}
         function showLevelPopup() {
             const savedLevel = localStorage.getItem('userLevel');
             if (!savedLevel) {
@@ -1399,10 +1602,26 @@ alert("Attention : Toutes les prédictions seront inversées pour la prochaine t
                 const level = selectedLevel.value.charAt(0).toUpperCase() + selectedLevel.value.slice(1);
                 localStorage.setItem('userLevel', level);
                 document.getElementById('userLevelSpan').textContent = `${level}`;
-                alert(`Niveau sélectionné : ${level}`);
-                document.getElementById('levelPopup').style.display = 'none';
+                Swal.fire({
+             title: 'Niveau sélectionné ✅',
+             text: `Niveau sélectionné : ${level}`,
+             icon: 'success',
+             confirmButtonText: 'Continuer',
+             confirmButtonColor: '#28a745',
+               background: '#f0f9f0',
+              iconColor: '#28a745',
+              });
+            document.getElementById('levelPopup').style.display = 'none';
             } else {
-                alert("Veuillez choisir un niveau avant de confirmer.");
+                Swal.fire({
+            title: 'Action requise ⚠️',
+            text: 'Veuillez choisir un niveau avant de confirmer.',
+            icon: 'warning',
+            confirmButtonText: 'Compris',
+            confirmButtonColor: '#ffc107',
+            background: '#fff3cd',
+            iconColor: '#ffc107',
+            });
             }
         }
 
@@ -1441,7 +1660,31 @@ alert("Attention : Toutes les prédictions seront inversées pour la prochaine t
             updateLevelButtons();
             showNotificationPopup(); // Affiche la popup de notification
         });
-        function findMostSimilarPattern(inputPattern) {
+         // Ajoutez ici le code de restriction pour le champ seriesInput
+    document.getElementById('seriesInput').addEventListener('input', function (e) {
+        const originalValue = this.value;
+        // Convertir en majuscules et ne garder que R ou V
+        this.value = this.value.toUpperCase().replace(/[^RV]/g, '');
+
+        // Limiter à 10 caractères
+        if (this.value.length > 10) {
+            this.value = this.value.slice(0, 10);
+        }
+
+        // Si la valeur a changé, afficher une alerte
+        if (originalValue !== this.value) {
+            Swal.fire({
+                title: 'Caractère non autorisé ⚠️',
+                text: 'Veuillez entrer uniquement "R" ou "V" (max 10 caractères).',
+                icon: 'warning',
+                confirmButtonText: 'Compris',
+                confirmButtonColor: '#ffc107',
+                background: '#fff3cd',
+                iconColor: '#ffc107',
+            });
+        }
+    });
+     function findMostSimilarPattern(inputPattern) {
     let mostSimilarPattern = '';
     let highestSimilarity = 0;
 
@@ -1478,8 +1721,7 @@ function invertPatterns() {
             patterns[pattern] = 'rouge';
         }
     }
-    invertedMode = true;
-    alert("Mode inversion activé : Tous les motifs ont été inversés.");
+    invertedMode = true;  
 }
 
 function resetPatterns() {
@@ -1491,7 +1733,6 @@ function resetPatterns() {
         }
     }
     invertedMode = false;
-    alert("Mode inversion désactivé : Tous les motifs sont revenus à la normale.");
 }
 function predictBasedOnTrends(colorInput) {
     const lastThreeColors = colorInput.slice(-3); // Prend les 3 dernières couleurs
