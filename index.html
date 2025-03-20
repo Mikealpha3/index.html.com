@@ -474,7 +474,7 @@
             <input type="date" id="dateInput" class="color-input">
         </div>
         <div class="input-container">
-            <input type="text" id="colorInput" class="color-input" maxlength="3" placeholder="Ajouter les Couleurs (ex: RVV)" readonly>
+            <input type="text" id="colorInput" class="color-input" maxlength="10" placeholder="Ajouter les Couleurs (ex: RVV)" readonly>
         </div>
         <div class="input-container">
             <input type="text" id="seriesInput" class="series-input" maxlength="10" oninput="autoFillColors()" placeholder="Entrer une série de couleurs">
@@ -664,6 +664,7 @@
         let failures = 0;
         let points = localStorage.getItem('totalPoints') ? parseInt(localStorage.getItem('totalPoints')) : 0;
         let lastResultWasLoss = false;
+        let invertedMode = false; // Variable pour suivre si le mode inversion est activé
        /* let timer;
         let totalSeconds = 300;
         let timerActive = false;
@@ -733,255 +734,342 @@
         }
 
         function autoFillColors() {
-            const seriesInput = document.getElementById('seriesInput').value.toUpperCase();
-            const validColors = ['R', 'V'];
+    const seriesInput = document.getElementById('seriesInput').value.toUpperCase();
+    const validColors = ['R', 'V'];
 
-            if (seriesInput.length === 10 && seriesInput.split('').every(char => validColors.includes(char))) {
-                const colorCount = seriesInput.split('').reduce((count, char) => {
-                    count[char] = (count[char] || 0) + 1;
-                    return count;
-                }, {});
+    if (seriesInput.length === 10 && seriesInput.split('').every(char => validColors.includes(char))) {
+        const colorCount = seriesInput.split('').reduce((count, char) => {
+            count[char] = (count[char] || 0) + 1;
+            return count;
+        }, {});
 
-                const redPercentage = (colorCount['R'] || 0) * 10;
-                const greenPercentage = (colorCount['V'] || 0) * 10;
+        const redPercentage = (colorCount['R'] || 0) * 10;
+        const greenPercentage = (colorCount['V'] || 0) * 10;
 
-                const mostFrequentColor = redPercentage >= greenPercentage ? `${redPercentage}% Rouge` : `${greenPercentage}% Vert`;
-                document.getElementById('colorPercentage').value = mostFrequentColor;
-                document.getElementById('colorInput').value = seriesInput.slice(-3);
-            }
-        }
+        const mostFrequentColor = redPercentage >= greenPercentage ? `${redPercentage}% Rouge` : `${greenPercentage}% Vert`;
+        document.getElementById('colorPercentage').value = mostFrequentColor;
+        document.getElementById('colorInput').value = seriesInput; // Utilise les 10 couleurs
+    }
+}
+const patterns = {
+    // Anciens motifs 13 mars 2024
+    "RVRVRVRVRV": "rouge", // 1R1V
+    "VRVRVRVRVR": "vert",  // 1V1R
+    "RRVVRRVVRR": "vert",  // 2R2V
+    "RVVRRVVRRV": "vert",  // 2R2V
+    "VVRRVVRRVV": "rouge", // 2V2R
+    "VRRVVRRVVR": "rouge", // 2V2R
+    "RRRVVVRRR": "vert",   // 3R3V
+    "RRVVVRRRVV": "vert",  // 3R3V
+    "VVVRRRVVVR": "rouge", // 3V3R
+    "VVRRRVVVRR": "rouge", // 3V3R
+    "RRRRVVVVRR": "rouge", // 4R4V
+    "RRRVVVVRRR": "rouge", // 4R4V
+    "RRVVVVRRRR": "vert",  // 4R4V
+    "RVVVVRRRRV": "vert",  // 4R4V
+    "VVVVRRRRVV": "vert",  // 4V4R
+    "VVVRRRRVVV": "vert",  // 4V4R
+    "VVRRRRVVVV": "rouge", // 4V4R
+    "VRRRRVVVVR": "rouge", // 4V4R
+    "RRRRVRRRRV": "rouge", // 4R1V
+    "RRRVRRRRVR": "rouge", // 4R1V
+    "RRVRRRRVRR": "rouge", // 4R1V
+    "RVRRRRVRRR": "rouge", // 4R1V
+    "VRRRRVRRRR": "vert",  // 4R1V
+    "VVVVRVVVVR": "vert",  // 4R1V
+    "VVVRVVVVRV": "vert",  // 4R1V
+    "VVRVVVVRVV": "vert",  // 4R1V
+    "VRVVVVRVVV": "vert",  // 4R1V
+    "RVVVVRVVVV": "rouge", // 4R1V
+    "VVVVRRVVVV": "rouge", // 4V2R
+    "VVVRRVVVVR": "rouge", // 4V2R
+    "RRRRVVRRRR": "vert",  // 4R2V
+    "RRRVVRRRRV": "vert",  // 4R2V
+    "RRRVVVRRR": "rouge",  // 4R3V
+    "RRVVVRRRRV": "vert",  // 4R3V
+    "RVVVRRRRVV": "vert",  // 4R3V
+    "VVVVVRRRVVV": "vert", // 4V3R
+    "VVVRRRVVVV": "rouge", // 4V3R
+    "VVRRRVVVVR": "rouge", // 4V3R
+    "VRRRVVVVRR": "rouge", // 4V3R
+    "RRVRRVRRVR": "rouge", // 2R1V
+    "RVRRVRRVRR": "vert",  // 2R1V
+    "VVRVVRVVRV": "vert",  // 2V1R
+    "VRVVRVVRVV": "rouge", // 2V1R
+    "RRRVRRRVRR": "rouge", // 3R1V
+    "RRVRRRVRRR": "vert",  // 3R1V
+    "VVVRVVVRVV": "vert",  // 3V1R
+    "VVRVVVRVVV": "rouge", // 3V1R
+    "RRRVVRRRVV": "rouge", // 3R2V
+    "VVVRRVVVRR": "vert",  // 3V2R
+    "RRRRRRRRRR": "rouge", // long
+    "VVVVVVVVVV": "vert",  // long
 
-        const patterns = {
-    // Alternance simple
-    "VRVR": "rouge",
-    "RVRV": "vert",
-    "VRV": "rouge",
-    "RVR": "vert",
-    // Alternance double
-    "VVRR": "vert",
-    "RRVV": "rouge",
-    // Alternance triple
-    "VVVRRR": "rouge",
-    "RRRVVV": "vert",
-    // Alternance complexe
-    "VRVRVR": "rouge",
-    "RVRVRV": "vert",
-    "VRRVRR": "rouge",
-    "VVRRVV": "vert",
-    "RVRRVR": "rouge",
-    "VVRRVVV": "rouge",
-    // Nouveaux motifs
-    "RRVRV": "rouge",
-    "VVRVR": "vert",
-    "VRRRV": "rouge",
-    "RVVRV": "vert",
-    "VVVRV": "rouge",
-    "RRRVR": "vert",
-    "VRRRRV": "rouge",
-    "RVVVVV": "vert",
-    "VRRR": "rouge",
-    "RRRVV": "vert",
-    "RRRVVV": "rouge",
-    "RVVV": "rouge",
-    "VVRRR": "rouge",
-    "RRRRRVVVV": "vert",
-    "RRVV": "rouge",
-    "VVRR": "vert",
-    "RRVR": "vert",
-    "VRV": "rouge",
-    "VVRR": "rouge",
-    "RRVVV": "rouge",
-    "VVVRR": "rouge",
-    "VVRR": "vert",
-    "RVVVVV": "rouge",
-    "VVRRVV": "vert",
-    "RVVV": "rouge",
-    "RRVRV": "vert",
-    "VVRVVVVV": "rouge",
-    "VVVVVR": "vert",
-    "RVVVR": "rouge",
-    "RVVVR": "vert",
-    "VVVRRR": "vert",
-    "RRRVVV": "rouge",
-    "RVRR": "vert",
-    "RRVR": "vert",
-    "RRRV": "rouge",
-    "VRRR": "rouge",
-    "VRRRR": "rouge",
-    "VRRRRR": "rouge",
-    "RRRV": "rouge",
-    "VRRR": "vert",
-    "RVR": "vert",
-    "RVR": "vert",
-    "VRRVRR": "rouge",
-    "VVRVV": "rouge",
-    "RVVR": "vert",
-    "VRRRRR": "vert",
-    "RRRV": "rouge",
-    "RRRRRV": "rouge",
-    "RRRRVR": "vert",
-    "RRRVRV": "vert",
-    "VVRVVR": "vert",
-    "RVVR": "vert",
-    "RVRRRR": "rouge",
-    "RRRRRV": "rouge",
-    "RRRRVR": "rouge",
-    "RVRRVV": "rouge",
-    "VVRRR": "vert",
-    "VRRVVR": "vert",
-    "VRRVVRVVR": "rouge",
-    "RRRVVVVVV": "vert",
-    "VVVVVV": "vert",
-    "RVVV": "rouge",
-    "RVVVRVV": "vert",
-    "RVVVRVVV": "rouge",
-    "RVVVR": "rouge",
-    "VRVRRVV": "rouge",
-    "RRVVRR": "rouge",
-    "VVR": "vert",
-    "VVRVV": "rouge",
-    "VVRRRR": "rouge",
-    "VRRVRVV": "rouge",
-    "RVVRV": "rouge",
-    "RRVV": "vert",
-    "RRVVVV": "rouge",
-    "VVVRRR": "rouge",
-    "VVVRR": "rouge",
-    "VRRRRRRR": "rouge",
-    "VRRRR": "rouge",
-    "VRRRRR": "rouge",
-    "VRRR": "vert",
-    "VVRRVR": "vert",
-    "RRVRVV": "vert",
-    "VRVVVRR": "vert",
-    "VVVRRV": "rouge",
-    "RVVVVVRRR": "rouge",
-    "VVVVVRRR": "rouge",
-    "RVVVVVRR": "rouge",
-    "RVVRRRV": "rouge",
-    "RVRVVVVV": "vert",
-    "RVRRVRRV": "vert",
-    "RVRVRVVR": "rouge",
-    "RVRVRVVRR": "vert",
-    "RRRRRR": "rouge",
-    "RRRRRRRV": "rouge",
-    "VRRVVVVRR": "rouge",
-    "VRVRVVVVR": "rouge",
-    "VRRRRRVVV": "vert",
-    "RVVRRRRRV": "vert",
-    "VVRRRRRV": "vert",
-    "RVVRRR": "rouge",
-    "RVVRRVRVV": "rouge",
-    "RRVVRRRRV": "vert",
-    "VVRRRVRRV": "vert",
-    "RRRRRRRRR": "rouge",
-    "RVRRRV": "rouge",
-    "RRRVRRV": "vert",
-    "VVRRVRRRV": "vert",
-    "VRRRVVVRR": "rouge",
-    "VRRVRRRV": "vert",
-    "VRRVRRRVV": "vert",
-    "RVRRVRRRV": "vert",
-    "VRRRVVRRV": "rouge",
-    "RRVVRRRV": "vert",
-    "VRRRVVRRR": "rouge",
-    "VRVRRRVVR": "vert",
-    "VVRRVVVVR": "rouge",
-    "VVVVRRRRR": "vert",
-    "RRVRRRV": "vert",
-    "VVVVRRR": "vert",
-    "RRRRRVVVV": "vert",
-    "VVRRRVVVR": "vert",
-    "VRVVVRRRV": "vert",
-    "RRVVRRRVV": "vert",
-    // Ajout du motif VVV
-    "VVV": "rouge",
-    // Ajout du motif RRR
-    "RRR": "vert"
+    // Nouveaux motifs à ajouter 17 mars 2024
+    "RRRRRRRRVR": "vert",
+    "RRRRRRRVRV": "rouge",
+    "RRRRRVRVRV": "vert",
+    "RRRVRVRVVV": "rouge",
+    "RRVRVRVVVR": "rouge",
+    "RVRVRVVVRR": "vert",
+    "VRVRVVVRRV": "vert",
+    "RVRVVVRRVV": "rouge",
+    "VRVVVRRVVR": "vert",
+    "RVVVRRVVRV": "vert",
+    "VVVRRVVRVV": "vert",
+    "VVRRVVRVVV": "rouge",
+    "VRRVVRVVVR": "vert",
+    "RRVVRVVVRV": "vert",
+    "RVVRVVVRVV": "vert",
+    "VVRVVVRVVV": "vert",
+    "VRVVVRVVVV": "vert",
+    "RVVVRVVVVV": "vert",
+    "VVVRVVVVVV": "vert",
+    "VVRVVVVVVV": "vert",
+    "VRVVVVVVVV": "vert",
+    "RVVVVVVVVV": "vert",
+    "RVVVVVVVVV": "rouge",
+    "VVVVVVVVVR": "rouge",
+    "VVVVVVVRRR": "vert",
+    "VVVVVVRRRV": "rouge",
+    "VVVVVRRRVR": "vert",
+    "VVVVRRRVRV": "rouge",
+    "VVVRRRVRVR": "rouge",
+    "VVRRRVRVRR": "rouge",
+    "VRRRVRVRRR": "rouge",
+    "RRRVRVRRRR": "rouge",
+    "RRVRVRRRRR": "vert",
+    "RVRVRRRRRV": "rouge",
+    "VRVRRRRRVR": "vert",
+    "RVRRRRRVRV": "vert",
+    "VRRRRRVRVV": "rouge",
+    "RRRRRVRVVR": "vert",
+    "RRRRVRVVRV": "vert",
+    "RRRVRVVRVV": "vert",
+    "RRVRVVRVVV": "rouge",
+    "RVRVVRVVVR": "rouge",
+    "VRVVRVVVRR": "rouge",
+    "RVVRVVVRRR": "rouge",
+    "VVRVVVRRRR": "vert",
+    "VRVVVRRRRV": "rouge",
+    "RVVVRRRRVR": "vert",
+    "VVVRRRRVRV": "rouge",
+    "VVRRRRVRVR": "rouge",
+    "VRRRRVRVRR": "rouge",
+    "RRRRVRVRRR": "rouge",
+    "RRRVRVRRRR": "rouge",
+    "RRVRVRRRRR": "vert",
+    "RVRVRRRRRV": "vert",
+    "VRVRRRRRVV": "vert",
+    "RVRRRRRVVV": "vert",
+    "VRRRRRVVVV": "vert",
+    "RRRRRVVVVV": "vert",
+    "RRRRVVVVVV": "vert",
+    "RRRVVVVVVV": "vert",
+    "RRVVVVVVVV": "vert",
+    "RVVVVVVVVV": "vert",
+    "VVVVVVVVVV": "rouge",
+    "VVVVVVVVVR": "vert",
+    "VVVVVVVVRV": "vert",
+    "VVVVVVVRVV": "vert",
+    "VVVVVVRVVV": "rouge",
+    "VVVVVRVVVR": "vert",
+    "VVVVRVVVRV": "vert",
+    "VVVRVVVRVV": "rouge",
+    "VVRVVVRVVR": "rouge",
+    "VRVVVRVVRR": "vert",
+    "RVVVRVVRRV": "rouge",
+    "VVVRVVRRVR": "rouge",
+    "VVRVVRRVRR": "vert",
+    "VRVVRRVRRV": "rouge",
+    "RVVRRVRRVR": "rouge",
+    "VVRRVRRVRR": "vert",
+    "VRRVRRVRRV": "vert",
+    "RRVRRVRRVV": "rouge",
+    "RVRRVRRVVR": "vert",
+    "VRRVRRVVRV": "rouge",
+    "RRVRRVVRVR": "vert",
+    "RVRRVVRVRV": "rouge",
+    "VRRVVRVRVR": "rouge",
+    "RRVVRVRVRR": "rouge",
+    "RVVRVRVRRR": "vert",
+    "VVRVRVRRRV": "rouge",
+    "VRVRVRRRVR": "vert",
+    "RVRVRRRVRV": "vert",
+    "VRVRRRVRVV": "rouge",
+    "RVRRRVRVVR": "vert",
+    "VRRRVRVVRV": "vert",
+    "RRRVRVVRVV": "vert",
+    "RRVRVVRVVV": "rouge",
+    "RVRVVRVVVR": "vert",
+    "VRVVRVVVRV": "vert",
+    "RVVRVVVRVV": "vert",
+    "VVRVVVRVVV": "vert",
+    "VRVVVRVVVV": "vert",
+    "RVVVRVVVVV": "vert",
+    "VVVRVVVVVV": "vert",
+    "VVRVVVVVVV": "rouge",
+    "VRVVVVVVVR": "rouge",
+    "RVVVVVVVRR": "vert",
+    "VVVVVVVRRV": "rouge",
+    "VVVVVVRRVR": "vert",
+    "VVVVVRRVRV": "rouge",
+    "VVVVRRVRVR": "vert",
+    "VVVRRVRVRV": "rouge",
+    "VVRRVRVRVR": "rouge",
+    "VRRVRVRVRR": "vert",
+    "RRVRVRVRRV": "rouge",
+    "RVRVRVRRVR": "rouge",
+    "VRVRVRRVRR": "rouge",
+    "RVRVRRVRRR": "rouge",
+    "VRVRRVRRRR": "vert",
+    "RVRRVRRRRV": "vert",
+    "VRRVRRRRVV": "rouge",
+    "RRVRRRRVVR": "vert",
+    "RVRRRRVVRV": "vert",
+    "VRRRRVVRVV": "vert",
+    "RRRRVVRVVV": "rouge",
+    "RRRVVRVVVR": "vert",
+    "RRVVRVVVRV": "vert",
+    "RVVRVVVRVV": "rouge",
+    "VVRVVVRVVR": "vert",
+    "VRVVVRVVRV": "rouge",
+    "RVVVRVVRVR": "vert",
+    "VVVRVVRVRV": "rouge",
+    "VVRVVRVRVR": "rouge",
+    "VRVVRVRVRR": "rouge",
+    "RVVRVRVRRR": "vert",
+    "VVRVRVRRRV": "vert",
+    "VRVRVRRRVV": "rouge",
+    "RVRVRRRVVR": "rouge",
+    "VRVRRRVVRR": "rouge",
+    "RVRRRVVRRR": "vert",
+    "VRRRVVRRRV": "vert",
+    "RRRVVRRRVV": "rouge",
+    "RRVVRRRVVR": "vert",
+    "RVVRRRVVRV": "vert",
+    "VVRRRVVRVV": "rouge",
+    "VRRRVVRVVR": "vert",
+    "RRRVVRVVRV": "vert",
+    "RRVVRVVRVV": "vert",
+    "RVVRVVRVVV": "vert",
+     // Motifs du 19 mars
+     "RRVRRRRRVR": "vert",
+     "RVRRRRRVRV": "vert",
+     "VRRRRRVRVV": "rouge",
+     "RRRRRVRVVR": "vert",
+     "RRRRVRVVRV": "rouge",
+    "RRRVRVVRVR": "vert",
+    "RRVRVVRVRV": "rouge",
+"RVRVVRVRVR": "vert",
+"VRVVRVRVRV": "vert",
+"RVVRVRVRVV": "vert",
+"VVRVRVRVVV": "rouge",
+"VRVRVRVVVR": "vert",
+"RVRVRVVVRV": "vert",
+"VRVRVVVRVV": "rouge",
+"VRVVRVRRRV": "rouge",
+"RVVRVRRRVR": "vert",
+"VVRVRRRVRV": "rouge",
+"VRVRRRVRVR": "rouge",
+"RVRRRVRVRR": "vert",
+"VRRRVRVRRV": "vert",
+"RRRVRVRRVV": "vert",
+"RRVRVRRVVV": "rouge",
+"RVRVRRVVVR": "rouge",
+"VRVRRVVVRR": "rouge",
+"RVRRVVVRRR": "rouge",
+"VRRVVVRRRR": "vert",
+"RRVVVRRRRV": "rouge",
+"RVRRVVVVRR": "rouge",
+"VRRVVVVRRR": "rouge",
+"RRVVVVRRRR": "rouge",
+"RVVVVRRRRR": "vert",
+"VVVVRRRRRV": "vert",
+"VVVRRRRRVV": "rouge",
+"VVRRRRRVVR": "vert",
+"VRRRRRVVRV": "rouge",
+"RRRRRVVRVR": "vert",
+"RRRRVVRVRV": "rouge",
+"RRRVVRVRVR": "rouge",
+"RRVVRVRVRR": "vert",
+"RVVRVRVRRV": "rouge",
+"VVRVRVRRVR": "vert",
+"VRVRVRRVRV": "vert",
+"RVRVRRVRVV": "vert",
+"VRVRRVRVVV": "rouge",
+"RVRRVRVVVR": "vert",
+"VRRVRVVVRV": "vert",
+"RRVRVVVRVV": "rouge",
+"RVRVVVRVVR": "vert",
+"VRVVVRVVRV": "rouge",
+"RVVVRVVRVR": "vert",
+"VVVRVVRVRV": "vert"
+    
 };
 function predictColor() {
-    // Valider les couleurs
     const colorInput = document.getElementById('colorInput').value.toUpperCase();
     const validColors = ['R', 'V'];
 
-    // Vérifier que la séquence contient uniquement 'R' ou 'V'
-    if (!colorInput.split('').every(char => validColors.includes(char))) {
-        alert('Veuillez entrer une séquence de couleurs, utilisant uniquement "R" ou "V".');
+    if (colorInput.length !== 10 || !colorInput.split('').every(char => validColors.includes(char))) {
+        alert('Veuillez entrer une séquence de 10 couleurs, utilisant uniquement "R" ou "V".');
         return;
     }
 
-    // Vérifier si une prédiction précédente n'a pas été marquée
+    const colorCount = colorInput.split('').reduce((count, char) => {
+        count[char] = (count[char] || 0) + 1;
+        return count;
+    }, {});
+
+    const redPercentage = (colorCount['R'] || 0) * 10;
+    const greenPercentage = (colorCount['V'] || 0) * 10;
+    const frequentColor = redPercentage >= greenPercentage ? `${redPercentage}% Rouge` : `${greenPercentage}% Vert`;
+
     if (history.length > 0 && !history[history.length - 1].result) {
         alert('Veuillez marquer la dernière prédiction comme gagnée ou perdue avant d\'effectuer une nouvelle prédiction.');
         return;
     }
 
-    // Convertir la séquence en couleurs (rouge/vert)
     const lastColors = colorInput.split('').map(char => char === 'R' ? 'rouge' : 'vert');
 
-    // Vérifier si la séquence correspond à un motif connu
-    let nextColor = patterns[colorInput];
+    // Vérifie si le motif existe dans la liste prédéfinie
+    let nextColor = predictBasedOnSimilarity(colorInput);
 
-    // Si aucun motif n'est trouvé, utiliser la logique basée sur la fréquence
+    // Si le motif n'existe pas, utilise une prédiction basée sur les tendances statistiques
     if (!nextColor) {
-        const mostFrequentColor = document.getElementById('colorPercentage').value.toLowerCase();
-
-        if (mostFrequentColor.includes('%') && parseInt(mostFrequentColor.split('%')[0]) >= 70) {
-            nextColor = mostFrequentColor.includes('rouge') ? 'rouge' : 'vert';
-        } else if (lastColors.every(color => color === 'vert')) {
-            nextColor = 'vert';
-        } else if (lastColors.every(color => color === 'rouge')) {
-            nextColor = 'rouge';
-        } else if (lastColors[lastColors.length - 1] === 'vert' && lastColors.includes('rouge')) {
-            nextColor = 'rouge';
-        } else if (lastColors[lastColors.length - 1] === 'rouge' && lastColors.includes('vert')) {
-            nextColor = 'vert';
-        } else if (mostFrequentColor.includes('%')) {
-            const percent = parseInt(mostFrequentColor.split('%')[0]);
-            if (Math.random() * 100 < percent) {
-                nextColor = mostFrequentColor.includes('rouge') ? 'rouge' : 'vert';
-            } else {
-                nextColor = mostFrequentColor.includes('rouge') ? 'vert' : 'rouge';
-            }
-        } else {
-            nextColor = mostFrequentColor;
-        }
+        nextColor = predictBasedOnTrends(colorInput);
     }
 
-    // Vérifier si cette prédiction existe déjà dans l'historique
     const previousResult = history.find(record => record.colors === lastColors.join(', '));
     if (previousResult) {
         if (previousResult.result === 'Échec') {
             document.getElementById('previousResult').textContent = 'Cette prédiction existe déjà dans l\'historique avec résultat Échec. Essayez de miser la couleur contraire.';
         } else {
-            document.getElementById('previousResult').textContent = `Prédiction : ${previousResult.prediction}, Résultat : ${previousResult.result}, Pourcentage de Couleur : ${previousResult.frequentColor}`;
+            document.getElementById('previousResult').textContent = `Prédiction : ${previousResult.prediction}, Résultat : ${previousResult.result}`;
         }
     } else {
         document.getElementById('previousResult').textContent = '';
     }
 
-    // Ajouter la prédiction à l'historique
-    previousHistory = [...history];
     history.push({
         colors: lastColors.join(', '),
         prediction: nextColor,
-        frequentColor: document.getElementById('colorPercentage').value,
+        frequentColor: frequentColor,
         result: '',
         date: document.getElementById('dateInput').value || new Date().toLocaleDateString()
     });
 
-    // Afficher la prédiction
     const predictionResult = document.getElementById('predictionResult');
     predictionResult.textContent = "Prédiction : " + nextColor;
 
-    // Effacer le champ de saisie
     document.getElementById('colorInput').value = '';
-
-    // Mettre à jour l'historique et activer les boutons de feedback
     updateHistory();
     enableFeedbackButtons();
     alert('Prédiction ajoutée avec succès !');
-}        function displayPreviousResult(previousResult) {
+    updateStats();
+    saveHistoryToLocalStorage();
+}
+function displayPreviousResult(previousResult) {
     const lastPrediction = history.length > 1 ? history[history.length - 2] : null; // Récupérer la dernière prédiction avant la plus récente
 
     // Vérifier si la prédiction précédente a échoué et si la prédiction actuelle est différente
@@ -1018,20 +1106,34 @@ function predictColor() {
     if (correct) {
         lastHistoryItem.result = 'Succès';
         successes += 1;
+        alert('Félicitations, vous avez réussi !');
         points += 10;
         lastResultWasLoss = false;
+        // Désactiver le mode inversion si la prédiction est correcte
+       if (invertedMode) {
+    resetPatterns();
+    }
+    
+
+    alert("Les prédictions sont revenues à la normale. Vous pouvez continuer à miser comme d'habitude.");
         consecutiveLosses = 0;
 
         updateProgressBar(1); // Augmente la barre de progression de 1%
 
-        alert('Félicitations, vous avez réussi !');
     } else {
         lastHistoryItem.result = 'Échec';
         failures += 1;
+        alert('Dommage, vous avez perdu.');
         lastResultWasLoss = true;
         consecutiveLosses += 1;
+        // Activer le mode inversion si la prédiction est incorrecte
+if (!invertedMode) {
+    invertPatterns();
+}
 
-        alert('Dommage, vous avez perdu.');
+alert("Attention : Toutes les prédictions seront inversées pour la prochaine tentative. Misez sur la couleur contraire !");
+
+        
     }
 
     updateHistory(); // Met à jour l'historique et applique/arrête le clignotement
@@ -1339,6 +1441,117 @@ function predictColor() {
             updateLevelButtons();
             showNotificationPopup(); // Affiche la popup de notification
         });
+        function findMostSimilarPattern(inputPattern) {
+    let mostSimilarPattern = '';
+    let highestSimilarity = 0;
+
+    // Parcourir tous les motifs existants
+    for (const pattern in patterns) {
+        let similarity = 0;
+        for (let i = 0; i < inputPattern.length; i++) {
+            if (inputPattern[i] === pattern[i]) {
+                similarity++;
+            }
+        }
+        // Si ce motif est plus similaire que le précédent, on le garde
+        if (similarity > highestSimilarity) {
+            highestSimilarity = similarity;
+            mostSimilarPattern = pattern;
+        }
+    }
+
+    return mostSimilarPattern;
+}
+function predictBasedOnSimilarity(inputPattern) {
+    const mostSimilarPattern = findMostSimilarPattern(inputPattern);
+    if (mostSimilarPattern) {
+        return patterns[mostSimilarPattern]; // Retourne la prédiction associée au motif le plus similaire
+    } else {
+        return predictBasedOnTrends(inputPattern); // Si aucun motif similaire n'est trouvé, utilise la prédiction basée sur les tendances
+    }
+}
+function invertPatterns() {
+    for (const pattern in patterns) {
+        if (patterns[pattern] === 'rouge') {
+            patterns[pattern] = 'vert';
+        } else if (patterns[pattern] === 'vert') {
+            patterns[pattern] = 'rouge';
+        }
+    }
+    invertedMode = true;
+    alert("Mode inversion activé : Tous les motifs ont été inversés.");
+}
+
+function resetPatterns() {
+    for (const pattern in patterns) {
+        if (patterns[pattern] === 'rouge') {
+            patterns[pattern] = 'vert';
+        } else if (patterns[pattern] === 'vert') {
+            patterns[pattern] = 'rouge';
+        }
+    }
+    invertedMode = false;
+    alert("Mode inversion désactivé : Tous les motifs sont revenus à la normale.");
+}
+function predictBasedOnTrends(colorInput) {
+    const lastThreeColors = colorInput.slice(-3); // Prend les 3 dernières couleurs
+    const colorCount = lastThreeColors.split('').reduce((count, char) => {
+        count[char] = (count[char] || 0) + 1;
+        return count;
+    }, {});
+
+    // Si une couleur domine dans les 3 dernières, prédire cette couleur
+    if (colorCount['R'] > colorCount['V']) {
+        return 'rouge';
+    } else if (colorCount['V'] > colorCount['R']) {
+        return 'vert';
+    } else {
+        // Si égalité, prédire en fonction du pourcentage global
+        const globalRed = (colorInput.split('R').length - 1) * 10;
+        const globalGreen = (colorInput.split('V').length - 1) * 10;
+        return globalRed >= globalGreen ? 'rouge' : 'vert';
+    }
+}
+function isSimpleAlternate(colors) {
+    for (let i = 1; i < colors.length; i++) {
+        if (colors[i] === colors[i - 1]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function isSimpleDoubleAlternate(colors) {
+    for (let i = 2; i < colors.length; i += 2) {
+        if (colors[i] !== colors[i - 1] || colors[i] === colors[i - 2]) {
+            return false;
+        }
+    }
+    return true;
+}
+function isSimpleTripleAlternate(colors) {
+    for (let i = 3; i < colors.length; i += 3) {
+        // Vérifie si les 3 couleurs suivantes sont identiques aux 3 précédentes
+        if (colors[i] !== colors[i - 1] || colors[i] !== colors[i - 2] || colors[i] === colors[i - 3]) {
+            return false;
+        }
+    }
+    return true;
+}
+function predictBasedOnTrend(colorInput) {
+    const colors = colorInput.split('');
+
+    if (isSimpleAlternate(colors)) {
+        return colors[colors.length - 1] === 'R' ? 'vert' : 'rouge';
+    } else if (isSimpleDoubleAlternate(colors)) {
+        return colors[colors.length - 1] === 'R' ? 'vert' : 'rouge';
+    } else if (isSimpleTripleAlternate(colors)) {
+        return colors[colors.length - 1] === 'R' ? 'vert' : 'rouge';
+    } else {
+        return predictBasedOnTrends(colorInput); // Utilise la fonction existante
+    }
+}
+
     </script>
 </body>
 </html>
