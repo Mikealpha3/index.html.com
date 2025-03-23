@@ -164,13 +164,21 @@
             background-color: #c82333;
         }
 
-        .btn-copy, .btn-export {
-            background-color: #ffc107;
+       
+        .btn-copy {
+         background-color: #ffc107; /* Jaune */
+        
         }
+        .btn-copy:hover {
+          background-color: #e0a800; /* Jaune plus foncé */
+         }
 
-        .btn-copy:hover, .btn-export:hover {
-            background-color: #e0a800;
-        }
+         .btn-export {
+          background-color: #28a745; /* Vert */
+          }
+          .btn-export:hover {
+           background-color: #218838; /* Vert plus foncé */
+           }
 
         .color-input, .series-input, .level-selection, #colorPercentage {
             padding: 10px;
@@ -487,6 +495,74 @@
     width: 100%;
     transition: width 1s linear;
 }
+.timer-container {
+    margin-top: 20px;
+    text-align: center;
+}
+
+#startStopTimer {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#startStopTimer:hover {
+    background-color: #0056b3;
+}
+
+#timerDisplay {
+    font-size: 18px;
+    margin-top: 10px;
+}
+
+#timerMessage {
+    font-size: 16px;
+    color: #dc3545;
+    margin-top: 10px;
+}
+.timer-container {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.timer-container button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 5px;
+}
+
+.timer-container button:hover {
+    background-color: #0056b3;
+}
+
+#timerDisplay {
+    font-size: 18px;
+    margin-top: 10px;
+}
+.btn-invert {
+    background-color: #ffc107; /* Jaune */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 10px;
+}
+
+.btn-invert:hover {
+    background-color: #e0a800; /* Jaune plus foncé */
+}
+
 </style>
 </head>
 <!-- Popup de notification -->
@@ -510,7 +586,15 @@
                 <p id="userName">Nom : Utilisateur</p>
                 <p id="userLevel">Niveau : <span id="userLevelSpan"></span></p>
                 <p id="haitiTime">Heure en Haïti : <span id="currentTime"></span></p> <!-- Nouvel élément pour l'heure -->
+                <p id="timerDisplay">Temps restant : 00:00</p>
             </div>
+        </div>
+        <div class="timer-container">
+        </p><button class="btn-invert" onclick="disableInversionMode()">Désactiver l'Inversion</button></p>
+            <button onclick="startTimer(10)">10 Minutes</button>
+            <button onclick="startTimer(15)">15 Minutes</button>
+            <button onclick="startTimer(20)">20 Minutes</button>
+            <p>Veuillez activer le minuteur à la fin de la bougie suivante.</p>
         </div>
         <div class="input-container">
             <label for="dateInput" style="margin-left: 30px;">Date :</label>
@@ -558,9 +642,9 @@
             <h2>Historique</h2>
             <div>
                 <button class="btn-undo" onclick="undoLastPrediction()">Annuler la prédiction</button>
+                <button class="btn-analyze" onclick="analyzeAllLosses()">Analyser Mes Pertes</button>
                 <button class="btn-copy" onclick="copyHistory()">Copier</button>
                 <button class="btn-export" onclick="exportHistory()">Exporter</button>
-                <button class="btn-analyze" onclick="analyzeAllLosses()">Analyser Mes Pertes</button>
             </div>
         </div>
         <div id="historyContainer" class="table-container">
@@ -758,78 +842,94 @@ let points = localStorage.getItem('totalPoints') ? parseInt(localStorage.getItem
 let lastResultWasLoss = false;
 let invertedMode = false; // Variable pour suivre si le mode inversion est activé
 
-// Nouvelles variables globales
-let isBotBlocked = false; // État du bot (bloqué ou non)
-let timerDuration = 5; // Durée de la pause en minutes (augmente automatiquement)
+
 let timerInterval;
-let timerEndTime; // Heure de fin de la pause
-// Fonction pour jouer le son de notification
-function playNotificationSound() {
-    const sound = document.getElementById('notificationSound');
-    sound.play();
-}
+let timerTime = 0;
+let isTimerRunning = false;
 
-function blockBot() {
-    if (isBotBlocked) return; // Ne pas bloquer si déjà bloqué
-
-    isBotBlocked = true;
-
-    // Définir la durée de la pause en fonction du nombre de pertes consécutives
-    if (consecutiveLosses === 3) {
-        timerDuration = 5; // 5 minutes pour 3 pertes
-    } else if (consecutiveLosses === 4) {
-        timerDuration = 10; // 10 minutes pour 4 pertes
-    } else if (consecutiveLosses >= 5) {
-        timerDuration = 15; // 15 minutes pour 5 pertes ou plus
+// Fonction pour démarrer le minuteur
+function startTimer(minutes) {
+    if (isTimerRunning) {
+        Swal.fire({
+            title: 'Minuteur déjà en cours ⏰',
+            text: 'Veuillez attendre que le minuteur actuel se termine.',
+            icon: 'warning',
+            confirmButtonText: 'Compris',
+            confirmButtonColor: '#ffc107',
+            background: '#fff3cd',
+            iconColor: '#ffc107',
+        });
+        return;
     }
 
-    // Enregistrer l'heure de fin de la pause dans localStorage
-    timerEndTime = Date.now() + timerDuration * 60 * 1000; // Convertir en millisecondes
-    localStorage.setItem('timerEndTime', timerEndTime);
+    // Démarrer le minuteur
+    timerTime = minutes * 60; // Convertir en secondes
+    isTimerRunning = true;
 
-    document.getElementById('lossCount').textContent = consecutiveLosses;
-    document.getElementById('timer').textContent = timerDuration;
-    document.getElementById('timerPopup').style.display = 'flex';
-
-    // Désactiver les boutons du bot
+    // Désactiver tous les boutons du bot
     document.querySelectorAll('button').forEach(button => button.disabled = true);
 
-    // Lancer le minuteur
-    let remainingTime = timerDuration * 60; // Convertir en secondes
-    const progressBarTimer = document.getElementById('progressBarTimer');
+    // Afficher l'alerte SweetAlert pour bloquer l'accès
+    Swal.fire({
+        title: 'Minuteur activé ⏳',
+        html: `
+            <p>Le bot est désactivé pendant <strong>${minutes} minutes</strong>.</p>
+            <p>Veuillez patienter jusqu'à la fin du minuteur.</p>
+            <p id="swalTimer">Temps restant : ${minutes}:00</p>
+        `,
+        icon: 'info',
+        showConfirmButton: false,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        allowEnterKey: false,
+        background: '#f0f8ff',
+        iconColor: '#007bff',
+    });
 
-    // Réinitialiser la barre de progression
-    progressBarTimer.style.width = '100%';
-
+    // Mettre à jour le minuteur dans l'alerte et dans l'interface
     timerInterval = setInterval(() => {
-        remainingTime--;
-        if (remainingTime <= 0) {
-            unblockBot();
-        } else {
-            // Mettre à jour le texte du minuteur
-            document.getElementById('timer').textContent = Math.ceil(remainingTime / 60);
+        timerTime--;
+        if (timerTime <= 0) {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
 
-            // Mettre à jour la barre de progression
-            const progressPercentage = (remainingTime / (timerDuration * 60)) * 100;
-            progressBarTimer.style.width = `${progressPercentage}%`;
+            // Réactiver tous les boutons du bot
+            document.querySelectorAll('button').forEach(button => button.disabled = false);
+
+            // Fermer l'alerte SweetAlert
+            Swal.close();
+
+            // Afficher un message de fin
+            Swal.fire({
+                title: 'Minuteur terminé ⏰',
+                text: 'Le bot est maintenant réactivé. Vous pouvez continuer à utiliser le bot.',
+                icon: 'success',
+                confirmButtonText: 'Compris',
+                confirmButtonColor: '#28a745',
+                background: '#f0f9f0',
+                iconColor: '#28a745',
+            });
+
+            // Réinitialiser l'affichage du minuteur
+            document.getElementById('timerDisplay').textContent = 'Temps restant : 00:00';
+            return;
+        }
+
+        // Mettre à jour l'affichage du minuteur dans l'alerte et dans l'interface
+        const minutesLeft = Math.floor(timerTime / 60);
+        const secondsLeft = timerTime % 60;
+        const timerText = `Temps restant : ${minutesLeft.toString().padStart(2, '0')}:${secondsLeft.toString().padStart(2, '0')}`;
+        document.getElementById('timerDisplay').textContent = timerText;
+
+        if (Swal.isVisible()) {
+            Swal.getHtmlContainer().querySelector('#swalTimer').textContent = timerText;
         }
     }, 1000);
 }
-// Fonction pour débloquer le bot
-function unblockBot() {
-    clearInterval(timerInterval);
-    isBotBlocked = false;
-    consecutiveLosses = 0; // Réinitialiser le compteur
-    document.getElementById('timerPopup').style.display = 'none';
-
-    // Réactiver les boutons du bot
-    document.querySelectorAll('button').forEach(button => button.disabled = false);
-
-    // Jouer le son de notification
-    playNotificationSound();
-
-    // Supprimer l'heure de fin de la pause du localStorage
-    localStorage.removeItem('timerEndTime');
+function updateTimerDisplay() {
+    const minutes = Math.floor(timerTime / 60);
+    const seconds = timerTime % 60;
+    document.getElementById('timerDisplay').textContent = `Temps restant : ${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 }
            function validateUserName() {
             const savedUserName = localStorage.getItem('userName');
@@ -2107,6 +2207,35 @@ function shouldShowTutorial() {
 // Appeler showTutorial() uniquement si shouldShowTutorial() renvoie true
 if (shouldShowTutorial()) {
     showTutorial();
+}
+function disableInversionMode() {
+    if (invertedMode) {
+        resetPatterns(); // Réinitialiser les motifs à leur état d'origine
+        invertedMode = false; // Désactiver le mode inversion
+        Swal.fire({
+            title: 'Mode inversion désactivé ! 🔄',
+            html: `
+                <p>Le mode inversion a été désactivé avec succès.</p>
+                <p><strong>Les prédictions reviennent à la normale.</strong></p>
+                <p>Vous pouvez continuer à miser de manière honnête.</p>
+            `,
+            icon: 'success',
+            confirmButtonText: 'Compris',
+            confirmButtonColor: '#28a745',
+            background: '#f0f9f0',
+            iconColor: '#28a745',
+        });
+    } else {
+        Swal.fire({
+            title: 'Information ℹ️',
+            text: 'Le mode inversion n\'est pas activé.',
+            icon: 'info',
+            confirmButtonText: 'Compris',
+            confirmButtonColor: '#007bff',
+            background: '#f0f8ff',
+            iconColor: '#007bff',
+        });
+    }
 }
         function showLevelPopup() {
             const savedLevel = localStorage.getItem('userLevel');
