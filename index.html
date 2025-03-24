@@ -1581,6 +1581,23 @@ function predictColor() {
 
     // Vérifie si le motif existe dans la liste prédéfinie
     let nextColor = predictBasedOnSimilarity(colorInput);
+    // Ajout de la vérification des trois dernières couleurs
+const lastThreeColors = colorInput.slice(-3); // Prend les 3 dernières couleurs
+if (lastThreeColors === 'RVR' || lastThreeColors === 'VRV') {
+    Swal.fire({
+        title: 'Prédiction interdite ⛔',
+        html: `
+            <p>Les trois dernières couleurs sont <strong>${lastThreeColors}</strong>.</p>
+            <p>En phase de perte, cette séquence est interdite pour éviter des pertes supplémentaires.</p>
+        `,
+        icon: 'warning',
+        confirmButtonText: 'Compris',
+        confirmButtonColor: '#ffc107',
+        background: '#fff3cd',
+        iconColor: '#ffc107',
+    });
+    return;
+}
 
     // Si le motif n'existe pas, utilise une prédiction basée sur les tendances statistiques
     if (!nextColor) {
@@ -1631,6 +1648,7 @@ function predictColor() {
     updateStats();
     saveHistoryToLocalStorage();
 }
+
 function displayPreviousResult(previousResult) {
     const lastPrediction = history.length > 1 ? history[history.length - 2] : null; // Récupérer la dernière prédiction avant la plus récente
 
