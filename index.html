@@ -300,12 +300,17 @@
         }
 
         .history-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 20px;
-        }
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    width: 100%;
+}
 
+.history-header > div {
+    display: flex;
+    gap: 10px;
+}
         .date-selector {
             display: flex;
             align-items: center;
@@ -672,13 +677,7 @@
             </div>
         </div>
         <div class="timer-container">
-        </p><button class="btn-invert" onclick="disableInversionMode()">Désactiver l'Inversion</button></p>
-        <p>1 perte activer (1) 2 perte activer bouton (2) 3 perte activer bouton (3) perte 4 activer bouton (4)</p>
-            <button onclick="startTimer(10)">10 Minutes</button>
-            <button onclick="startTimer(15)">15 Minutes</button>
-            <button onclick="startTimer(20)">20 Minutes</button>
-            <button onclick="startTimer(40)">40 Minutes</button>
-            <p>Veuillez activer le minuteur tout de suite après votre perte afin de ne pas faires des series de pertes.</p>
+       
         </div>
         <div class="input-container">
             <label for="dateInput" style="margin-left: 30px;">Date :</label>
@@ -718,11 +717,15 @@
         <p id="predictionResult"></p>
 
         <div class="history-header">
-            <div>
-                <button class="btn-undo" onclick="undoLastPrediction()">Annuler la prédiction</button>
-                <button class="btn-analyze" onclick="analyzeAllLosses()">Analyser Mes Pertes</button>
-                <button class="btn-copy" onclick="copyHistory()">Copier</button>
-                <button class="btn-export" onclick="exportHistory()">Exporter</button>
+            <div style="display: flex; justify-content: space-between; width: 100%;">
+                <div>
+                    <button class="btn-undo" onclick="undoLastPrediction()">Annuler la prédiction</button>
+                    <button class="btn-analyze" onclick="analyzeAllLosses()">Analyser Mes Pertes</button>
+                </div>
+                <div>
+                    <button class="btn-copy" onclick="copyHistory()">Copier</button>
+                    <button class="btn-export" onclick="exportHistory()">Exporter</button>
+                </div>
             </div>
         </div>
         <div id="historyContainer" class="table-container">
@@ -908,23 +911,9 @@ let previousHistory = [];
 let consecutiveLosses = 0; // Déjà déclaré ici
 let successes = 0;
 let failures = 0;
+let failedPatterns = {}; // Pour stocker les motifs ayant échoué
 let points = localStorage.getItem('totalPoints') ? parseInt(localStorage.getItem('totalPoints')) : 0;
 let lastResultWasLoss = false;
-let invertedMode = false; // Variable pour suivre si le mode inversion est activé
-// NOUVELLES VARIABLES À AJOUTER :
-let failedPatterns = {}; // Stocke les motifs ayant échoué sous la forme : { "RVV": "rouge", "VRR": "vert" }
-/*
-Explication :
-- Clé : le motif de 3 couleurs (ex: "RVV")
-- Valeur : la prédiction qui a échoué pour ce motif
-*/
-
-// Variable optionnelle pour le suivi avancé (si vous voulez plus de statistiques)
-let patternStatistics = {
-    totalPatternsRecognized: 0,
-    successfulPatterns: {},
-    failedPatternsCount: 0
-};
 let timerInterval;
 let timerTime = 0;
 let isTimerRunning = false;
@@ -1609,6 +1598,9 @@ const patterns = {
 function predictColor() {
     const colorInput = document.getElementById('colorInput').value.toUpperCase();
     const validColors = ['R', 'V'];
+    if (!checkPredictionRestrictions(colorInput)) {
+        return; // Bloque la prédiction si restriction
+    }
 
     // Validation de l'entrée
     if (colorInput.length !== 10 || !colorInput.split('').every(char => validColors.includes(char))) {
@@ -1664,6 +1656,42 @@ function predictColor() {
      
     const lastColors = colorInput.split('').map(char => char === 'R' ? 'rouge' : 'vert');
 
+    // Vérification des résultats précédents
+    const previousResult = history.find(record => record.colors === lastColors.join(', '));
+    
+    if (previousResult) {
+        return Swal.fire({
+            title: 'Prédiction existante ⚠️',
+            html: `
+                <p>Cette séquence existe déjà dans l'historique :</p>
+                <p><strong>Prédiction :</strong> ${previousResult.prediction}</p>
+                <p><strong>Résultat :</strong> ${previousResult.result === 'Échec' ? '❌ Échec' : '✅ Succès'}</p>
+                ${previousResult.result === 'Échec' ? '<p>Conseil : Essayez de miser la couleur contraire.</p>' : ''}
+            `,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Continuer quand même',
+            cancelButtonText: 'Annuler la prédiction',
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            background: '#fff3cd',
+            iconColor: '#ffc107'
+        }).then((result) => {
+            if (!result.isConfirmed) {
+                clearFields();
+                return false;
+            }
+            // Si l'utilisateur confirme, exécuter le reste de la fonction
+            return completePrediction(colorInput, lastColors, frequentColor);
+        });
+    }
+    
+    // Si pas de prédiction précédente trouvée, continuer normalement
+    return completePrediction(colorInput, lastColors, frequentColor);
+}
+
+// Nouvelle fonction pour la partie finale de la prédiction (identique à votre code original)
+function completePrediction(colorInput, lastColors, frequentColor) {
     // NOUVEAU: Analyse des motifs répétés en premier
     let nextColor = predictBasedOnRepeatedPatterns(colorInput);
 
@@ -1671,48 +1699,16 @@ function predictColor() {
     if (!nextColor) {
         // Vérifie si le motif existe dans la liste prédéfinie
         nextColor = predictBasedOnSimilarity(colorInput);
-        
+         // Vérification des restrictions avant tout
         // Vérification des trois dernières couleurs (sécurité)
         const lastThreeColors = colorInput.slice(-3);
         if (lastThreeColors === 'RVR' || lastThreeColors === 'VRV') {
-            Swal.fire({
-                title: 'Prédiction interdite ⛔',
-                html: `
-                    <p>Les trois dernières couleurs sont <strong>${lastThreeColors}</strong>.</p>
-                    <p>En phase de perte, cette séquence est interdite pour éviter des pertes supplémentaires.</p>
-                `,
-                icon: 'warning',
-                confirmButtonText: 'Compris',
-                confirmButtonColor: '#ffc107',
-                background: '#fff3cd',
-                iconColor: '#ffc107',
-            });
-            return;
         }
 
         // Si le motif n'existe pas, utilise une prédiction basée sur les tendances statistiques
         if (!nextColor) {
             nextColor = predictBasedOnTrends(colorInput);
         }
-    }
-     // Vérification du motif échoué AVANT toute autre prédiction
-     const lastThree = colorInput.slice(-3);
-    if (failedPatterns[lastThree]) {
-        nextColor = failedPatterns[lastThree] === 'rouge' ? 'vert' : 'rouge';
-        document.getElementById('previousResult').textContent = 
-            `Inversion active (${lastThree} a échoué précédemment)`;
-    }
-
-    // Vérification des résultats précédents
-    const previousResult = history.find(record => record.colors === lastColors.join(', '));
-    if (previousResult) {
-        if (previousResult.result === 'Échec') {
-            document.getElementById('previousResult').textContent = 'Cette prédiction existe déjà dans l\'historique avec résultat Échec. Essayez de miser la couleur contraire.';
-        } else {
-            document.getElementById('previousResult').textContent = `Prédiction : ${previousResult.prediction}, Résultat : ${previousResult.result}`;
-        }
-    } else {
-        document.getElementById('previousResult').textContent = '';
     }
 
     // Enregistrement de la prédiction
@@ -1754,8 +1750,8 @@ function predictColor() {
     });
     updateStats();
     saveHistoryToLocalStorage();
+    return true;
 }
-
 // NOUVELLE FONCTION: Analyse des motifs répétés
 function predictBasedOnRepeatedPatterns(colorInput) {
     // Recherche des motifs de 3 couleurs répétés
@@ -1841,6 +1837,7 @@ function predictBasedOnTrends(colorInput) {
         return globalRed >= globalGreen ? 'rouge' : 'vert';
     }
 }
+
 function displayPreviousResult(previousResult) {
     const lastPrediction = history.length > 1 ? history[history.length - 2] : null; // Récupérer la dernière prédiction avant la plus récente
 
@@ -1874,220 +1871,170 @@ function displayPreviousResult(previousResult) {
     // Vérification du feedback déjà donné
     if (lastHistoryItem.result !== '') {
         Swal.fire({
-            title: 'Attention ! ⚠️',
-            text: 'Vous ne pouvez pas donner de feedback plus d\'une fois pour chaque prédiction.',
-            icon: 'warning',
+            title: 'Action déjà enregistrée ⚠️',
+            text: 'Cette prédiction a déjà été évaluée.',
+            icon: 'info',
             confirmButtonText: 'Compris',
-            confirmButtonColor: '#ffc107',
-            background: '#fff3cd',
-            iconColor: '#ffc107',
-            showClass: {
-                popup: 'animate__animated animate__shakeX'
-            },
-            hideClass: {
-                popup: 'animate__animated animate__fadeOut'
-            }
+            confirmButtonColor: '#007bff'
         });
         return;
     }
 
     if (correct) {
-        // Gestion des succès
-        handleSuccessFeedback(lastHistoryItem);
-    } else {
-        // Gestion des échecs
-        handleFailureFeedback(lastHistoryItem);
-    }
+        // Gestion des succès - Message motivant
+        lastHistoryItem.result = 'Succès';
+        successes += 1;
+        points += 10;
+        lastResultWasLoss = false;
+        consecutiveLosses = 0;
 
-    // Mise à jour de l'interface et des statistiques
-    updateAfterFeedback();
-}
-
-// Fonction pour gérer les succès
-function handleSuccessFeedback(lastHistoryItem) {
-    lastHistoryItem.result = 'Succès';
-    successes += 1;
-    points += 10;
-    lastResultWasLoss = false;
-    consecutiveLosses = 0;
-
-    // Enregistrer le motif réussi (pour analyse future)
-    const lastColors = lastHistoryItem.colors.replace(/, /g, '').slice(-10);
-    const successfulPattern = lastColors.slice(-3);
-    if (failedPatterns[successfulPattern]) {
-        delete failedPatterns[successfulPattern]; // Retirer le motif de la liste des échecs s'il y était
-    }
-
-    // Afficher l'alerte de succès
-    Swal.fire({
-        title: 'Félicitations ! 🎉',
-        html: `
-            <p>Prédiction correcte ! Le motif ${successfulPattern} a fonctionné.</p>
-            <p>Vos points ont augmenté de +10.</p>
-        `,
-        icon: 'success',
-        confirmButtonText: 'Continuer',
-        confirmButtonColor: '#28a745',
-        background: '#f0f9f0',
-        iconColor: '#28a745',
-        showClass: {
-            popup: 'animate__animated animate__bounceIn'
-        },
-        hideClass: {
-            popup: 'animate__animated animate__bounceOut'
-        }
-    });
-
-    // Désactiver l'inversion si active
-    if (invertedMode) {
-        resetPatterns();
         Swal.fire({
-            title: 'Stratégie réinitialisée ! ✅',
+            title: 'EXCELLENT CHOIX ! 🏆',
             html: `
-                <p>Le mode inversion a été désactivé après ce succès.</p>
-                <p><strong>Conseil :</strong> Maintenez cette stratégie jusqu'au prochain échec.</p>
+                <div style="font-size: 3rem;">🎯</div>
+                <p><strong>Félicitations !</strong> Votre analyse était parfaite.</p>
+                <p>+10 points ajoutés à votre score !</p>
+                <p style="font-size: 0.8em; color: #28a745;">Continuez sur cette lancée !</p>
             `,
             icon: 'success',
-            confirmButtonText: 'Compris',
+            confirmButtonText: 'Faire une nouvelle prédiction',
             confirmButtonColor: '#28a745',
-            background: '#f0f9f0',
-            iconColor: '#28a745',
+            background: 'linear-gradient(135deg, #f0f9f0 0%, #e6f7e6 100%)',
+            showClass: {
+                popup: 'animate__animated animate__bounceIn'
+            }
         });
-    }
 
-    updateProgressBar(1);
-}
-
-// Fonction pour gérer les échecs
-function handleFailureFeedback(lastHistoryItem) {
-    lastHistoryItem.result = 'Échec';
-    failures += 1;
-    consecutiveLosses += 1;
-    lastResultWasLoss = true;
-    // Enregistrer le motif complet (10 couleurs) ET les 3 dernières couleurs
-    const lastColors = lastHistoryItem.colors.replace(/, /g, '').slice(-10);
-    const failedPattern = lastColors.slice(-3);
-    
-    // Stocker la couleur à INVERSE pour ce motif
-    failedPatterns[failedPattern] = lastHistoryItem.prediction === 'rouge' ? 'vert' : 'rouge';
-    // Gestion des pertes consécutives
-    if (consecutiveLosses >= 5) {
-        handleConsecutiveLosses();
+        updateProgressBar(1);
     } else {
-        // Afficher l'analyse de l'échec
-        const lossReason = analyzeLossReason(lastColors, lastHistoryItem.prediction, 'Échec');
-        const advice = getLossAdvice(lossReason);
+        // Gestion des échecs - Messages persuasifs avec minuteurs
+        lastHistoryItem.result = 'Échec';
+        failures += 1;
+        consecutiveLosses += 1;
+        lastResultWasLoss = true;
 
-        Swal.fire({
-            title: 'Analyse de l\'échec 🧐',
-            html: `
-                <p>Motif en échec : <strong>${failedPattern}</strong></p>
-                <p><strong>Raison :</strong> ${lossReason}</p>
-                <p><strong>Conseil :</strong> ${advice}</p>
-                <p>Ce motif sera inversé à sa prochaine apparition.</p>
-            `,
-            icon: 'info',
-            confirmButtonText: 'Compris',
-            confirmButtonColor: '#007bff',
-            background: '#f0f8ff',
-            iconColor: '#007bff',
-        });
+        let timerMinutes = 0;
+        let message = '';
+        let icon = 'error';
 
-        // Activer l'inversion seulement pour ce motif
-        if (!invertedMode) {
-            Swal.fire({
-                title: 'Inversion ciblée activée 🔄',
-                html: `
-                    <p>Ce motif </strong> sera inversé à sa prochaine apparition.</p>
-                    <p>Les autres motifs continueront de fonctionner normalement.</p>
-                `,
-                icon: 'info',
-                confirmButtonText: 'Compris',
-                confirmButtonColor: '#007bff',
-                background: '#f0f8ff',
-                iconColor: '#007bff',
-            });
+        switch(consecutiveLosses) {
+            case 1:
+                timerMinutes = 10;
+                message = `
+                    <div style="font-size: 2rem;">⚠️</div>
+                    <p><strong>Première perte</strong> - Le marché est volatil aujourd'hui.</p>
+                    <p>Nous activons un temps de réflexion de <strong>10 minutes</strong>.</p>
+                    <p style="color: #ffc107;">Utilisez ce temps pour analyser les tendances.</p>
+                `;
+                icon = 'warning';
+                break;
+            case 2:
+                timerMinutes = 15;
+                message = `
+                    <div style="font-size: 2rem;">🔔</div>
+                    <p><strong>Deuxième perte consécutive</strong> - Attention !</p>
+                    <p>Activation d'une pause de <strong>15 minutes</strong>.</p>
+                    <p style="color: #fd7e14;">C'est le moment de revoir votre stratégie.</p>
+                `;
+                break;
+            case 3:
+                timerMinutes = 20;
+                message = `
+                    <div style="font-size: 2rem;">🚨</div>
+                    <p><strong>Troisième perte consécutive</strong> - Alerte !</p>
+                    <p>Pause obligatoire de <strong>20 minutes</strong> activée.</p>
+                    <p style="color: #dc3545;">Ne vous découragez pas, analysez bien les motifs.</p>
+                `;
+                break;
+            case 4:
+                timerMinutes = 40;
+                message = `
+                    <div style="font-size: 2rem;">🛑</div>
+                    <p><strong>Quatrième perte consécutive</strong> - STOP !</p>
+                    <p>Pause prolongée de <strong>40 minutes</strong> requise.</p>
+                    <p style="color: #6c757d;">Prenez du recul, le marché sera toujours là.</p>
+                    <p><strong>Conseil :</strong> Étudiez les archives avant de reprendre.</p>
+                `;
+                break;
+            default:
+                timerMinutes = 0;
+                message = 'Perte enregistrée. Analysez les tendances.';
         }
+
+        // Affichage du message d'échec
+        Swal.fire({
+            title: 'RÉSULTAT NÉGATIF',
+            html: message,
+            icon: icon,
+            confirmButtonText: 'Compris',
+            confirmButtonColor: '#dc3545',
+            background: 'linear-gradient(135deg, #fff0f0 0%, #ffe6e6 100%)',
+            showClass: {
+                popup: 'animate__animated animate__headShake'
+            }
+        }).then(() => {
+            // Activation du minuteur si nécessaire
+            if (timerMinutes > 0) {
+                startTimer(timerMinutes);
+            }
+        });
     }
-}
 
-// Gestion des 5 pertes consécutives
-function handleConsecutiveLosses() {
-    resetPatterns();
-    consecutiveLosses = 0;
-    
-    Swal.fire({
-        title: 'Stratégie révisée ! 🔄',
-        html: `
-            <p>5 pertes consécutives détectées. Mesures spéciales activées :</p>
-            <ol>
-                <li>Tous les motifs problématiques ont été réinitialisés</li>
-                <li>Le système repasse en mode normal</li>
-                <li>Pause recommandée avant de continuer</li>
-            </ol>
-            <p><strong>Conseil :</strong> Attendez 10 minutes avant de reprendre.</p>
-        `,
-        icon: 'warning',
-        confirmButtonText: 'Compris',
-        confirmButtonColor: '#ffc107',
-        background: '#fff3cd',
-        iconColor: '#ffc107',
-    });
-}
-function showFailedPatterns() {
-    console.log("Motifs échoués enregistrés:", failedPatterns);
-    let message = "Motifs à inverser:\n";
-    for (const pattern in failedPatterns) {
-        message += `${pattern} → ${failedPatterns[pattern]}\n`;
-    }
-    Swal.fire({
-        title: 'Motifs Échoués',
-        text: message,
-        icon: 'info'
-    });
-}
-function addPredictionToHistory(prediction, colorInput) {
-    const lastColors = colorInput.split('').map(char => char === 'R' ? 'rouge' : 'vert');
-    const colorCount = colorInput.split('').reduce((count, char) => {
-        count[char] = (count[char] || 0) + 1;
-        return count;
-    }, {});
-    
-    const redPercentage = (colorCount['R'] || 0) * 10;
-    const greenPercentage = (colorCount['V'] || 0) * 10;
-    const frequentColor = redPercentage >= greenPercentage ? `${redPercentage}% Rouge` : `${greenPercentage}% Vert`;
-
-    history.push({
-        tradeNumber: history.length + 1,
-        colors: lastColors.join(', '),
-        prediction: prediction,
-        frequentColor: frequentColor,
-        result: '',
-        date: document.getElementById('dateInput').value || new Date().toLocaleDateString(),
-        modified: true // Marquer comme modifié par inversion
-    });
-
-    // ... (mise à jour de l'interface)
-}
-// Mise à jour après feedback
-function updateAfterFeedback() {
+    // Mise à jour de l'interface
     updateHistory();
     updateSuccessRate();
     updatePoints();
-    clearFields();
-    
-    if (lastResultWasLoss) {
-        document.getElementById('previousResult').textContent = 'Le dernier motif a échoué. Sa prochaine apparition sera inversée.';
-    } else {
-        document.getElementById('previousResult').textContent = '';
-    }
-    
     updateLevelButtons();
     updatePieChart();
-    checkConsecutiveLosses();
     saveHistoryToLocalStorage();
-}
 
+    // Effacement des champs comme demandé
+    document.getElementById('seriesInput').value = '';
+    document.getElementById('colorPercentage').value = '';
+    document.getElementById('predictionResult').textContent = '';
+}
+function checkPredictionRestrictions(colorSeries) {
+    const lastThree = colorSeries.slice(-3); // Récupère les 3 dernières couleurs
+    
+    // Vérification permanente (valable en tout temps)
+    if (lastThree === 'RVR' || lastThree === 'VRV') {
+        Swal.fire({
+            title: 'PRÉDICTION INTERDITE ⛔',
+            html: `
+                <div style="font-size: 2rem;">🚨</div>
+                <p>La séquence <strong>${lastThree}</strong> est strictement interdite.</p>
+                <p>Motif : Tendance trop volatile et imprévisible.</p>
+                <p style="color: #dc3545;">Veuillez attendre le prochain tour.</p>
+            `,
+            icon: 'error',
+            confirmButtonText: 'Compris',
+            confirmButtonColor: '#dc3545'
+        });
+        return false;
+    }
+
+    // Vérification seulement en phase de perte (consecutiveLosses > 0)
+    if (consecutiveLosses > 0 && (lastThree === 'RRV' || lastThree === 'VVR')) {
+        Swal.fire({
+            title: 'RESTRICTION EN PHASE DE PERTE ⚠️',
+            html: `
+                <div style="font-size: 2rem;">🛑</div>
+                <p>Vous avez ${consecutiveLosses} perte(s) consécutive(s).</p>
+                <p>La séquence <strong>${lastThree}</strong> est temporairement bloquée.</p>
+                <p style="color: #ffc107;">Stratégie de protection activée.</p>
+                <p>Attendez ${consecutiveLosses === 1 ? '10' : 
+                   consecutiveLosses === 2 ? '15' : 
+                   consecutiveLosses === 3 ? '20' : '40'} minutes ou changez de motif.</p>
+            `,
+            icon: 'warning',
+            confirmButtonText: 'Compris',
+            confirmButtonColor: '#ffc107'
+        });
+        return false;
+    }
+
+    return true; // Tout est OK
+}
 // Fonction pour analyser les raisons de l'échec (exemple)
 function analyzeLossReason(colorInput, prediction, result) {
     const colors = colorInput.split('');
@@ -2110,9 +2057,7 @@ function analyzeLossReason(colorInput, prediction, result) {
 
 // Fonction pour obtenir des conseils (exemple)
 function getLossAdvice(reason) {
-    if (reason.includes("déjà échoué")) {
-        return "Inversez systématiquement ce motif à l'avenir.";
-    }
+   
     if (reason.includes("tendance dominante")) {
         return "Suivez la tendance dominante dans vos prochaines prédictions.";
     }
@@ -2574,35 +2519,6 @@ function shouldShowTutorial() {
 if (shouldShowTutorial()) {
     showTutorial();
 }
-function disableInversionMode() {
-    if (invertedMode) {
-        resetPatterns(); // Réinitialiser les motifs à leur état d'origine
-        invertedMode = false; // Désactiver le mode inversion
-        Swal.fire({
-            title: 'Mode inversion désactivé ! 🔄',
-            html: `
-                <p>Le mode inversion a été désactivé avec succès.</p>
-                <p><strong>Les prédictions reviennent à la normale.</strong></p>
-                <p>Vous pouvez continuer à miser de manière honnête.</p>
-            `,
-            icon: 'success',
-            confirmButtonText: 'Compris',
-            confirmButtonColor: '#28a745',
-            background: '#f0f9f0',
-            iconColor: '#28a745',
-        });
-    } else {
-        Swal.fire({
-            title: 'Information ℹ️',
-            text: 'Le mode inversion n\'est pas activé.',
-            icon: 'info',
-            confirmButtonText: 'Compris',
-            confirmButtonColor: '#007bff',
-            background: '#f0f8ff',
-            iconColor: '#007bff',
-        });
-    }
-}
         function showLevelPopup() {
             const savedLevel = localStorage.getItem('userLevel');
             if (!savedLevel) {
@@ -2730,27 +2646,7 @@ function predictBasedOnSimilarity(inputPattern) {
         return predictBasedOnTrends(inputPattern); // Si aucun motif similaire n'est trouvé, utilise la prédiction basée sur les tendances
     }
 }
-function invertPatterns() {
-    for (const pattern in patterns) {
-        if (patterns[pattern] === 'rouge') {
-            patterns[pattern] = 'vert';
-        } else if (patterns[pattern] === 'vert') {
-            patterns[pattern] = 'rouge';
-        }
-    }
-    invertedMode = true;  
-}
 
-function resetPatterns() {
-    for (const pattern in patterns) {
-        if (patterns[pattern] === 'rouge') {
-            patterns[pattern] = 'vert';
-        } else if (patterns[pattern] === 'vert') {
-            patterns[pattern] = 'rouge';
-        }
-    }
-    invertedMode = false;
-}
 function predictBasedOnTrends(colorInput) {
     const lastThreeColors = colorInput.slice(-3); // Prend les 3 dernières couleurs
     const colorCount = lastThreeColors.split('').reduce((count, char) => {
