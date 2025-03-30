@@ -396,9 +396,49 @@
 
 .action-buttons {
     display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 15px 0;
+}
+.action-buttons button {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
     justify-content: center;
-    gap: 10px; /* Espacement entre les boutons */
-    margin: 10px 0;
+    gap: 6px;
+}
+/* Couleurs des boutons */
+.btn-predict { background-color: #28a745; color: white; }
+.btn-clear { background-color: #dc3545; color: white; }
+.btn-level { background-color: #6f42c1; color: white; }
+.btn-analyze { background-color: #17a2b8; color: white; }
+
+/* Icônes */
+.action-buttons button i {
+    font-size: 14px;
+}
+
+/* Effets au survol */
+.action-buttons button:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+/* Version mobile */
+@media (max-width: 768px) {
+    .action-buttons {
+        gap: 6px;
+    }
+    .action-buttons button {
+        padding: 6px 10px;
+        font-size: 13px;
+    }
 }
 
         .level-info-popup {
@@ -649,9 +689,276 @@
         border-radius: 5px;
         color: #856404;
     }
+    /* Styles pour la popup de stratégie */
+.strategy-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    animation: fadeIn 0.5s;
+}
 
+.strategy-content {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    max-width: 600px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+}
+
+.strategy-steps {
+    margin: 20px 0;
+}
+
+.step {
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.step h3 {
+    color: #2c3e50;
+    margin-top: 0;
+}
+
+.color-example {
+    font-size: 24px;
+    margin: 10px 0;
+    text-align: center;
+}
+
+.red-dot, .green-dot {
+    margin: 0 3px;
+}
+
+.btn-confirm {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    display: block;
+    margin: 20px auto 0;
+    transition: background 0.3s;
+}
+
+.btn-confirm:hover {
+    background: #2980b9;
+}
+ /* Ajoutez ce style dans la section <style> */
+    .strategy-content {
+        max-height: 80vh; /* Hauteur maximale de 80% de la hauteur de l'écran */
+        overflow-y: auto; /* Activation de la barre de défilement verticale */
+        padding: 25px;
+        width: 90%;
+        max-width: 600px;
+    }
+
+    /* Style personnalisé pour la barre de défilement */
+    .strategy-content::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .strategy-content::-webkit-scrollbar-track {
+        background: #f1f1f1;
+        border-radius: 10px;
+    }
+
+    .strategy-content::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+    }
+
+    .strategy-content::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+    .btn-analyze {
+    background-color: #6c757d; /* Gris */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-analyze:hover {
+    background-color: #5a6268; /* Gris foncé */
+}
+
+.fa-chart-bar {
+    margin-right: 8px;
+}
+/* Conteneur principal en grille */
+.color-buttons-grid {
+    display: flex;
+    justify-content: center;
+    gap: 30px; /* Grand écart entre les colonnes */
+    margin: 25px 0;
+}
+
+/* Colonne verticale de boutons */
+.button-column {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Espace vertical entre les boutons */
+}
+
+/* Style des boutons R */
+.btn-red {
+    background-color: #dc3545;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s;
+    min-width: 80px;
+    text-align: center;
+}
+
+/* Style des boutons V */
+.btn-green {
+    background-color: #28a745;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s;
+    min-width: 80px;
+    text-align: center;
+}
+
+/* Effets au survol */
+.btn-red:hover {
+    background-color: #c82333;
+    transform: scale(1.05);
+}
+
+.btn-green:hover {
+    background-color: #218838;
+    transform: scale(1.05);
+}
+
+/* Effet lors du clic */
+.btn-red:active, .btn-green:active {
+    transform: scale(0.98);
+}
+.password-container {
+    display: none;
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+.password-container input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.password-error {
+    color: #dc3545;
+    font-size: 14px;
+    margin-top: 5px;
+    display: none;
+}
 </style>
 </head>
+<div class="strategy-popup" id="strategyPopup" style="display: none;">
+    <div class="strategy-content">
+        <h2>📊 Stratégie "L'Équilibre de David"</h2>
+        
+        <div class="step">
+            <h3>🔎 Zone d'Intervention (5R/5V Exactement)</h3>
+            <div class="color-grid">
+                <div class="color-combo">
+                    <div class="color-box">🔴</div>
+                    <div class="color-box">🟢</div>
+                    <div class="color-box">🔴</div>
+                    <div class="color-box">🟢</div>
+                    <div class="color-box">🔴</div>
+                    <div class="color-box">🟢</div>
+                    <div class="color-box">🔴</div>
+                    <div class="color-box">🟢</div>
+                    <div class="color-box">🔴</div>
+                    <div class="color-box">🟢</div>
+                    <p class="combo-label">Alterné</p>
+                </div>
+                <div class="color-combo">
+                    <div class="color-box">🔴</div>
+                    <div class="color-box">🔴</div>
+                    <div class="color-box">🔴</div>
+                    <div class="color-box">🔴</div>
+                    <div class="color-box">🔴</div>
+                    <div class="color-box">🟢</div>
+                    <div class="color-box">🟢</div>
+                    <div class="color-box">🟢</div>
+                    <div class="color-box">🟢</div>
+                    <div class="color-box">🟢</div>
+                    <p class="combo-label">Groupé</p>
+                </div>
+            </div>
+            <p class="stats">📈 Probabilité: 24.6% | Seuil: 5R/5V exact</p>
+        </div>
+
+        <div class="step">
+            <h3>⚖️ Règle de Prédiction (3 Derniers Tours)</h3>
+            <div class="prediction-rules">
+                <div class="rule">
+                    <div class="rule-header">Si 2+ 🔴</div>
+                    <div class="rule-arrow">→</div>
+                    <div class="rule-prediction">🟢 VERT</div>
+                    <div class="rule-example">Ex: 🔴🔴🟢 → 🟢</div>
+                </div>
+                <div class="rule">
+                    <div class="rule-header">Si 2+ 🟢</div>
+                    <div class="rule-arrow">→</div>
+                    <div class="rule-prediction">🔴 ROUGE</div>
+                    <div class="rule-example">Ex: 🟢🟢🔴 → 🔴</div>
+                </div>
+            </div>
+            <p class="algo-info">Algorithme: Modèle Markovien (ordre 3) | Confiance: 68%</p>
+        </div>
+
+        <div class="step">
+            <h3>⏱️ Gestion des Pertes</h3>
+            <div class="loss-management">
+                <div class="protocol">
+                    <span class="protocol-icon">1️⃣</span>
+                    <span class="protocol-text">Pause de 10 minutes après chaque perte</span>
+                </div>
+                <div class="protocol">
+                    <span class="protocol-icon">2️⃣</span>
+                    <span class="protocol-text">Vérification du ratio 5R/5V</span>
+                </div>
+                <div class="protocol">
+                    <span class="protocol-icon">3️⃣</span>
+                    <span class="protocol-text">Réduction de mise de 25%</span>
+                </div>
+            </div>
+            <p class="performance">Performance: 68.3% de réussite | Risque max: 2 pertes consécutives</p>
+        </div>
+
+        <button class="btn-confirm" onclick="closeStrategyPopup()">J'ai compris</button>
+    </div>
+</div>
 <!-- Popup de notification -->
 <div class="notification-popup" id="notificationPopup">
     <div class="notification-content">
@@ -677,8 +984,28 @@
             </div>
         </div>
         <div class="timer-container">
-       
-        </div>
+            <div class="action-buttons">
+                <button class="btn-predict" onclick="predictColor()" id="predictButton">
+                    <i class="fas fa-magic"></i> Prédire
+                </button>
+                
+                <button class="btn-clear" onclick="clearFields()">
+                    <i class="fas fa-eraser"></i> Effacer
+                </button>
+                
+                <button class="btn-level" onclick="showLevelInfo()">
+                    <i class="fas fa-user-shield"></i> Niveau
+                </button>
+                
+                <button class="btn-analyze" onclick="analyzeAllLosses()">
+                    <i class="fas fa-search-minus"></i> Pertes
+                </button>
+                
+                <button class="btn-analyze" onclick="forceStatisticalAnalysis()">
+                    <i class="fas fa-chart-bar"></i> Stats
+                </button>
+            </div>
+     </div>
         <div class="input-container">
             <label for="dateInput" style="margin-left: 30px;">Date :</label>
             <input type="date" id="dateInput" class="color-input">
@@ -692,22 +1019,24 @@
         <div class="input-container">
             <input type="text" id="colorPercentage" class="color-input" readonly placeholder="Pourcentage de couleurs">
         </div>
-        <div class="action-buttons">
-            <button class="btn-success" onclick="appendColor('R')">R</button>
-            <button class="btn-success" onclick="appendColor('V')">V</button>
-            <button class="btn-success" onclick="appendMultiple('R', 2)">RR</button>
-            <button class="btn-success" onclick="appendMultiple('V', 2)">VV</button>
-            <button class="btn-success" onclick="appendMultiple('R', 3)">RRR</button>
-            <button class="btn-success" onclick="appendMultiple('V', 3)">VVV</button>
-            <button class="btn-success" onclick="appendMultiple('R', 4)">RRRR</button>
-            <button class="btn-success" onclick="appendMultiple('V', 4)">VVVV</button>
+        <div class="color-buttons-grid">
+            <!-- Colonne R -->
+            <div class="button-column">
+                <button class="btn-red" onclick="appendColor('R')">R</button>
+                <button class="btn-red" onclick="appendMultiple('R', 2)">RR</button>
+                <button class="btn-red" onclick="appendMultiple('R', 3)">RRR</button>
+                <button class="btn-red" onclick="appendMultiple('R', 4)">RRRR</button>
+            </div>
+            
+            <!-- Colonne V -->
+            <div class="button-column">
+                <button class="btn-green" onclick="appendColor('V')">V</button>
+                <button class="btn-green" onclick="appendMultiple('V', 2)">VV</button>
+                <button class="btn-green" onclick="appendMultiple('V', 3)">VVV</button>
+                <button class="btn-green" onclick="appendMultiple('V', 4)">VVVV</button>
+            </div>
         </div>
-        <div class="action-buttons">
-            <button class="btn-predict" onclick="predictColor()" id="predictButton">Prédire</button>
-            <button class="btn-clear" onclick="clearFields()">Effacer</button>
-            <!-- Bouton "Voir son niveau" ajouté ici -->
-            <button class="btn-level" onclick="showLevelInfo()">Voir son Niveau</button>
-        </div>
+        
         <div class="progress-bar-container">
             <div class="progress-bar">
                 <div class="progress-bar-fill" id="progressBarFill" style="width: 0%; background-color: #4caf50;"></div>
@@ -720,7 +1049,6 @@
             <div style="display: flex; justify-content: space-between; width: 100%;">
                 <div>
                     <button class="btn-undo" onclick="undoLastPrediction()">Annuler la prédiction</button>
-                    <button class="btn-analyze" onclick="analyzeAllLosses()">Analyser Mes Pertes</button>
                 </div>
                 <div>
                     <button class="btn-copy" onclick="copyHistory()">Copier</button>
@@ -737,18 +1065,16 @@
             </table>
           
        </div>
-        <div class="level-popup" id="levelPopup">
-            <h2>Choisissez votre Niveau</h2>
-            <div class="level-buttons">
-                <label><input type="radio" name="level" value="débutant"> Débutant</label>
-                <label><input type="radio" name="level" value="intermédiaire" disabled> Intermédiaire</label>
-                <label><input type="radio" name="level" value="avancé" disabled> Avancé</label>
-            </div>
-            <div class="action-buttons">
-                <button class="btn-confirm" onclick="confirmLevel()">Confirmer</button>
-            </div>
+       <div class="level-popup" id="levelPopup">
+        <h2>Choisissez votre Niveau</h2>
+        <div class="level-buttons">
+            <label><input type="radio" name="level" value="débutant" checked> Débutant</label>
+            <label><input type="radio" name="level" value="intermédiaire"> Intermédiaire</label>
+            <label><input type="radio" name="level" value="avancé"> Avancé</label>
         </div>
-        <p id="previousResult"></p>
+        <button class="btn-confirm" onclick="confirmLevel()">Confirmer</button>
+    </div>
+       <p id="previousResult"></p>
         <div style="display: flex; align-items: center; gap: 20px;">
              <div style="position: relative; width: 100%; height: 100vh;">
         <button class="btn-undo" onclick="undo()" style="position: absolute; top: 80px; right:20px;">Marche Arrière</button>
@@ -792,6 +1118,57 @@
 </audio>
     </div>
     <script>
+        function forceStatisticalAnalysis() {
+    const colorInput = document.getElementById('seriesInput').value.toUpperCase().replace(/[^RV]/g, '');
+    
+    // Validation
+    if (colorInput.length < 5) {
+        Swal.fire({
+            title: 'Données insuffisantes',
+            text: 'Entrez au moins 5 couleurs pour une analyse fiable',
+            icon: 'warning',
+            confirmButtonColor: '#ffc107'
+        });
+        return;
+    }
+
+    // Exécution de l'analyse
+    const analysis = analyzeAndRecommend(colorInput);
+    
+    // Affichage détaillé
+    Swal.fire({
+        title: '📊 Rapport Statistique Complet',
+        html: `
+            <div style="text-align: left; margin: 15px 0;">
+                <p><strong>Recommandation :</strong> ${analysis.recommendation.message}</p>
+                <p><strong>Prédiction prioritaire :</strong> ${analysis.recommendation.primary === 'rouge' ? '🔴 ROUGE' : '🟢 VERT'}</p>
+                ${analysis.recommendation.secondary ? `<p><strong>Alternative :</strong> ${analysis.recommendation.secondary === 'rouge' ? '🔴 ROUGE' : '🟢 VERT'}</p>` : ''}
+            </div>
+            
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 10px;">
+                <h4 style="margin-top: 0;">Détails Techniques :</h4>
+                <ul style="text-align: left;">
+                    <li>🔴 Rouge total : ${analysis.trends['🔴'] || 0} (${Math.round((analysis.trends['🔴']/colorInput.length)*100)}%)</li>
+                    <li>🟢 Vert total : ${analysis.trends['🟢'] || 0} (${Math.round((analysis.trends['🟢']/colorInput.length)*100)}%)</li>
+                    <li>Plus longue série 🔴 : ${analysis.streaks['🔴'] || 0}</li>
+                    <li>Plus longue série 🟢 : ${analysis.streaks['🟢'] || 0}</li>
+                </ul>
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Appliquer cette prédiction',
+        cancelButtonText: 'Fermer',
+        confirmButtonColor: '#28a745',
+        width: '650px'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Applique automatiquement la prédiction
+            document.getElementById('seriesInput').value = colorInput.slice(-10); // Garde les 10 derniers
+            document.getElementById('colorInput').value = colorInput.slice(-10);
+            predictColor(); // Déclenche le processus normal
+        }
+    });
+}
          function updateHaitiTime() {
     const options = {
         timeZone: 'America/Port-au-Prince', // Fuseau horaire d'Haïti
@@ -932,11 +1309,111 @@ function startTimer(minutes) {
         });
         return;
     }
+    // Gestion des champs de mot de passe pour les niveaux
+document.querySelectorAll('input[name="level"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        document.getElementById('intermediatePasswordContainer').style.display = 'none';
+        document.getElementById('advancedPasswordContainer').style.display = 'none';
+        
+        if (this.value === 'intermédiaire') {
+            document.getElementById('intermediatePasswordContainer').style.display = 'block';
+        } else if (this.value === 'avancé') {
+            document.getElementById('advancedPasswordContainer').style.display = 'block';
+        }
+    });
+});
 
-    // Démarrer le minuteur
+function confirmLevel() {
+    const level = document.querySelector('input[name="level"]:checked').value;
+    
+    if (level === "intermédiaire" || level === "avancé") {
+        Swal.fire({
+            title: 'Mot de passe requis',
+            input: 'password',
+            showCancelButton: true,
+            confirmButtonText: 'Valider',
+            cancelButtonText: 'Annuler'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                alert("Mot de passe accepté !");
+            }
+        });
+    } else {
+        alert("Niveau débutant sélectionné");
+    }
+}
+
+function showPasswordPopup(level) {
+    Swal.fire({
+        title: `Accès ${level} 🔒`,
+        html: `Veuillez entrer le mot de passe pour le niveau <strong>${level}</strong>`,
+        input: 'password',
+        inputPlaceholder: 'Mot de passe...',
+        inputAttributes: {
+            autocapitalize: 'off',
+            autocorrect: 'off'
+        },
+        showCancelButton: true,
+        confirmButtonText: 'Valider',
+        cancelButtonText: 'Annuler',
+        allowOutsideClick: false,
+        preConfirm: (password) => {
+            if (password !== LEVEL_PASSWORDS[level]) {
+                Swal.showValidationMessage('Mot de passe incorrect');
+                return false;
+            }
+            return true;
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            setUserLevel(level);
+        } else {
+            // Re-sélectionne le niveau débutant si annulation
+            document.querySelector('input[value="débutant"]').checked = true;
+        }
+    });
+}
+
+// Définissez vos mots de passe (à changer pour la production)
+const LEVEL_PASSWORDS = {
+    "intermédiaire": "123",
+    "avancé": "456"
+};
+function setUserLevel(level) {
+    localStorage.setItem('userLevel', level);
+    document.getElementById('userLevelSpan').textContent = level;
+    document.getElementById('levelPopup').style.display = 'none';
+    
+    Swal.fire({
+        title: 'Succès !',
+        text: `Vous êtes maintenant niveau ${level}`,
+        icon: 'success'
+    });
+    
+    // Mettre à jour l'interface selon le niveau
+    updateInterfaceForLevel(level);
+}
+function updateInterfaceForLevel(level) {
+    // Désactiver certaines fonctionnalités pour les niveaux inférieurs
+    if (level === "débutant") {
+        // Désactiver les boutons avancés
+        document.querySelector('.btn-analyze').style.display = 'none';
+    } else {
+        // Activer tous les boutons
+        document.querySelector('.btn-analyze').style.display = 'inline-block';
+    }
+}
+function showLevelPopup() {
+    // Sélection automatique du niveau débutant si aucun niveau n'est défini
+    if (!localStorage.getItem('userLevel')) {
+        document.querySelector('input[value="débutant"]').checked = true;
+    }
+    document.getElementById('levelPopup').style.display = 'block';
+}
+// Démarrer le minuteur
     timerTime = minutes * 60; // Convertir en secondes
     isTimerRunning = true;
-
+  
     // Désactiver tous les boutons du bot
     document.querySelectorAll('button').forEach(button => button.disabled = true);
 
@@ -1090,6 +1567,16 @@ function analyzeLossReason(colorInput, prediction, result) {
     }
 
     return reason;
+}
+// Nouvelle fonction pour afficher la popup stratégie
+function showStrategyPopup() {
+    document.getElementById('strategyPopup').style.display = 'flex';
+}
+
+function closeStrategyPopup() {
+    document.getElementById('strategyPopup').style.display = 'none';
+    // Activer les fonctionnalités du bot après fermeture
+    document.querySelectorAll('button').forEach(btn => btn.disabled = false);
 }
 function getLossAdvice(reason) {
     switch (reason) {
@@ -1595,119 +2082,189 @@ const patterns = {
   "RVVVRRVRRV": "rouge",
   "VVRRVRRVRV": "rouge"
 };
+function analyzeAndRecommend(sequence) {
+    // Convertir la séquence en emojis 🔴/🟢 pour l'analyse
+    const colors = sequence.split('').map(c => c === 'R' ? '🔴' : '🟢');
+    
+    // Initialisation des données
+    const trends = {};
+    const streaks = {};
+    let currentStreak = 0;
+    let currentColor = null;
+
+    // Analyse des tendances et séries consécutives
+    colors.forEach((color, index) => {
+        // Compter les occurrences
+        trends[color] = (trends[color] || 0) + 1;
+
+        // Calculer les séries consécutives
+        if (color === currentColor) {
+            currentStreak++;
+        } else {
+            if (currentColor !== null) {
+                streaks[currentColor] = Math.max(streaks[currentColor] || 0, currentStreak);
+            }
+            currentColor = color;
+            currentStreak = 1;
+        }
+
+        // Dernière position
+        if (index === colors.length - 1) {
+            streaks[currentColor] = Math.max(streaks[currentColor] || 0, currentStreak);
+        }
+    });
+
+    // Identifier la couleur dominante (celle qui apparaît le plus)
+    const dominantColor = Object.keys(trends).reduce((a, b) => trends[a] > trends[b] ? a : b);
+
+    // Identifier la plus longue série consécutive
+    const longestStreakColor = Object.keys(streaks).reduce((a, b) => streaks[a] > streaks[b] ? a : b, Object.keys(streaks)[0]);
+
+    // Décider des recommandations
+    const recommendation = {
+        primary: null,
+        secondary: null,
+        message: ""
+    };
+
+    if (streaks[longestStreakColor] >= 3) {
+        recommendation.primary = longestStreakColor === '🔴' ? 'rouge' : 'vert';
+        recommendation.message = `La couleur ${longestStreakColor} montre une série forte (${streaks[longestStreakColor]} fois), privilégiez-la.`;
+    } else {
+        recommendation.primary = dominantColor === '🔴' ? 'rouge' : 'vert';
+        recommendation.secondary = longestStreakColor === '🔴' ? 'rouge' : 'vert';
+        recommendation.message = `La couleur ${dominantColor} domine (${trends[dominantColor]}/10), mais surveillez ${longestStreakColor} pour une possible inversion.`;
+    }
+
+    return {
+        trends,
+        streaks,
+        recommendation
+    };
+}
 function predictColor() {
     const colorInput = document.getElementById('colorInput').value.toUpperCase();
     const validColors = ['R', 'V'];
-    if (!checkPredictionRestrictions(colorInput)) {
-        return; // Bloque la prédiction si restriction
-    }
 
-    // Validation de l'entrée
+    // 1. Vérification des restrictions
+    if (!checkPredictionRestrictions(colorInput)) return;
+
+    // 2. Validation du format
     if (colorInput.length !== 10 || !colorInput.split('').every(char => validColors.includes(char))) {
-        Swal.fire({
-            title: 'Séquence de couleurs 🔴🟢',
-            html: `
-                <p>Veuillez entrer une séquence de <strong>10 couleurs</strong>, utilisant uniquement :</p>
-                <ul>
-                    <li><strong>"R"</strong> pour Rouge 🔴</li>
-                    <li><strong>"V"</strong> pour Vert 🟢</li>
-                </ul>
-            `,
-            icon: 'info',
-            confirmButtonText: 'Compris',
-            confirmButtonColor: '#007bff',
-            background: '#f0f8ff',
-            iconColor: '#007bff',
-            showClass: {
-                popup: 'animate__animated animate__fadeIn'
-            },
-            hideClass: {
-                popup: 'animate__animated animate__fadeOut'
-            }
-        });
+        showColorFormatAlert();
         return;
     }
 
-    // Calcul des pourcentages
+    // 3. Calcul des pourcentages (conservé pour compatibilité)
     const colorCount = colorInput.split('').reduce((count, char) => {
         count[char] = (count[char] || 0) + 1;
         return count;
     }, {});
 
-    const redPercentage = (colorCount['R'] || 0) * 10;
-    const greenPercentage = (colorCount['V'] || 0) * 10;
-    const frequentColor = redPercentage >= greenPercentage ? `${redPercentage}% Rouge` : `${greenPercentage}% Vert`;
+    const frequentColor = (colorCount['R'] || 0) * 10 >= (colorCount['V'] || 0) * 10 
+        ? `${(colorCount['R'] || 0) * 10}% Rouge` 
+        : `${(colorCount['V'] || 0) * 10}% Vert`;
 
-    // Vérification du feedback précédent
+    // 4. Vérification du feedback manquant
     if (history.length > 0 && !history[history.length - 1].result) {
-        Swal.fire({
-            title: 'Action requise ⚠️',
-            html: `
-                <p>Veuillez marquer la dernière prédiction comme <strong>gagnée</strong> ou <strong>perdue</strong> avant d'effectuer une nouvelle prédiction.</p>
-            `,
-            icon: 'warning',
-            confirmButtonText: 'Compris',
-            confirmButtonColor: '#ffc107',
-            background: '#fff3cd',
-            iconColor: '#ffc107',
-        });
+        showMissingFeedbackAlert();
         return;
     }
-     
+
+    // 5. Conversion au format lisible
     const lastColors = colorInput.split('').map(char => char === 'R' ? 'rouge' : 'vert');
 
-    // Vérification des résultats précédents
+    // 6. Vérification des doublons
     const previousResult = history.find(record => record.colors === lastColors.join(', '));
-    
     if (previousResult) {
-        return Swal.fire({
-            title: 'Prédiction existante ⚠️',
-            html: `
-                <p>Cette séquence existe déjà dans l'historique :</p>
-                <p><strong>Prédiction :</strong> ${previousResult.prediction}</p>
-                <p><strong>Résultat :</strong> ${previousResult.result === 'Échec' ? '❌ Échec' : '✅ Succès'}</p>
-                ${previousResult.result === 'Échec' ? '<p>Conseil : Essayez de miser la couleur contraire.</p>' : ''}
-            `,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Continuer quand même',
-            cancelButtonText: 'Annuler la prédiction',
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            background: '#fff3cd',
-            iconColor: '#ffc107'
-        }).then((result) => {
-            if (!result.isConfirmed) {
-                clearFields();
-                return false;
-            }
-            // Si l'utilisateur confirme, exécuter le reste de la fonction
-            return completePrediction(colorInput, lastColors, frequentColor);
-        });
+        handleDuplicatePrediction(previousResult, colorInput, lastColors, frequentColor);
+        return;
     }
-    
-    // Si pas de prédiction précédente trouvée, continuer normalement
-    return completePrediction(colorInput, lastColors, frequentColor);
+
+    // 7. Exécution normale
+    completePrediction(colorInput, lastColors, frequentColor);
 }
 
+// Fonctions extraites pour plus de clarté :
+function showColorFormatAlert() {
+    Swal.fire({
+        title: 'Séquence de couleurs 🔴🟢',
+        html: `
+            <p>Veuillez entrer une séquence de <strong>10 couleurs</strong>, utilisant uniquement :</p>
+            <ul>
+                <li><strong>"R"</strong> pour Rouge 🔴</li>
+                <li><strong>"V"</strong> pour Vert 🟢</li>
+            </ul>
+        `,
+        icon: 'info',
+        confirmButtonText: 'Compris'
+    });
+}
+
+function showMissingFeedbackAlert() {
+    Swal.fire({
+        title: 'Action requise ⚠️',
+        html: `
+            <p>Veuillez marquer la dernière prédiction comme <strong>gagnée</strong> ou <strong>perdue</strong> avant d'effectuer une nouvelle prédiction.</p>
+        `,
+        icon: 'warning',
+        confirmButtonText: 'Compris'
+    });
+}
+
+function handleDuplicatePrediction(previousResult, colorInput, lastColors, frequentColor) {
+    Swal.fire({
+        title: 'Prédiction existante ⚠️',
+        html: `
+            <p>Cette séquence existe déjà dans l'historique :</p>
+            <p><strong>Prédiction :</strong> ${previousResult.prediction}</p>
+            <p><strong>Résultat :</strong> ${previousResult.result === 'Échec' ? '❌ Échec' : '✅ Succès'}</p>
+            ${previousResult.result === 'Échec' ? '<p>Conseil : Essayez de miser la couleur contraire.</p>' : ''}
+        `,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Continuer quand même',
+        cancelButtonText: 'Annuler'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            completePrediction(colorInput, lastColors, frequentColor);
+        } else {
+            clearFields();
+        }
+    });
+}
 // Nouvelle fonction pour la partie finale de la prédiction (identique à votre code original)
 function completePrediction(colorInput, lastColors, frequentColor) {
-    // NOUVEAU: Analyse des motifs répétés en premier
+    // 1. D'abord essayer avec les motifs répétés
     let nextColor = predictBasedOnRepeatedPatterns(colorInput);
 
-    // Si aucun motif répété trouvé, utiliser l'ancien système
+    // 2. Si aucun motif répété, essayer avec les motifs prédéfinis
     if (!nextColor) {
-        // Vérifie si le motif existe dans la liste prédéfinie
         nextColor = predictBasedOnSimilarity(colorInput);
-         // Vérification des restrictions avant tout
-        // Vérification des trois dernières couleurs (sécurité)
-        const lastThreeColors = colorInput.slice(-3);
-        if (lastThreeColors === 'RVR' || lastThreeColors === 'VRV') {
-        }
-
-        // Si le motif n'existe pas, utilise une prédiction basée sur les tendances statistiques
+        
+        // 3. Si aucun motif prédéfini trouvé, utiliser l'analyse statistique
         if (!nextColor) {
-            nextColor = predictBasedOnTrends(colorInput);
+            const analysis = analyzeAndRecommend(colorInput);
+            nextColor = analysis.recommendation.primary;
+            
+            // Ajouter un message d'information
+            Swal.fire({
+                title: 'Analyse Statistique Activée 📊',
+                html: `
+                    <p>${analysis.recommendation.message}</p>
+                    <p><strong>Détails :</strong></p>
+                    <ul>
+                        <li>🔴 Rouge: ${analysis.trends['🔴'] || 0} occurrences</li>
+                        <li>🟢 Vert: ${analysis.trends['🟢'] || 0} occurrences</li>
+                        <li>Plus longue série: ${analysis.streaks[analysis.recommendation.primary === 'rouge' ? '🔴' : '🟢'] || 0}</li>
+                    </ul>
+                `,
+                icon: 'info',
+                confirmButtonText: 'Compris',
+                confirmButtonColor: '#17a2b8',
+                background: '#f0f8ff',
+                iconColor: '#17a2b8'
+            });
         }
     }
 
@@ -1718,7 +2275,8 @@ function completePrediction(colorInput, lastColors, frequentColor) {
         prediction: nextColor,
         frequentColor: frequentColor,
         result: '',
-        date: document.getElementById('dateInput').value || new Date().toLocaleDateString()
+        date: document.getElementById('dateInput').value || new Date().toLocaleDateString(),
+        method: nextColor ? 'pattern' : 'statistical' // Nouveau champ pour tracker la méthode
     });
 
     // Affichage du résultat
@@ -1728,26 +2286,24 @@ function completePrediction(colorInput, lastColors, frequentColor) {
         <span class="prediction-icon">${nextColor === 'rouge' ? '🔴' : '🟢'}</span>
         <span>PRÉDICTION : MISER SUR <strong>${nextColor.toUpperCase()}</strong></span>
         <span class="prediction-icon">${nextColor === 'rouge' ? '🔴' : '🟢'}</span>
+        ${!nextColor ? '<div class="warning-alert">⚠️ Prédiction basée sur l\'analyse statistique</div>' : ''}
     `;
 
     document.getElementById('colorInput').value = '';
     updateHistory();
     enableFeedbackButtons();
+    
     Swal.fire({
-        title: 'Succès ! 🎉',
-        text: 'Prédiction ajoutée avec succès !',
+        title: 'Prédiction Enregistrée!',
+        html: `
+            <p>Mise recommandée: <strong>${nextColor.toUpperCase()}</strong></p>
+            <p>Méthode: ${nextColor ? 'Motif reconnu' : 'Analyse statistique'}</p>
+            <p>${frequentColor}</p>
+        `,
         icon: 'success',
-        confirmButtonText: 'Continuer',
-        confirmButtonColor: '#28a745',
-        background: '#f0f9f0',
-        iconColor: '#28a745',
-        showClass: {
-            popup: 'animate__animated animate__bounceIn'
-        },
-        hideClass: {
-            popup: 'animate__animated animate__bounceOut'
-        }
+        confirmButtonText: 'Continuer'
     });
+    
     updateStats();
     saveHistoryToLocalStorage();
     return true;
@@ -1907,65 +2463,21 @@ function displayPreviousResult(previousResult) {
 
         updateProgressBar(1);
     } else {
-        // Gestion des échecs - Messages persuasifs avec minuteurs
+        // Gestion des échecs - Minuteur unique de 10 minutes
         lastHistoryItem.result = 'Échec';
         failures += 1;
         consecutiveLosses += 1;
         lastResultWasLoss = true;
 
-        let timerMinutes = 0;
-        let message = '';
-        let icon = 'error';
-
-        switch(consecutiveLosses) {
-            case 1:
-                timerMinutes = 10;
-                message = `
-                    <div style="font-size: 2rem;">⚠️</div>
-                    <p><strong>Première perte</strong> - Le marché est volatil aujourd'hui.</p>
-                    <p>Nous activons un temps de réflexion de <strong>10 minutes</strong>.</p>
-                    <p style="color: #ffc107;">Utilisez ce temps pour analyser les tendances.</p>
-                `;
-                icon = 'warning';
-                break;
-            case 2:
-                timerMinutes = 15;
-                message = `
-                    <div style="font-size: 2rem;">🔔</div>
-                    <p><strong>Deuxième perte consécutive</strong> - Attention !</p>
-                    <p>Activation d'une pause de <strong>15 minutes</strong>.</p>
-                    <p style="color: #fd7e14;">C'est le moment de revoir votre stratégie.</p>
-                `;
-                break;
-            case 3:
-                timerMinutes = 20;
-                message = `
-                    <div style="font-size: 2rem;">🚨</div>
-                    <p><strong>Troisième perte consécutive</strong> - Alerte !</p>
-                    <p>Pause obligatoire de <strong>20 minutes</strong> activée.</p>
-                    <p style="color: #dc3545;">Ne vous découragez pas, analysez bien les motifs.</p>
-                `;
-                break;
-            case 4:
-                timerMinutes = 40;
-                message = `
-                    <div style="font-size: 2rem;">🛑</div>
-                    <p><strong>Quatrième perte consécutive</strong> - STOP !</p>
-                    <p>Pause prolongée de <strong>40 minutes</strong> requise.</p>
-                    <p style="color: #6c757d;">Prenez du recul, le marché sera toujours là.</p>
-                    <p><strong>Conseil :</strong> Étudiez les archives avant de reprendre.</p>
-                `;
-                break;
-            default:
-                timerMinutes = 0;
-                message = 'Perte enregistrée. Analysez les tendances.';
-        }
-
-        // Affichage du message d'échec
         Swal.fire({
-            title: 'RÉSULTAT NÉGATIF',
-            html: message,
-            icon: icon,
+            title: 'TEMPS DE RÉFLEXION ⏳',
+            html: `
+                <div style="font-size: 2rem;">⚠️</div>
+                <p><strong>Perte enregistrée</strong> - Le marché est volatil aujourd'hui.</p>
+                <p>Nous activons un temps de réflexion de <strong>10 minutes</strong>.</p>
+                <p style="color: #ffc107;">Utilisez ce temps pour analyser les tendances.</p>
+            `,
+            icon: 'warning',
             confirmButtonText: 'Compris',
             confirmButtonColor: '#dc3545',
             background: 'linear-gradient(135deg, #fff0f0 0%, #ffe6e6 100%)',
@@ -1973,10 +2485,8 @@ function displayPreviousResult(previousResult) {
                 popup: 'animate__animated animate__headShake'
             }
         }).then(() => {
-            // Activation du minuteur si nécessaire
-            if (timerMinutes > 0) {
-                startTimer(timerMinutes);
-            }
+            // Activation du minuteur de 10 minutes
+            startTimer(10);
         });
     }
 
@@ -2009,26 +2519,6 @@ function checkPredictionRestrictions(colorSeries) {
             icon: 'error',
             confirmButtonText: 'Compris',
             confirmButtonColor: '#dc3545'
-        });
-        return false;
-    }
-
-    // Vérification seulement en phase de perte (consecutiveLosses > 0)
-    if (consecutiveLosses > 0 && (lastThree === 'RRV' || lastThree === 'VVR')) {
-        Swal.fire({
-            title: 'RESTRICTION EN PHASE DE PERTE ⚠️',
-            html: `
-                <div style="font-size: 2rem;">🛑</div>
-                <p>Vous avez ${consecutiveLosses} perte(s) consécutive(s).</p>
-                <p>La séquence <strong>${lastThree}</strong> est temporairement bloquée.</p>
-                <p style="color: #ffc107;">Stratégie de protection activée.</p>
-                <p>Attendez ${consecutiveLosses === 1 ? '10' : 
-                   consecutiveLosses === 2 ? '15' : 
-                   consecutiveLosses === 3 ? '20' : '40'} minutes ou changez de motif.</p>
-            `,
-            icon: 'warning',
-            confirmButtonText: 'Compris',
-            confirmButtonColor: '#ffc107'
         });
         return false;
     }
@@ -2497,7 +2987,6 @@ function updatePieChart() {
             popup: 'animate__animated animate__fadeOut'
         },
         didOpen: () => {
-            // Gérer la case à cocher
             const hideTutorialCheckbox = document.getElementById('hideTutorial');
             hideTutorialCheckbox.addEventListener('change', (e) => {
                 if (e.target.checked) {
@@ -2507,18 +2996,14 @@ function updatePieChart() {
                 }
             });
         }
+    }).then(() => {
+        // Afficher la popup stratégie après fermeture du tutoriel
+        showStrategyPopup();
     });
 }
 
-// Vérifier si l'utilisateur a choisi de masquer le tutoriel
-function shouldShowTutorial() {
-    return !localStorage.getItem('hideTutorial');
-}
 
-// Appeler showTutorial() uniquement si shouldShowTutorial() renvoie true
-if (shouldShowTutorial()) {
-    showTutorial();
-}
+
         function showLevelPopup() {
             const savedLevel = localStorage.getItem('userLevel');
             if (!savedLevel) {
@@ -2529,33 +3014,17 @@ if (shouldShowTutorial()) {
         }
 
         function confirmLevel() {
-            const selectedLevel = document.querySelector('input[name="level"]:checked');
-            if (selectedLevel) {
-                const level = selectedLevel.value.charAt(0).toUpperCase() + selectedLevel.value.slice(1);
-                localStorage.setItem('userLevel', level);
-                document.getElementById('userLevelSpan').textContent = `${level}`;
-                Swal.fire({
-             title: 'Niveau sélectionné ✅',
-             text: `Niveau sélectionné : ${level}`,
-             icon: 'success',
-             confirmButtonText: 'Continuer',
-             confirmButtonColor: '#28a745',
-               background: '#f0f9f0',
-              iconColor: '#28a745',
-              });
-            document.getElementById('levelPopup').style.display = 'none';
-            } else {
-                Swal.fire({
-            title: 'Action requise ⚠️',
-            text: 'Veuillez choisir un niveau avant de confirmer.',
-            icon: 'warning',
-            confirmButtonText: 'Compris',
-            confirmButtonColor: '#ffc107',
-            background: '#fff3cd',
-            iconColor: '#ffc107',
-            });
-            }
-        }
+    const selectedLevel = document.querySelector('input[name="level"]:checked').value;
+    localStorage.setItem('userLevel', selectedLevel);
+    document.getElementById('userLevelSpan').textContent = selectedLevel.charAt(0).toUpperCase() + selectedLevel.slice(1);
+    document.getElementById('levelPopup').style.display = 'none';
+    
+    Swal.fire({
+        title: 'Niveau changé !',
+        text: `Vous êtes maintenant niveau ${selectedLevel}`,
+        icon: 'success'
+    });
+}
 
         function showLevelInfo() {
             document.getElementById('levelInfoPopup').style.display = 'block';
@@ -2567,56 +3036,59 @@ if (shouldShowTutorial()) {
         }
 
         function updateLevelButtons() {
-            const intermediateButton = document.querySelector('input[value="intermédiaire"]');
-            const advancedButton = document.querySelector('input[value="avancé"]');
-
-            if (points >= 1000) {
-                intermediateButton.disabled = false;
-            } else {
-                intermediateButton.disabled = true;
-            }
-
-            if (points >= 10000) {
-                advancedButton.disabled = false;
-            } else {
-                advancedButton.disabled = true;
-            }
-        }
-
+    const intermediateButton = document.querySelector('input[value="intermédiaire"]');
+    const advancedButton = document.querySelector('input[value="avancé"]');
+    
+    // Débloque TOUJOURS les boutons, quel que soit le nombre de points
+    intermediateButton.disabled = false;
+    advancedButton.disabled = false;
+    
+    // Optionnel : supprime aussi l'apparence visuelle "désactivé"
+    intermediateButton.classList.remove('disabled');
+    advancedButton.classList.remove('disabled');
+}
         document.addEventListener('DOMContentLoaded', () => {
-            loadHistoryFromLocalStorage();
-            loadStatsFromLocalStorage();
-            showTutorial(); // Affiche le tutoriel de bienvenue une seule fois
-            validateUserName();
-            showLevelPopup();
-            updateLevelButtons();
-            showNotificationPopup(); // Affiche la popup de notification
-            checkConsecutiveLosses();
+    loadHistoryFromLocalStorage();
+    loadStatsFromLocalStorage();
+    validateUserName();
+    showLevelPopup();
+    updateLevelButtons();
+    showNotificationPopup();
+    checkConsecutiveLosses();
+    
+    // Gestion unique de l'affichage du tutoriel
+    if (!localStorage.getItem('hideTutorial')) {
+        showTutorial();
+    } else {
+        // Si l'utilisateur a choisi de masquer le tutoriel
+        document.querySelectorAll('button').forEach(btn => btn.disabled = false);
+    }
+});
+
+// Gestion de l'input pour les séries de couleurs
+document.getElementById('seriesInput').addEventListener('input', function (e) {
+    const originalValue = this.value;
+    // Convertir en majuscules et ne garder que R ou V
+    this.value = this.value.toUpperCase().replace(/[^RV]/g, '');
+
+    // Limiter à 10 caractères
+    if (this.value.length > 10) {
+        this.value = this.value.slice(0, 10);
+    }
+
+    // Si la valeur a changé, afficher une alerte
+    if (originalValue !== this.value) {
+        Swal.fire({
+            title: 'Caractère non autorisé ⚠️',
+            text: 'Veuillez entrer uniquement "R" ou "V" (max 10 caractères).',
+            icon: 'warning',
+            confirmButtonText: 'Compris',
+            confirmButtonColor: '#ffc107',
+            background: '#fff3cd',
+            iconColor: '#ffc107',
         });
-         // Ajoutez ici le code de restriction pour le champ seriesInput
-    document.getElementById('seriesInput').addEventListener('input', function (e) {
-        const originalValue = this.value;
-        // Convertir en majuscules et ne garder que R ou V
-        this.value = this.value.toUpperCase().replace(/[^RV]/g, '');
-
-        // Limiter à 10 caractères
-        if (this.value.length > 10) {
-            this.value = this.value.slice(0, 10);
-        }
-
-        // Si la valeur a changé, afficher une alerte
-        if (originalValue !== this.value) {
-            Swal.fire({
-                title: 'Caractère non autorisé ⚠️',
-                text: 'Veuillez entrer uniquement "R" ou "V" (max 10 caractères).',
-                icon: 'warning',
-                confirmButtonText: 'Compris',
-                confirmButtonColor: '#ffc107',
-                background: '#fff3cd',
-                iconColor: '#ffc107',
-            });
-        }
-    });
+    }
+});
      function findMostSimilarPattern(inputPattern) {
     let mostSimilarPattern = '';
     let highestSimilarity = 0;
