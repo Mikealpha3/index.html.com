@@ -2470,15 +2470,17 @@ function displayPreviousResult(previousResult) {
         lastResultWasLoss = true;
 
         Swal.fire({
-            title: 'TEMPS DE RÉFLEXION ⏳',
-            html: `
-                <div style="font-size: 2rem;">⚠️</div>
-                <p><strong>Perte enregistrée</strong> - Le marché est volatil aujourd'hui.</p>
-                <p>Nous activons un temps de réflexion de <strong>10 minutes</strong>.</p>
-                <p style="color: #ffc107;">Utilisez ce temps pour analyser les tendances.</p>
-            `,
+    title: 'Règle pour dévorer ta proie⏳',
+    html: `
+        <div style="font-size: 2rem;">⚠️</div>
+        <p><strong>Perte enregistrée</strong> - Le marché est volatil aujourd'hui.</p>
+        <p>ne miser pas sur 🔴🔴🔴 et 🔴🔴🔴 car tu es position de faiblesse, soyez patient pour les victoires : trop d’illusions vous entourent.<patientez</strong>.</p>
+        <p style="color: #ffc107;"> si vous subissez  2 a 3 pertes consecutifs ne miser plus 🔴🔴🟢 et🟢🟢🔴</p>
+    `,
+    // ... (autres paramètres comme icon, confirmButton, etc.)
+
             icon: 'warning',
-            confirmButtonText: 'Compris',
+            confirmButtonText: 'Compris soldat',
             confirmButtonColor: '#dc3545',
             background: 'linear-gradient(135deg, #fff0f0 0%, #ffe6e6 100%)',
             showClass: {
@@ -2486,7 +2488,7 @@ function displayPreviousResult(previousResult) {
             }
         }).then(() => {
             // Activation du minuteur de 10 minutes
-            startTimer(10);
+            //startTimer(0);
         });
     }
 
@@ -2525,6 +2527,7 @@ function checkPredictionRestrictions(colorSeries) {
 
     return true; // Tout est OK
 }
+
 // Fonction pour analyser les raisons de l'échec (exemple)
 function analyzeLossReason(colorInput, prediction, result) {
     const colors = colorInput.split('');
