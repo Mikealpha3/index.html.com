@@ -318,37 +318,53 @@
             gap: 5px;
             margin-bottom: 20px;
         }
-
-        .progress-bar-container {
-            display: flex;
-            align-items: center;
-            margin-top: 20px;
-            width: 100%;
-        }
-
-        .progress-bar {
-            width: 100%;
-            background-color: #e0e0e0;
-            border-radius: 10px;
-            overflow: hidden;
-            height: 20px;
-            margin-right: 10px;
-        }
-
-        .progress-bar-fill {
-            width: 0%;
-            background-color: #4caf50;
-            height: 100%;
-            transition: width 0.3s ease;
-        }
-
-        .patterns {
+       .patterns {
             margin-bottom: 20px;
         }
 
         .tips {
             margin-bottom: 20px;
         }
+        .progress-bar-container {
+    position: relative;
+    width: 100%;
+    margin: 20px 0;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 30px;
+    background-color: #e0e0e0;
+    border-radius: 15px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%);
+    width: 0%;
+    transition: width 0.5s ease;
+    position: relative;
+}
+
+.progress-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    line-height: 30px;
+    color: white;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    z-index: 1;
+}
+
+.progress-percentage {
+    margin-top: 5px;
+    text-align: center;
+    font-weight: bold;
+}
+
 
         .global-stats {
             margin-bottom: 20px;
@@ -879,6 +895,200 @@
     margin-top: 5px;
     display: none;
 }
+/* Styles pour la bankroll */
+.bankroll-container {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 15px 0;
+    border: 1px solid #ddd;
+}
+
+.bankroll-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.bankroll-input input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 120px;
+}
+
+.btn-bankroll {
+    background-color: #6c757d;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.bankroll-display {
+    background-color: white;
+    padding: 10px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.bankroll-display span {
+    color: #28a745;
+}
+.btn-apply, .btn-calc {
+    padding: 5px 10px;
+    margin-left: 8px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-apply {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-calc {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.calculation-result strong {
+    color: #2c3e50;
+}
+/* Styles pour la section Martingale */
+.martingale-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: 1px solid #dee2e6;
+}
+
+.martingale-section h3 {
+    color: #343a40;
+    margin-top: 0;
+    font-size: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.martingale-section h3::before {
+    content: "⚡";
+    font-size: 1.6rem;
+}
+
+.input-group {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.input-group label {
+    font-weight: 600;
+    color: #495057;
+    min-width: 150px;
+    margin-bottom: 5px;
+}
+
+.input-group input {
+    padding: 10px 15px;
+    border: 2px solid #ced4da;
+    border-radius: 8px;
+    font-size: 16px;
+    flex-grow: 1;
+    max-width: 200px;
+    transition: all 0.3s;
+}
+
+.input-group input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    outline: none;
+}
+
+.btn-validate {
+    background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-validate:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-validate:active {
+    transform: translateY(0);
+}
+
+.result-display {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 15px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    border-left: 4px solid #007bff;
+}
+
+.result-display p {
+    margin: 8px 0;
+    font-size: 16px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.result-display p span {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.martingale-status {
+    font-size: 14px;
+    color: #6c757d;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed #dee2e6;
+}
+
+/* Style pour les puces dans la séquence */
+.martingale-sequence {
+    display: flex;
+    gap: 5px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+}
+
+.martingale-chip {
+    background: #007bff;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 30px;
+}
+
+.current-chip {
+    background: #28a745;
+    transform: scale(1.1);
+    box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.5);
+}
 </style>
 </head>
 <div class="strategy-popup" id="strategyPopup" style="display: none;">
@@ -984,6 +1194,41 @@
             </div>
         </div>
         <div class="timer-container">
+            <div class="bankroll-container">
+                <h3>💰 Gestion de Bankroll</h3>
+                <div class="bankroll-input">
+                    <label for="initialBankroll">Capital initial (R) :</label>
+                    <input type="number" id="initialBankroll" min="1" placeholder="Ex: 1000">
+                    <button onclick="setBankroll()" class="btn-bankroll">Valider</button>
+                </div>
+                <div class="bankroll-display">
+                    <p>Capital actuel : <span id="currentBankroll">0</span> R</p>
+                    <p>Dernière mise : <span id="lastBet">0</span> R</p>
+                </div>
+            </div>
+            <div class="result-display">
+                <p>Mise actuelle: <span id="currentBetDisplay">0</span> R</p>
+                <p>Profit potentiel: <span id="profitDisplay">0</span> R</p>
+                <p id="martingaleStatus" class="martingale-status"></p>
+            </div>
+            
+            <div class="martingale-section">
+                <h3>⚡ Martingale</h3>
+                
+                <div class="input-group">
+                    <label for="martingaleInput">Séquence des mises (R) :</label>
+                    <input type="text" id="martingaleInput" value="1,2,4,8,16,32" placeholder="1,2,4,8,16">
+                    <button onclick="validateMartingale()" class="btn-validate">Valider</button>
+                </div>
+                
+                <div class="input-group">
+                    <label for="oddsInput">Cotation (%) :</label>
+                    <input type="number" id="oddsInput" value="97" min="1" max="100" step="0.01">
+                    <button onclick="validateOdds()" class="btn-validate">Valider</button>
+                </div>
+                
+                <div id="martingaleSequenceDisplay" class="martingale-sequence"></div>
+            </div>            
             <div class="action-buttons">
                 <button class="btn-predict" onclick="predictColor()" id="predictButton">
                     <i class="fas fa-magic"></i> Prédire
@@ -1039,9 +1284,11 @@
         
         <div class="progress-bar-container">
             <div class="progress-bar">
-                <div class="progress-bar-fill" id="progressBarFill" style="width: 0%; background-color: #4caf50;"></div>
+                <div class="progress-bar-fill" id="progressBarFill" style="width: 0%;">
+                    <div class="progress-text" id="progressText">☢️☢️☢️☢️Tuer ⚔️le ⚔️Boss☢️☢️☢️☢️</div>
+                </div>
             </div>
-            <span id="progressPercentage">0%</span>
+            <div class="progress-percentage" id="progressPercentage">0%</div>
         </div>
         <p id="predictionResult"></p>
 
@@ -1169,6 +1416,171 @@
         }
     });
 }
+let initialBankroll = 0;
+let currentBankroll = 0;
+let lastBetAmount = 0;
+
+function setBankroll() {
+    const bankrollInput = document.getElementById('initialBankroll').value;
+    
+    // Validation du montant saisi
+    if (!bankrollInput || isNaN(bankrollInput) || parseFloat(bankrollInput) <= 0) {
+        Swal.fire({
+            title: 'Erreur',
+            text: 'Veuillez entrer un montant valide pour votre capital',
+            icon: 'error'
+        });
+        return;
+    }
+    
+    initialBankroll = parseFloat(bankrollInput);
+    currentBankroll = initialBankroll;
+    updateBankrollDisplay();
+    
+    // Afficher l'alerte de succès
+    Swal.fire({
+        title: 'Capital enregistré! 💰',
+        html: `
+            <div style="font-size: 2.5rem;">✅</div>
+            <p>Votre capital initial a été défini à :</p>
+            <p style="font-size: 1.5rem; font-weight: bold; color: #28a745;">${initialBankroll.toFixed(2)} R</p>
+            <p>Vous pouvez maintenant commencer à trader.</p>
+        `,
+        icon: 'success',
+        confirmButtonText: 'Commencer',
+        confirmButtonColor: '#28a745',
+        timer: 3000,
+        timerProgressBar: true,
+        background: '#f8f9fa',
+        showClass: {
+            popup: 'animate__animated animate__fadeInDown'
+        },
+        hideClass: {
+            popup: 'animate__animated animate__fadeOutUp'
+        }
+    });
+}
+function updateBankrollDisplay() {
+    document.getElementById('currentBankroll').textContent = currentBankroll.toFixed(2);
+    document.getElementById('lastBet').textContent = lastBetAmount.toFixed(2);
+}
+
+let martingaleSequence = [1, 2, 4, 8, 16, 32];
+let currentMartingaleIndex = 0;
+function validateOdds() {
+    const oddsInput = document.getElementById('oddsInput');
+    const odds = parseFloat(oddsInput.value);
+    
+    // Validation stricte (entre 1 et 100)
+    if (isNaN(odds) || odds < 1 || odds > 100) {
+        oddsInput.value = 97; // Valeur par défaut si invalide
+        Swal.fire({
+            title: 'Erreur',
+            text: 'Veuillez entrer une cotation valide entre 1% et 100%',
+            icon: 'error'
+        });
+        return;
+    }
+    
+    // Arrondir à 2 décimales
+    const roundedOdds = Math.round(odds * 100) / 100;
+    oddsInput.value = roundedOdds;
+    
+    Swal.fire({
+        title: 'Cotation validée!',
+        html: `Nouvelle cotation : <strong>${roundedOdds}%</strong>`,
+        icon: 'success',
+        timer: 1500
+    });
+    
+    updateMartingaleDisplay();
+}
+function validateMartingale() {
+    const input = document.getElementById('martingaleInput').value;
+    martingaleSequence = input.split(',').map(Number).filter(n => !isNaN(n));
+    if (martingaleSequence.length === 0) martingaleSequence = [1];
+    
+    Swal.fire({
+        title: 'Succès!',
+        text: `Séquence martingale mise à jour : ${martingaleSequence.join(', ')}`,
+        icon: 'success'
+    });
+    
+    updateMartingaleDisplay();
+}
+
+function updateMartingaleDisplay() {
+    const nextBet = getCurrentBet();
+    const odds = parseFloat(document.getElementById('oddsInput').value) || 97; // 97 par défaut
+    
+    document.getElementById('currentBetDisplay').textContent = nextBet.toFixed(2);
+    document.getElementById('profitDisplay').textContent = (nextBet * (odds / 100)).toFixed(2);
+    
+    // Afficher le statut en temps réel
+    document.getElementById('martingaleStatus').innerHTML = `
+        <small>Séquence: ${martingaleSequence.join(', ')} | Cote: ${odds}%</small>
+    `;
+}
+function getCurrentBet() {
+    return martingaleSequence[currentMartingaleIndex] || martingaleSequence[0];
+}
+
+// À appeler quand le trade gagne
+function onWin() {
+    const profit = getCurrentBet() * (parseFloat(document.getElementById('oddsInput').value) / 100);
+    currentBankroll += profit;
+    currentMartingaleIndex = 0; // Réinitialiser la martingale
+    updateBankrollDisplay();
+    updateMartingaleDisplay();
+    return profit;
+}
+
+// À appeler quand le trade perd
+function onLoss() {
+    const loss = getCurrentBet();
+    currentBankroll -= loss;
+    lastBetAmount = loss;
+    currentMartingaleIndex = Math.min(currentMartingaleIndex + 1, martingaleSequence.length - 1);
+    updateBankrollDisplay();
+    updateMartingaleDisplay();
+    return -loss;
+}
+function applyMartingale() {
+    const input = document.getElementById('martingaleSequence').value;
+    martingaleSequence = input.split(',').map(Number).filter(n => !isNaN(n));
+    if (martingaleSequence.length === 0) martingaleSequence = [1];
+    updateDisplay();
+    Swal.fire('Succès!', 'Séquence martingale mise à jour', 'success');
+}
+
+function calculateProfit() {
+    updateDisplay();
+}
+
+function updateDisplay() {
+    const odds = (document.getElementById('simpleOdds').value || 97) / 100;
+    const nextBet = martingaleSequence[currentMartingaleIndex] || martingaleSequence[0];
+    document.getElementById('nextBet').textContent = nextBet;
+    document.getElementById('potentialProfit').textContent = (nextBet * odds).toFixed(2);
+}
+
+function getCurrentBet() {
+    return martingaleSequence[currentMartingaleIndex] || martingaleSequence[0];
+}
+
+// À appeler quand le trade gagne
+function onWin() {
+    currentMartingaleIndex = 0;
+    updateDisplay();
+    return getCurrentBet() * (document.getElementById('simpleOdds').value / 100);
+}
+
+// À appeler quand le trade perd
+function onLoss() {
+    currentMartingaleIndex = Math.min(currentMartingaleIndex + 1, martingaleSequence.length - 1);
+    updateDisplay();
+    return -getCurrentBet();
+}
          function updateHaitiTime() {
     const options = {
         timeZone: 'America/Port-au-Prince', // Fuseau horaire d'Haïti
@@ -1286,6 +1698,7 @@ updateHaitiTime();
 let history = [];
 let previousHistory = [];
 let consecutiveLosses = 0; // Déjà déclaré ici
+let bannedPatterns = []; // Pour stocker les motifs temporairement interdits
 let successes = 0;
 let failures = 0;
 let failedPatterns = {}; // Pour stocker les motifs ayant échoué
@@ -1294,6 +1707,8 @@ let lastResultWasLoss = false;
 let timerInterval;
 let timerTime = 0;
 let isTimerRunning = false;
+
+
 
 // Fonction pour démarrer le minuteur
 function startTimer(minutes) {
@@ -2424,83 +2839,134 @@ function displayPreviousResult(previousResult) {
         function giveFeedback(correct) {
     const lastHistoryItem = history[history.length - 1];
     
-    // Vérification du feedback déjà donné
+    // Vérification si le feedback a déjà été donné
     if (lastHistoryItem.result !== '') {
         Swal.fire({
-            title: 'Action déjà enregistrée ⚠️',
-            text: 'Cette prédiction a déjà été évaluée.',
+            title: 'Déjà évalué ⚠️',
+            text: 'Cette prédiction a déjà reçu un feedback.',
             icon: 'info',
-            confirmButtonText: 'Compris',
+            confirmButtonText: 'OK',
             confirmButtonColor: '#007bff'
         });
         return;
     }
 
+    // Configuration du trading
+    const odds = parseFloat(document.getElementById('oddsInput').value) || 97;
+    const currentBet = getCurrentBet();
+    const nextBet = martingaleSequence[Math.min(currentMartingaleIndex + 1, martingaleSequence.length - 1)] || martingaleSequence[0];
+
+    // Vérification de la bankroll
+    if (!correct && currentBankroll < currentBet) {
+        Swal.fire({
+            title: 'Fonds insuffisants ⛔',
+            html: `<strong>${currentBankroll.toFixed(2)} R</strong> disponibles<br>
+                   <strong>${currentBet.toFixed(2)} R</strong> requis`,
+            icon: 'error',
+            willClose: () => {
+                currentMartingaleIndex = 0; // Reset martingale après impossibilité de miser
+                updateMartingaleDisplay();
+            }
+        });
+        return;
+    }
+
     if (correct) {
-        // Gestion des succès - Message motivant
-        lastHistoryItem.result = 'Succès';
-        successes += 1;
-        points += 10;
-        lastResultWasLoss = false;
+         // Mettre à jour la barre de progression
+         updateProgressBar(1); // Augmente de 1% à chaque succès
+        // Traitement gain
+        const profit = currentBet * (odds / 100);
+        currentBankroll = parseFloat((currentBankroll + profit).toFixed(2));
         consecutiveLosses = 0;
+        currentMartingaleIndex = 0;
+        bannedPatterns = []; // Réinitialiser les motifs interdits après un gain
+
+        lastHistoryItem.result = 'Succès';
+        successes++;
+        points += 10;
+        progressPercentage = Math.min(progressPercentage + 1, 100); // Incrémente de 1% sans dépasser 100%
 
         Swal.fire({
-            title: 'EXCELLENT CHOIX ! 🏆',
+            title: 'Gagné! 🎉',
             html: `
-                <div style="font-size: 3rem;">🎯</div>
-                <p><strong>Félicitations !</strong> Votre analyse était parfaite.</p>
-                <p>+10 points ajoutés à votre score !</p>
-                <p style="font-size: 0.8em; color: #28a745;">Continuez sur cette lancée !</p>
+                <div style="font-size: 3rem;">💰</div>
+                <p><strong>+${profit.toFixed(2)} R</strong> (${odds}%)</p>
+                <hr>
+                <p>Bankroll: <strong>${currentBankroll.toFixed(2)} R</strong></p>
+                <p>Prochaine mise: <strong>${nextBet.toFixed(2)} R</strong></p>
+                <p style="color:#28a745">+10 points</p>
+                <div style="margin-top: 15px; background: #e9ecef; height: 20px; border-radius: 10px; overflow: hidden;">
+                    <div style="width: ${progressPercentage}%; background: linear-gradient(90deg, #28a745 0%, #5cb85c 100%); height: 100%; transition: width 0.5s ease;"></div>
+                </div>
+                <p style="margin-top: 5px; font-size: 0.9em;">Progression: ${progressPercentage}%</p>
             `,
             icon: 'success',
-            confirmButtonText: 'Faire une nouvelle prédiction',
-            confirmButtonColor: '#28a745',
             background: 'linear-gradient(135deg, #f0f9f0 0%, #e6f7e6 100%)',
             showClass: {
                 popup: 'animate__animated animate__bounceIn'
             }
         });
-
-        updateProgressBar(1);
     } else {
-        // Gestion des échecs - Minuteur unique de 10 minutes
+        // Traitement perte
+        currentBankroll = parseFloat((currentBankroll - currentBet).toFixed(2));
+        consecutiveLosses++;
+        currentMartingaleIndex = Math.min(currentMartingaleIndex + 1, martingaleSequence.length - 1);
+
+        // Gestion des interdictions progressives
+        bannedPatterns = ['RRR','VVV']; // Toujours bloquer RRR et VVV après une perte
+        if (consecutiveLosses >= 3) bannedPatterns.push('VVR','RRV'); // Bloquer plus après 3 pertes
+
         lastHistoryItem.result = 'Échec';
-        failures += 1;
-        consecutiveLosses += 1;
-        lastResultWasLoss = true;
+        failures++;
+
+        let warningMessage = '';
+        if (consecutiveLosses >= 3) {
+            warningMessage = `
+                <div style="background:#ffebee;padding:10px;border-radius:5px;margin:10px 0;">
+                    <p style="color:#d32f2f">🚨 3 pertes consécutives - Pause recommandée</p>
+                    <p>Évitez: RRR, VVV, VVR, RRV</p>
+                </div>
+            `;
+        } else if (consecutiveLosses >= 1) {
+            warningMessage = `
+                <p style="color:#fb8c00">⚠️ ${consecutiveLosses} perte(s) consécutive(s)</p>
+                <p>Évitez: RRR, VVV</p>
+            `;
+        }
 
         Swal.fire({
-    title: 'Règle pour dévorer ta proie⏳',
-    html: `
-        <div style="font-size: 2rem;">⚠️</div>
-        <p><strong>Perte enregistrée</strong> - Le marché est volatil aujourd'hui.</p>
-        <p>ne miser pas sur 🔴🔴🔴 et 🔴🔴🔴 car tu es position de faiblesse, soyez patient pour les victoires : trop d’illusions vous entourent.<patientez</strong>.</p>
-        <p style="color: #ffc107;"> si vous subissez  2 a 3 pertes consecutifs ne miser plus 🔴🔴🟢 et🟢🟢🔴</p>
-    `,
-    // ... (autres paramètres comme icon, confirmButton, etc.)
-
-            icon: 'warning',
-            confirmButtonText: 'Compris soldat',
-            confirmButtonColor: '#dc3545',
+            title: 'Perdu ❌',
+            html: `
+                <div style="font-size: 2rem;">📉</div>
+                <p><strong>-${currentBet.toFixed(2)} R</strong></p>
+                <hr>
+                <p>Bankroll: <strong>${currentBankroll.toFixed(2)} R</strong></p>
+                <p>Prochaine mise: <strong>${nextBet.toFixed(2)} R</strong></p>
+                <div style="margin-top: 15px; background: #e9ecef; height: 20px; border-radius: 10px; overflow: hidden;">
+                    <div style="width: ${progressPercentage}%; background: linear-gradient(90deg, #6c757d 0%, #adb5bd 100%); height: 100%;"></div>
+                </div>
+                <p style="margin-top: 5px; font-size: 0.9em;">Progression: ${progressPercentage}% (inchangé)</p>
+                ${warningMessage}
+            `,
+            icon: 'error',
             background: 'linear-gradient(135deg, #fff0f0 0%, #ffe6e6 100%)',
             showClass: {
                 popup: 'animate__animated animate__headShake'
             }
-        }).then(() => {
-            // Activation du minuteur de 10 minutes
-            //startTimer(0);
         });
     }
 
     // Mise à jour de l'interface
+    updateBankrollDisplay();
+    updateMartingaleDisplay();
     updateHistory();
     updateSuccessRate();
     updatePoints();
     updateLevelButtons();
     updatePieChart();
     saveHistoryToLocalStorage();
-
-    // Effacement des champs comme demandé
+    
+    // Réinitialisation des champs
     document.getElementById('seriesInput').value = '';
     document.getElementById('colorPercentage').value = '';
     document.getElementById('predictionResult').textContent = '';
@@ -2508,7 +2974,7 @@ function displayPreviousResult(previousResult) {
 function checkPredictionRestrictions(colorSeries) {
     const lastThree = colorSeries.slice(-3); // Récupère les 3 dernières couleurs
     
-    // Vérification permanente (valable en tout temps)
+    // 1. Vérification permanente (valable en tout temps)
     if (lastThree === 'RVR' || lastThree === 'VRV') {
         Swal.fire({
             title: 'PRÉDICTION INTERDITE ⛔',
@@ -2525,9 +2991,27 @@ function checkPredictionRestrictions(colorSeries) {
         return false;
     }
 
+    // 2. Vérification des motifs bloqués après une perte
+    if (bannedPatterns.includes(lastThree)) {
+        Swal.fire({
+            title: 'PRÉDICTION TEMPORAIREMENT BLOQUÉE ⚠️',
+            html: `
+                <div style="font-size: 2rem;">🔒</div>
+                <p>La séquence <strong>${lastThree}</strong> est temporairement bloquée.</p>
+                <p>Motif : Cette séquence a récemment entraîné une perte.</p>
+                <p style="color: #ffc107;">Attendez un gain pour débloquer ce motif.</p>
+                ${consecutiveLosses >= 3 ? `<p style="margin-top:10px;">🚨 Vous avez ${consecutiveLosses} pertes consécutives - Soyez prudent!</p>` : ''}
+            `,
+            icon: 'warning',
+            confirmButtonText: 'Compris',
+            confirmButtonColor: '#ffc107',
+            background: '#fff3cd'
+        });
+        return false;
+    }
+
     return true; // Tout est OK
 }
-
 // Fonction pour analyser les raisons de l'échec (exemple)
 function analyzeLossReason(colorInput, prediction, result) {
     const colors = colorInput.split('');
@@ -2556,7 +3040,15 @@ function getLossAdvice(reason) {
     }
     return "Maintenez votre stratégie, ce type de perte est statistiquement normal.";
 }
-        function updateProgressBar(change) {
+let progress = 0;
+const progressMessages = {
+    20: "20% atteint - Prenez une pause de 20 minutes avant de continuer",
+    40: "40% atteint - Prenez une pause de 20 minutes avant de continuer",
+    60: "60% atteint - Prenez une pause de 20 minutes avant de continuer",
+    80: "80% atteint - Prenez une pause de 20 minutes avant de continuer",
+    100: "Félicitations ! Vous avez tué le boss ! Vous pouvez maintenant changer de niveau"
+};
+           function updateProgressBar(change) {
             const progressBarFill = document.getElementById('progressBarFill');
             const progressPercentage = document.getElementById('progressPercentage');
             let currentWidth = parseInt(progressBarFill.style.width);
@@ -2578,9 +3070,92 @@ function getLossAdvice(reason) {
                 progressBarFill.style.backgroundColor = 'green';
             } else {
                 progressBarFill.style.backgroundColor = '#4caf50';
+                localStorage.setItem('gameProgress', progress);
+                checkProgressMilestones();
             }
         }
+        function checkProgressMilestones() {
+    // Vérifier si on a atteint un palier important
+    if (progressMessages[progress]) {
+        showProgressAlert(progress);
+    }
+}
+function showProgressAlert(percentage) {
+    const message = progressMessages[percentage];
+    const isFinal = percentage === 100;
+    
+    Swal.fire({
+        title: isFinal ? '🎉 Félicitations !' : '⏱️ Pause recommandée',
+        html: message,
+        icon: isFinal ? 'success' : 'info',
+        confirmButtonText: 'Compris',
+        confirmButtonColor: isFinal ? '#28a745' : '#007bff',
+        willClose: () => {
+            if (isFinal) {
+                // Proposer de changer de niveau
+                showLevelUpPopup();
+            } else {
+                // Démarrer le minuteur de pause
+                startTimer(20);
+            }
+        }
+    });
+}
 
+function showLevelUpPopup() {
+    Swal.fire({
+        title: 'Changement de niveau disponible',
+        html: 'Vous avez tué le boss de ce niveau ! Souhaitez-vous passer au niveau suivant ?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Oui, niveau suivant',
+        cancelButtonText: 'Non, rester ici',
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#dc3545'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Logique pour passer au niveau suivant
+            advanceToNextLevel();
+        }
+    });
+}
+
+function advanceToNextLevel() {
+    const currentLevel = localStorage.getItem('userLevel') || 'débutant';
+    let nextLevel = '';
+    
+    switch(currentLevel) {
+        case 'débutant': nextLevel = 'intermédiaire'; break;
+        case 'intermédiaire': nextLevel = 'avancé'; break;
+        case 'avancé': nextLevel = 'expert'; break;
+        default: nextLevel = 'intermédiaire';
+    }
+    
+    localStorage.setItem('userLevel', nextLevel);
+    document.getElementById('userLevelSpan').textContent = nextLevel;
+    
+    // Réinitialiser la progression pour le nouveau niveau
+    progress = 0;
+    localStorage.setItem('gameProgress', progress);
+    document.getElementById('progressBarFill').style.width = '0%';
+    document.getElementById('progressPercentage').textContent = '0%';
+    
+    Swal.fire({
+        title: 'Niveau supérieur débloqué !',
+        html: `Vous êtes maintenant niveau <strong>${nextLevel}</strong>`,
+        icon: 'success'
+    });
+}
+
+// Au chargement de la page, charger la progression sauvegardée
+document.addEventListener('DOMContentLoaded', () => {
+    const savedProgress = localStorage.getItem('gameProgress');
+    if (savedProgress) {
+        progress = parseInt(savedProgress);
+        document.getElementById('progressBarFill').style.width = progress + '%';
+        document.getElementById('progressPercentage').textContent = progress + '%';
+    }
+});
         function analyzeAllLosses() {
     const losses = history.filter(record => record.result === 'Échec'); // Filtrer les pertes
     if (losses.length === 0) {
