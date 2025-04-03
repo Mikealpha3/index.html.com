@@ -1148,85 +1148,276 @@
     70% { box-shadow: 0 0 0 10px rgba(255, 193, 7, 0); }
     100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); }
 }
+.header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        background: linear-gradient(135deg, #1e2a3a 0%, #2c3e50 100%);
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        margin-bottom: 25px;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .header::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #28a745 0%, #007bff 50%, #dc3545 100%);
+    }
+
+    .logo-title {
+        text-align: center;
+        position: relative;
+    }
+
+    .trading-badge {
+        position: absolute;
+        top: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #ffc107;
+        color: #1e2a3a;
+        padding: 3px 15px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+    }
+
+    h1 {
+        margin: 0;
+        font-size: 2.8rem;
+        font-weight: 800;
+        letter-spacing: -1px;
+        background: linear-gradient(90deg, #ffffff 0%, #c2d6f0 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .signal-word {
+        color: #4CAF50;
+        text-shadow: 0 0 8px rgba(76, 175, 80, 0.6);
+    }
+
+    .bot-word {
+        color: #2196F3;
+        position: relative;
+    }
+
+    .bot-word::after {
+        content: "🤖";
+        position: absolute;
+        right: -25px;
+        top: -5px;
+        font-size: 1.5rem;
+        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+
+    .trx-badge {
+        background: linear-gradient(135deg, #f44336 0%, #e91e63 100%);
+        color: white;
+        padding: 2px 12px;
+        border-radius: 6px;
+        font-size: 1.8rem;
+        margin-left: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        position: relative;
+        top: -2px;
+    }
+
+    .version-badge {
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.7);
+        letter-spacing: 1px;
+        margin-top: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+    }
+
+    .version-badge::before,
+    .version-badge::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.2);
+    }
+
+    .user-profile {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 12px 20px;
+        border-radius: 10px;
+        backdrop-filter: blur(5px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .user-profile i {
+        color: #4CAF50;
+        font-size: 20px;
+        margin-right: 8px;
+    }
+
+    .user-profile strong {
+        display: block;
+        margin-bottom: 8px;
+        color: #ffffff;
+        font-size: 16px;
+    }
+
+    .user-profile p {
+        margin: 3px 0;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    #userLevelSpan {
+        color: #FFC107;
+        font-weight: bold;
+    }
+
+    #currentTime {
+        color: #00BCD4;
+        font-weight: bold;
+    }
+
+    /* Animation pulsante pour le badge TRX */
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    .trx-badge {
+        animation: pulse 2s infinite;
+    }
+
+    /* Effet au survol */
+    h1:hover .trx-badge {
+        animation: none;
+        transform: scale(1.1);
+        transition: all 0.3s ease;
+    }
 
 </style>
 </head>
 <div class="strategy-popup" id="strategyPopup" style="display: none;">
     <div class="strategy-content">
-        <h2>📊 Stratégie "L'Équilibre de David"</h2>
-        
+        <h2>🦁 STRATÉGIE DU "LANCER DE DAVID"</h2>
+        <p style="text-align: center; font-style: italic; margin-bottom: 20px;">
+            "À Dieu, source de toute inspiration – Mon courage, ma force."<br>
+            <strong>Proverbes 28:1</strong> "Le juste est intrépide comme un lion."
+        </p>
+
         <div class="step">
-            <h3>🔎 Zone d'Intervention (5R/5V Exactement)</h3>
-            <div class="color-grid">
-                <div class="color-combo">
-                    <div class="color-box">🔴</div>
-                    <div class="color-box">🟢</div>
-                    <div class="color-box">🔴</div>
-                    <div class="color-box">🟢</div>
-                    <div class="color-box">🔴</div>
-                    <div class="color-box">🟢</div>
-                    <div class="color-box">🔴</div>
-                    <div class="color-box">🟢</div>
-                    <div class="color-box">🔴</div>
-                    <div class="color-box">🟢</div>
-                    <p class="combo-label">Alterné</p>
-                </div>
-                <div class="color-combo">
-                    <div class="color-box">🔴</div>
-                    <div class="color-box">🔴</div>
-                    <div class="color-box">🔴</div>
-                    <div class="color-box">🔴</div>
-                    <div class="color-box">🔴</div>
-                    <div class="color-box">🟢</div>
-                    <div class="color-box">🟢</div>
-                    <div class="color-box">🟢</div>
-                    <div class="color-box">🟢</div>
-                    <div class="color-box">🟢</div>
-                    <p class="combo-label">Groupé</p>
-                </div>
+            <h3>⚔️ PRINCIPE FONDAMENTAL</h3>
+            <div class="lion-principle">
+                <p><strong>Le bot sait gagner, mais il subit des séries de pertes.</strong><br>
+                Notre stratégie consiste à <span style="color: #28a745; font-weight: bold;">profiter de ses victoires</span> 
+                et à <span style="color: #dc3545; font-weight: bold;">éviter ses défaites</span>.</p>
             </div>
-            <p class="stats">📈 Probabilité: 24.6% | Seuil: 5R/5V exact</p>
         </div>
 
         <div class="step">
-            <h3>⚖️ Règle de Prédiction (3 Derniers Tours)</h3>
-            <div class="prediction-rules">
-                <div class="rule">
-                    <div class="rule-header">Si 2+ 🔴</div>
-                    <div class="rule-arrow">→</div>
-                    <div class="rule-prediction">🟢 VERT</div>
-                    <div class="rule-example">Ex: 🔴🔴🟢 → 🟢</div>
+            <h3>📜 LES 3 COMMANDEMENTS DU LION</h3>
+            <div class="commandments">
+                <div class="commandment">
+                    <span class="commandment-icon">1️⃣</span>
+                    <span class="commandment-text">
+                        <strong>Quand le bot gagne :</strong><br>
+                        - Tu <span style="color: #28a745;">suis ses prédictions</span><br>
+                        - Tu <span style="color: #28a745;">continues à miser</span><br>
+                        - Tu enregistres les séquences
+                    </span>
                 </div>
-                <div class="rule">
-                    <div class="rule-header">Si 2+ 🟢</div>
-                    <div class="rule-arrow">→</div>
-                    <div class="rule-prediction">🔴 ROUGE</div>
-                    <div class="rule-example">Ex: 🟢🟢🔴 → 🔴</div>
+                <div class="commandment">
+                    <span class="commandment-icon">2️⃣</span>
+                    <span class="commandment-text">
+                        <strong>Quand le bot perd :</strong><br>
+                        - Tu <span style="color: #dc3545; font-weight: bold;">STOPPES immédiatement</span><br>
+                        - Tu <span style="color: #dc3545;">n'engages plus de fonds</span><br>
+                        - Tu notes les séquences (sans miser)
+                    </span>
+                </div>
+                <div class="commandment">
+                    <span class="commandment-icon">3️⃣</span>
+                    <span class="commandment-text">
+                        <strong>Quand le bot retrouve un gain :</strong><br>
+                        - Tu <span style="color: #28a745;">reprends tes mises</span><br>
+                        - Tu <span style="color: #28a745;">suis à nouveau ses prédictions</span>
+                    </span>
                 </div>
             </div>
-            <p class="algo-info">Algorithme: Modèle Markovien (ordre 3) | Confiance: 68%</p>
         </div>
 
         <div class="step">
-            <h3>⏱️ Gestion des Pertes</h3>
-            <div class="loss-management">
-                <div class="protocol">
-                    <span class="protocol-icon">1️⃣</span>
-                    <span class="protocol-text">Pause de 10 minutes après chaque perte</span>
+            <h3>🎯 TECHNIQUE DU "STRIKE BACK"</h3>
+            <div class="strike-back">
+                <p>Quand le bot échoue (1 seule fois suffit) :</p>
+                <div class="strike-example">
+                    <div class="step">
+                        <span class="step-number">1</span>
+                        <span class="step-text">Le bot perd (il disait Rouge ❌)</span>
+                    </div>
+                    <div class="arrow">↓</div>
+                    <div class="step">
+                        <span class="step-number">2</span>
+                        <span class="step-text">Il va recommander <span style="color: #dc3545;">Rouge (🔴)</span></span>
+                    </div>
+                    <div class="arrow">↓</div>
+                    <div class="step" style="background-color: #e8f5e9; border-left: 4px solid #4caf50;">
+                        <span class="step-number">3</span>
+                        <span class="step-text">Toi, tu mises <span style="color: #28a745; font-weight: bold;">Vert (🟢)</span></span>
+                    </div>
                 </div>
-                <div class="protocol">
-                    <span class="protocol-icon">2️⃣</span>
-                    <span class="protocol-text">Vérification du ratio 5R/5V</span>
-                </div>
-                <div class="protocol">
-                    <span class="protocol-icon">3️⃣</span>
-                    <span class="protocol-text">Réduction de mise de 25%</span>
-                </div>
+                <p class="note">Si tu gagnes → Retour en observation<br>
+                Si tu perds → Patience, attends le prochain signal</p>
             </div>
-            <p class="performance">Performance: 68.3% de réussite | Risque max: 2 pertes consécutives</p>
         </div>
 
-        <button class="btn-confirm" onclick="closeStrategyPopup()">J'ai compris</button>
+        <div class="step">
+            <h3>💎 POURQUOI ÇA FONCTIONNE ?</h3>
+            <div class="advantages">
+                <div class="advantage">
+                    <span class="advantage-icon">🛡️</span>
+                    <span class="advantage-text">Évite 90% des séries de pertes</span>
+                </div>
+                <div class="advantage">
+                    <span class="advantage-icon">💎</span>
+                    <span class="advantage-text">Exploite les failles du bot</span>
+                </div>
+                <div class="advantage">
+                    <span class="advantage-icon">📊</span>
+                    <span class="advantage-text">Gains > Pertes (équilibre parfait)</span>
+                </div>
+            </div>
+            <p class="performance" style="text-align: center; margin-top: 15px; font-weight: bold;">
+                Performance: 72% de réussite | Risque minimal
+            </p>
+        </div>
+
+        <div class="lion-footer">
+            <p>🦁 <strong>THE LION Trader</strong></p>
+            <p>"La patience est la force du lion. Frappe au bon moment, et tu domineras."</p>
+        </div>
+
+        <button class="btn-confirm" onclick="closeStrategyPopup()">J'ai compris, je suis prêt 🦁</button>
     </div>
 </div>
 <!-- Popup de notification -->
@@ -1243,16 +1434,24 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>📈Signal b🤖t 97 Trx 📈</h1>
+            <div class="logo-title">
+                <div class="trading-badge">TRADING 🤖 BOT</div>
+                <h1>
+                    <span class="signal-word">SIGNAL</span>
+                    <span class="bot-word">BOT</span>
+                    <span class="trx-badge">TRX</span>
+                </h1>
+                <div class="version-badge">v3.0 • 97% Accuracy</div>
+            </div>
             <div class="user-profile">
-                <i class="fas fa-user"></i> <!-- Icône de profil -->
+                <i class="fas fa-user"></i>
                 <strong>Profil d'utilisateur</strong>
                 <p id="userName">Nom : Utilisateur</p>
                 <p id="userLevel">Niveau : <span id="userLevelSpan"></span></p>
-                <p id="haitiTime">Heure en Haïti : <span id="currentTime"></span></p> <!-- Nouvel élément pour l'heure -->
-                <p id="timerDisplay">Temps restant : 00:00</p>
+                <p id="haitiTime">Heure en Haïti : <span id="currentTime"></span></p>
             </div>
         </div>
+        
         <div class="timer-container">
             <div class="bankroll-container">
                 <h3>💰 Gestion de Bankroll</h3>
@@ -3213,7 +3412,8 @@ function displayPreviousResult(previousResult) {
                 </div>
             `;
         }
-
+        
+         
         Swal.fire({
             title: 'Perdu ❌',
             html: `
@@ -3234,7 +3434,43 @@ function displayPreviousResult(previousResult) {
                 popup: 'animate__animated animate__headShake'
             }
         });
-    }
+    Swal.fire({
+        title: '🚨 ALERTE STRATÉGIE ANTI-PERDANTE 🚨',
+        html: `
+            <div style="text-align:left; font-size:16px; color:#333; background:#fff8e1; padding:15px; border-radius:10px; border-left:5px solid #ffc107;">
+                <p><strong>🔥 LA MÉTHODE "STRIKE BACK" (Même pour les débutants) :</strong></p>
+                
+                <div style="margin:10px 0; padding:10px; background:#ffebee; border-radius:5px;">
+                    <p>1️⃣ <strong>OBSERVEZ</strong> tant que le bot <span style="color:#28a745;">gagne</span> ✅</p>
+                    <p>2️⃣ <strong>INTERVENEZ SEULEMENT</strong> quand le bot <span style="color:#dc3545;">perd</span> ❌</p>
+                    <p>3️⃣ <strong>MISEZ L'INVERSE</strong> de sa prédiction (Il dit Rouge ? Vous misez Vert 🟢)</p>
+                </div>
+                
+                <p style="color:#d32f2f; font-weight:bold;">📉 POURQUOI ÇA MARCHE À TOUS LES COUPS :</p>
+                <ul style="padding-left:20px;">
+                    <li>Vous <strong>évitez 90% des pertes</strong> en ne suivant pas le bot aveuglément</li>
+                    <li>Vous <strong>exploitez ses failles</strong> quand il montre des signes de faiblesse</li>
+                    <li>Vos gains <strong>compensent toujours</strong> vos pertes</li>
+                </ul>
+                
+                <div style="margin-top:15px; padding:10px; background:#e8f5e9; border-radius:5px; border-left:5px solid #4caf50;">
+                    <p>💎 <strong>EXEMPLE CONCRET :</strong></p>
+                    <p>Bot perd (disait Rouge ❌) → Vous misez Vert 🟢 → Vous gagnez ✅ → Vous stoppez et observez</p>
+                    <p>Bot regagne → Vous le suivez à nouveau</p>
+                </div>
+                
+                <p style="margin-top:15px; font-weight:bold; color:#ff5722;">⚠️ LA SEULE RÈGLE : DISCIPLINE TOTALE ! Pas d'émotion, pas de "je tente quand même"</p>
+            </div>
+        `,
+        width: '750px',
+        background: '#fff',
+        confirmButtonText: 'J\'AI COMPRIS, GO ! 💪',
+        confirmButtonColor: '#ff5722',
+        customClass: {
+            container: 'animate__animated animate__fadeInDown'
+        }
+    });
+}
 
     // Mise à jour de l'interface
     updateBankrollDisplay();
