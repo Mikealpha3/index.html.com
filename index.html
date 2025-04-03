@@ -1089,6 +1089,66 @@
     transform: scale(1.1);
     box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.5);
 }
+.stats-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin: 20px 0;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #dee2e6;
+}
+
+.color-stats {
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.red-stats {
+    background-color: rgba(220, 53, 69, 0.1);
+    border-left: 4px solid #dc3545;
+}
+
+.green-stats {
+    background-color: rgba(40, 167, 69, 0.1);
+    border-left: 4px solid #28a745;
+}
+
+.stats-header {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.stats-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 5px 0;
+}
+
+.stats-percentage {
+    font-size: 1.1rem;
+    color: #6c757d;
+}
+
+.force-mode-active {
+    animation: pulseWarning 2s infinite;
+    border: 2px solid #ffc107;
+    box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+}
+
+@keyframes pulseWarning {
+    0% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7); }
+    70% { box-shadow: 0 0 0 10px rgba(255, 193, 7, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); }
+}
+
 </style>
 </head>
 <div class="strategy-popup" id="strategyPopup" style="display: none;">
@@ -1302,6 +1362,27 @@
                     <button class="btn-export" onclick="exportHistory()">Exporter</button>
                 </div>
             </div>
+        </div>
+        <div class="stats-container">
+            <div class="color-stats red-stats" id="redStats">
+                <div class="stats-header"><span style="color:#dc3545">🔴</span> Statistiques Rouge</div>
+                <div class="stats-value" id="redSuccessCount">0 succès</div>
+                <div class="stats-value" id="redFailureCount">0 échecs</div>
+                <div class="stats-percentage" id="redSuccessRate">0% de réussite</div>
+                <div id="redTrend" style="margin-top:10px;"></div>
+            </div>
+            <div class="color-stats green-stats" id="greenStats">
+                <div class="stats-header"><span style="color:#28a745">🟢</span> Statistiques Vert</div>
+                <div class="stats-value" id="greenSuccessCount">0 succès</div>
+                <div class="stats-value" id="greenFailureCount">0 échecs</div>
+                <div class="stats-percentage" id="greenSuccessRate">0% de réussite</div>
+                <div id="greenTrend" style="margin-top:10px;"></div>
+            </div>
+        </div>
+        
+        <div id="forceModeAlert" class="alert alert-warning" style="display:none; background:#fff3cd; padding:15px; border-radius:5px; border-left:5px solid #ffc107; margin-bottom:20px;">
+            <strong>⚠️ Mode Forcé Activé</strong> 
+            <p>2 pertes consécutives détectées. Le bot force maintenant les prédictions sur <span id="forcedColorText"></span> jusqu'au prochain gain.</p>
         </div>
         <div id="historyContainer" class="table-container">
             <table>
@@ -1707,6 +1788,13 @@ let lastResultWasLoss = false;
 let timerInterval;
 let timerTime = 0;
 let isTimerRunning = false;
+let redSuccesses = 0;
+let redFailures = 0;
+let greenSuccesses = 0;
+let greenFailures = 0;
+let isForceModeActive = false;
+let forcedColor = '';
+
 
 
 
@@ -2561,16 +2649,95 @@ function predictColor() {
     const colorInput = document.getElementById('colorInput').value.toUpperCase();
     const validColors = ['R', 'V'];
 
-    // 1. Vérification des restrictions
+    // 1. Vérification du mode forcé (prioritaire)
+    if (isForceModeActive) {
+        completeForcedPrediction();
+        return;
+    }
+
+    // 2. Vérification des restrictions
     if (!checkPredictionRestrictions(colorInput)) return;
 
-    // 2. Validation du format
+    // 3. Validation du format
     if (colorInput.length !== 10 || !colorInput.split('').every(char => validColors.includes(char))) {
         showColorFormatAlert();
         return;
     }
 
-    // 3. Calcul des pourcentages (conservé pour compatibilité)
+    // 4. Calcul des pourcentages et vérification des ratios interdits
+    const colorCount = colorInput.split('').reduce((count, char) => {
+        count[char] = (count[char] || 0) + 1;
+        return count;
+    }, {});
+
+    const redCount = colorCount['R'] || 0;
+    const greenCount = colorCount['V'] || 0;
+    
+    // Vérification explicite des ratios 6R/4V et 6V/4R
+    if ((redCount === 6 && greenCount === 4) || (redCount === 4 && greenCount === 6)) {
+        Swal.fire({
+            title: 'RATIO INTERDIT ⛔',
+            html: `
+                <div style="font-size: 2rem;">🚫</div>
+                <p>Le ratio <strong>${redCount}R/${greenCount}V</strong> est interdit.</p>
+                <p>Motif : Ces ratios montrent une instabilité statistique trop importante.</p>
+                <p style="color: #dc3545;">Veuillez entrer une nouvelle séquence.</p>
+            `,
+            icon: 'error',
+            confirmButtonText: 'Compris',
+            confirmButtonColor: '#dc3545'
+        });
+        return;
+    }
+
+    const frequentColor = redCount * 10 >= greenCount * 10 
+        ? `${redCount * 10}% Rouge` 
+        : `${greenCount * 10}% Vert`;
+
+    // 5. Vérification du feedback manquant
+    if (history.length > 0 && !history[history.length - 1].result) {
+        showMissingFeedbackAlert();
+        return;
+    }
+
+    // 6. Conversion au format lisible
+    const lastColors = colorInput.split('').map(char => char === 'R' ? 'rouge' : 'vert');
+
+    // 7. Vérification des doublons
+    const previousResult = history.find(record => record.colors === lastColors.join(', '));
+    if (previousResult) {
+        handleDuplicatePrediction(previousResult, colorInput, lastColors, frequentColor);
+        return;
+    }
+
+    // 8. Exécution normale
+    completePrediction(colorInput, lastColors, frequentColor);
+}
+
+// Nouvelle fonction pour les prédictions forcées
+function completeForcedPrediction() {
+    const colorInput = document.getElementById('colorInput').value.toUpperCase();
+    
+    // 1. Vérification IMPÉRATIVE de toutes les restrictions avant toute prédiction forcée
+    if (!checkPredictionRestrictions(colorInput)) {
+        Swal.fire({
+            title: 'Prédiction Forcée Impossible ⚠️',
+            html: `
+                <p>Le mode forcé ne peut pas contourner les règles de sécurité :</p>
+                <p style="color:#dc3545;font-weight:bold;">
+                    ${getActiveRestrictions(colorInput).join('<br>')}
+                </p>
+                <p>Veuillez attendre un nouveau signal.</p>
+            `,
+            icon: 'error',
+            confirmButtonText: 'Compris'
+        });
+        return;
+    }
+
+    const lastColors = colorInput.split('').map(char => char === 'R' ? 'rouge' : 'vert');
+    
+    // Calcul du pourcentage de couleur (inchangé)
     const colorCount = colorInput.split('').reduce((count, char) => {
         count[char] = (count[char] || 0) + 1;
         return count;
@@ -2580,26 +2747,78 @@ function predictColor() {
         ? `${(colorCount['R'] || 0) * 10}% Rouge` 
         : `${(colorCount['V'] || 0) * 10}% Vert`;
 
-    // 4. Vérification du feedback manquant
-    if (history.length > 0 && !history[history.length - 1].result) {
-        showMissingFeedbackAlert();
-        return;
-    }
+    // Enregistrement de la prédiction forcée (inchangé)
+    history.push({
+        tradeNumber: history.length + 1,
+        colors: lastColors.join(', '),
+        prediction: forcedColor,
+        frequentColor: frequentColor,
+        result: '',
+        date: document.getElementById('dateInput').value || new Date().toLocaleDateString(),
+        method: 'forced',
+        forced: true,
+        restrictionsChecked: true // Nouveau champ pour tracer le respect des règles
+    });
 
-    // 5. Conversion au format lisible
-    const lastColors = colorInput.split('').map(char => char === 'R' ? 'rouge' : 'vert');
+    // Affichage du résultat (inchangé)
+    const predictionResult = document.getElementById('predictionResult');
+    predictionResult.className = `prediction-container prediction-${forcedColor === 'rouge' ? 'red' : 'green'}`;
+    predictionResult.innerHTML = `
+        <span class="prediction-icon">${forcedColor === 'rouge' ? '🔴' : '🟢'}</span>
+        <span>PRÉDICTION FORCÉE : MISER SUR <strong>${forcedColor.toUpperCase()}</strong></span>
+        <span class="prediction-icon">${forcedColor === 'rouge' ? '🔴' : '🟢'}</span>
+        <div class="warning-alert">⚠️ Mode forcé activé (2 pertes consécutives)</div>
+    `;
 
-    // 6. Vérification des doublons
-    const previousResult = history.find(record => record.colors === lastColors.join(', '));
-    if (previousResult) {
-        handleDuplicatePrediction(previousResult, colorInput, lastColors, frequentColor);
-        return;
-    }
-
-    // 7. Exécution normale
-    completePrediction(colorInput, lastColors, frequentColor);
+    document.getElementById('colorInput').value = '';
+    updateHistory();
+    enableFeedbackButtons();
+    
+    // Notification (inchangée mais avec mention des règles respectées)
+    Swal.fire({
+        title: 'Prédiction Forcée Validée!',
+        html: `
+            <p>Mise forcée sur: <strong style="color:${forcedColor === 'rouge' ? '#dc3545' : '#28a745'}">${forcedColor.toUpperCase()}</strong></p>
+            <p>✅ Toutes les règles de sécurité sont respectées :</p>
+            <ul style="text-align:left;margin-left:20px;">
+                ${getRespectedRules(colorInput).map(r => `<li>${r}</li>`).join('')}
+            </ul>
+            <p>${frequentColor}</p>
+        `,
+        icon: 'success',
+        confirmButtonText: 'Continuer'
+    });
 }
 
+// Fonctions helper (à ajouter dans votre code)
+function getActiveRestrictions(colorInput) {
+    const restrictions = [];
+    const lastThree = colorInput.slice(-3);
+    
+    if (lastThree === 'RVR' || lastThree === 'VRV') {
+        restrictions.push('• Séquence RVR/VRV interdite');
+    }
+    
+    const redCount = (colorInput.match(/R/g) || []).length;
+    const greenCount = (colorInput.match(/V/g) || []).length;
+    if ((redCount === 6 && greenCount === 4) || (redCount === 4 && greenCount === 6)) {
+        restrictions.push(`• Ratio ${redCount}R/${greenCount}V interdit`);
+    }
+    
+    if (bannedPatterns.includes(lastThree)) {
+        restrictions.push(`• Motif ${lastThree} temporairement bloqué`);
+    }
+    
+    return restrictions.length ? restrictions : ['Aucune restriction active'];
+}
+
+function getRespectedRules(colorInput) {
+    return [
+        'Aucune séquence RVR/VRV détectée',
+        'Ratios 6/4 absents',
+        bannedPatterns.length ? `Motifs ${bannedPatterns.join(', ')} évités` : 'Aucun motif temporaire bloqué'
+    ];
+}
 // Fonctions extraites pour plus de clarté :
 function showColorFormatAlert() {
     Swal.fire({
@@ -2871,9 +3090,24 @@ function displayPreviousResult(previousResult) {
         return;
     }
 
+    // Mise à jour des statistiques par couleur
     if (correct) {
-         // Mettre à jour la barre de progression
-         updateProgressBar(1); // Augmente de 1% à chaque succès
+        if (lastHistoryItem.prediction === 'rouge') {
+            redSuccesses++;
+        } else {
+            greenSuccesses++;
+        }
+    } else {
+        if (lastHistoryItem.prediction === 'rouge') {
+            redFailures++;
+        } else {
+            greenFailures++;
+        }
+    }
+
+    if (correct) {
+        // Mettre à jour la barre de progression
+        updateProgressBar(1);
         // Traitement gain
         const profit = currentBet * (odds / 100);
         currentBankroll = parseFloat((currentBankroll + profit).toFixed(2));
@@ -2884,7 +3118,22 @@ function displayPreviousResult(previousResult) {
         lastHistoryItem.result = 'Succès';
         successes++;
         points += 10;
-        progressPercentage = Math.min(progressPercentage + 1, 100); // Incrémente de 1% sans dépasser 100%
+        progressPercentage = Math.min(progressPercentage + 1, 100);
+
+        // Désactiver le mode forcé si actif
+        if (isForceModeActive) {
+            isForceModeActive = false;
+            document.getElementById('forceModeAlert').style.display = 'none';
+            document.getElementById('redStats').classList.remove('force-mode-active');
+            document.getElementById('greenStats').classList.remove('force-mode-active');
+            
+            Swal.fire({
+                title: 'Mode Forcé Désactivé',
+                text: 'Un gain a été enregistré, retour au mode normal.',
+                icon: 'success',
+                timer: 2000
+            });
+        }
 
         Swal.fire({
             title: 'Gagné! 🎉',
@@ -2913,8 +3162,8 @@ function displayPreviousResult(previousResult) {
         currentMartingaleIndex = Math.min(currentMartingaleIndex + 1, martingaleSequence.length - 1);
 
         // Gestion des interdictions progressives
-        bannedPatterns = ['RRR','VVV']; // Toujours bloquer RRR et VVV après une perte
-        if (consecutiveLosses >= 3) bannedPatterns.push('VVR','RRV'); // Bloquer plus après 3 pertes
+        bannedPatterns = ['RRR','VVV'];
+        if (consecutiveLosses >= 3) bannedPatterns.push('VVR','RRV');
 
         lastHistoryItem.result = 'Échec';
         failures++;
@@ -2931,6 +3180,37 @@ function displayPreviousResult(previousResult) {
             warningMessage = `
                 <p style="color:#fb8c00">⚠️ ${consecutiveLosses} perte(s) consécutive(s)</p>
                 <p>Évitez: RRR, VVV</p>
+            `;
+        }
+
+        // Activer le mode forcé après 2 pertes consécutives
+        if (consecutiveLosses >= 2 && !isForceModeActive) {
+            isForceModeActive = true;
+            
+            // Déterminer la couleur à forcer (meilleur taux de réussite)
+            const redTotal = redSuccesses + redFailures;
+            const greenTotal = greenSuccesses + greenFailures;
+            
+            const redRate = redTotal > 0 ? redSuccesses / redTotal : 0;
+            const greenRate = greenTotal > 0 ? greenSuccesses / greenTotal : 0;
+            
+            forcedColor = redRate >= greenRate ? 'rouge' : 'vert';
+            
+            // Mettre à jour l'interface
+            document.getElementById('forceModeAlert').style.display = 'block';
+            document.getElementById('forcedColorText').textContent = forcedColor;
+            document.getElementById('forcedColorText').style.color = forcedColor === 'rouge' ? '#dc3545' : '#28a745';
+            
+            if (forcedColor === 'rouge') {
+                document.getElementById('redStats').classList.add('force-mode-active');
+            } else {
+                document.getElementById('greenStats').classList.add('force-mode-active');
+            }
+            
+            warningMessage += `
+                <div style="margin-top:10px; background:#fff3cd; padding:10px; border-radius:5px;">
+                    <p style="color:#856404;">⚠️ Mode forcé activé: Prochaines prédictions sur <strong>${forcedColor}</strong></p>
+                </div>
             `;
         }
 
@@ -2964,6 +3244,7 @@ function displayPreviousResult(previousResult) {
     updatePoints();
     updateLevelButtons();
     updatePieChart();
+    updateColorStatsDisplay(); // Mettre à jour les stats par couleur
     saveHistoryToLocalStorage();
     
     // Réinitialisation des champs
@@ -2973,8 +3254,10 @@ function displayPreviousResult(previousResult) {
 }
 function checkPredictionRestrictions(colorSeries) {
     const lastThree = colorSeries.slice(-3); // Récupère les 3 dernières couleurs
+    const redCount = (colorSeries.match(/R/g) || []).length;
+    const greenCount = (colorSeries.match(/V/g) || []).length;
     
-    // 1. Vérification permanente (valable en tout temps)
+    // 1. Vérification permanente (valable en tout temps) - RVR et VRV
     if (lastThree === 'RVR' || lastThree === 'VRV') {
         Swal.fire({
             title: 'PRÉDICTION INTERDITE ⛔',
@@ -2991,7 +3274,24 @@ function checkPredictionRestrictions(colorSeries) {
         return false;
     }
 
-    // 2. Vérification des motifs bloqués après une perte
+    // 2. Vérification des ratios interdits (6R/4V et 6V/4R)
+    if ((redCount === 6 && greenCount === 4) || (redCount === 4 && greenCount === 6)) {
+        Swal.fire({
+            title: 'RATIO INTERDIT ⛔',
+            html: `
+                <div style="font-size: 2rem;">🚫</div>
+                <p>Le ratio <strong>${redCount}R/${greenCount}V</strong> est interdit.</p>
+                <p>Motif : Ces ratios montrent une instabilité statistique trop importante.</p>
+                <p style="color: #dc3545;">Veuillez entrer une nouvelle séquence.</p>
+            `,
+            icon: 'error',
+            confirmButtonText: 'Compris',
+            confirmButtonColor: '#dc3545'
+        });
+        return false;
+    }
+
+    // 3. Vérification des motifs bloqués après une perte (s'applique même en mode forcé)
     if (bannedPatterns.includes(lastThree)) {
         Swal.fire({
             title: 'PRÉDICTION TEMPORAIREMENT BLOQUÉE ⚠️',
@@ -3010,7 +3310,7 @@ function checkPredictionRestrictions(colorSeries) {
         return false;
     }
 
-    return true; // Tout est OK
+    return true; // Tout est OK - Aucune restriction ne s'applique
 }
 // Fonction pour analyser les raisons de l'échec (exemple)
 function analyzeLossReason(colorInput, prediction, result) {
@@ -3149,14 +3449,97 @@ function advanceToNextLevel() {
 
 // Au chargement de la page, charger la progression sauvegardée
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. Chargement de la progression du jeu
     const savedProgress = localStorage.getItem('gameProgress');
     if (savedProgress) {
         progress = parseInt(savedProgress);
         document.getElementById('progressBarFill').style.width = progress + '%';
         document.getElementById('progressPercentage').textContent = progress + '%';
     }
+
+    // 2. Initialisation des statistiques par couleur
+    const savedRedStats = localStorage.getItem('redStats');
+    const savedGreenStats = localStorage.getItem('greenStats');
+    
+    if (savedRedStats) {
+        const redStats = JSON.parse(savedRedStats);
+        redSuccesses = redStats.successes || 0;
+        redFailures = redStats.failures || 0;
+    }
+    
+    if (savedGreenStats) {
+        const greenStats = JSON.parse(savedGreenStats);
+        greenSuccesses = greenStats.successes || 0;
+        greenFailures = greenStats.failures || 0;
+    }
+
+    // 3. Chargement de l'état du mode forcé
+    const savedForceMode = localStorage.getItem('forceMode');
+    if (savedForceMode) {
+        const forceModeData = JSON.parse(savedForceMode);
+        isForceModeActive = forceModeData.isActive || false;
+        forcedColor = forceModeData.color || '';
+        consecutiveLosses = forceModeData.consecutiveLosses || 0;
+        
+        if (isForceModeActive) {
+            document.getElementById('forceModeAlert').style.display = 'block';
+            document.getElementById('forcedColorText').textContent = forcedColor;
+            document.getElementById('forcedColorText').style.color = forcedColor === 'rouge' ? '#dc3545' : '#28a745';
+            
+            if (forcedColor === 'rouge') {
+                document.getElementById('redStats').classList.add('force-mode-active');
+            } else {
+                document.getElementById('greenStats').classList.add('force-mode-active');
+            }
+        }
+    }
+
+    // 4. Mise à jour initiale de l'interface
+    updateColorStatsDisplay();
+    updateBankrollDisplay();
+    updateMartingaleDisplay();
+    updateHistory();
+    updateSuccessRate();
+    updatePoints();
+    updateLevelButtons();
+    updatePieChart();
+    
+    // 5. Vérification du tutoriel
+    if (!localStorage.getItem('hideTutorial')) {
+        showTutorial();
+    }
 });
-        function analyzeAllLosses() {
+
+// Nouvelle fonction pour sauvegarder les stats par couleur
+function saveColorStats() {
+    localStorage.setItem('redStats', JSON.stringify({
+        successes: redSuccesses,
+        failures: redFailures
+    }));
+    
+    localStorage.setItem('greenStats', JSON.stringify({
+        successes: greenSuccesses,
+        failures: greenFailures
+    }));
+}
+
+// Nouvelle fonction pour sauvegarder l'état du mode forcé
+function saveForceModeState() {
+    localStorage.setItem('forceMode', JSON.stringify({
+        isActive: isForceModeActive,
+        color: forcedColor,
+        consecutiveLosses: consecutiveLosses
+    }));
+}
+
+// Modifier la fonction saveHistoryToLocalStorage() pour inclure les nouvelles données
+function saveHistoryToLocalStorage() {
+    localStorage.setItem('predictionHistory', JSON.stringify(history));
+    saveColorStats();
+    saveForceModeState();
+    localStorage.setItem('gameProgress', progress);
+}
+function analyzeAllLosses() {
     const losses = history.filter(record => record.result === 'Échec'); // Filtrer les pertes
     if (losses.length === 0) {
         Swal.fire({
@@ -3755,8 +4138,140 @@ function predictBasedOnTrend(colorInput) {
         return predictBasedOnTrends(colorInput); // Utilise la fonction existante
     }
 }
+function checkColorRatioBan(colorInput) {
+    const redCount = (colorInput.match(/R/g) || []).length;
+    const greenCount = (colorInput.match(/V/g) || []).length;
+    
+    // Bloquer les ratios 6R/4V et 6V/4R
+    if ((redCount === 6 && greenCount === 4) || (redCount === 4 && greenCount === 6)) {
+        return true; // Ratio banni
+    }
+    return false; // Ratio acceptable
+}
+// Fonction pour calculer les statistiques par couleur
+function calculateColorStats() {
+    // Réinitialiser les compteurs
+    redSuccesses = 0;
+    redFailures = 0;
+    greenSuccesses = 0;
+    greenFailures = 0;
 
+    // Parcourir l'historique pour compter les succès/échecs par couleur
+    history.forEach(record => {
+        if (record.result === 'Succès' || record.result === 'Échec') {
+            if (record.prediction === 'rouge') {
+                if (record.result === 'Succès') redSuccesses++;
+                else redFailures++;
+            } else if (record.prediction === 'vert') {
+                if (record.result === 'Succès') greenSuccesses++;
+                else greenFailures++;
+            }
+        }
+    });
 
+    // Mettre à jour l'affichage
+    updateColorStatsDisplay();
+    
+    // Vérifier si on doit activer le mode forcé
+    checkForceMode();
+}
+
+// Fonction pour mettre à jour l'affichage des statistiques
+function updateColorStatsDisplay() {
+    // Calcul des pourcentages
+    const redTotal = redSuccesses + redFailures;
+    const greenTotal = greenSuccesses + greenFailures;
+    
+    const redSuccessRate = redTotal > 0 ? (redSuccesses / redTotal * 100).toFixed(1) : 0;
+    const greenSuccessRate = greenTotal > 0 ? (greenSuccesses / greenTotal * 100).toFixed(1) : 0;
+
+    // Mise à jour des éléments HTML
+    document.getElementById('redSuccessCount').textContent = `${redSuccesses} succès`;
+    document.getElementById('redFailureCount').textContent = `${redFailures} échecs`;
+    document.getElementById('redSuccessRate').textContent = `${redSuccessRate}% de réussite`;
+    
+    document.getElementById('greenSuccessCount').textContent = `${greenSuccesses} succès`;
+    document.getElementById('greenFailureCount').textContent = `${greenFailures} échecs`;
+    document.getElementById('greenSuccessRate').textContent = `${greenSuccessRate}% de réussite`;
+
+    // Ajouter des indicateurs de tendance
+    updateTrendIndicators(redSuccessRate, greenSuccessRate);
+}
+
+// Fonction pour mettre à jour les indicateurs de tendance
+function updateTrendIndicators(redRate, greenRate) {
+    const redTrendElement = document.getElementById('redTrend');
+    const greenTrendElement = document.getElementById('greenTrend');
+    
+    // Effacer les anciens indicateurs
+    redTrendElement.innerHTML = '';
+    greenTrendElement.innerHTML = '';
+    
+    // Ajouter des indicateurs visuels
+    if (redRate > greenRate) {
+        redTrendElement.innerHTML = '<span style="color:#28a745">↑ Meilleure performance</span>';
+        greenTrendElement.innerHTML = '<span style="color:#6c757d">↘ Plus faible performance</span>';
+    } else if (greenRate > redRate) {
+        greenTrendElement.innerHTML = '<span style="color:#28a745">↑ Meilleure performance</span>';
+        redTrendElement.innerHTML = '<span style="color:#6c757d">↘ Plus faible performance</span>';
+    } else {
+        redTrendElement.innerHTML = '<span style="color:#6c757d">= Performance égale</span>';
+        greenTrendElement.innerHTML = '<span style="color:#6c757d">= Performance égale</span>';
+    }
+}
+
+// Fonction pour vérifier si on doit activer le mode forcé
+function checkForceMode() {
+    // Désactiver le mode forcé si on a un gain
+    if (history.length > 0 && history[history.length - 1].result === 'Succès') {
+        if (isForceModeActive) {
+            isForceModeActive = false;
+            document.getElementById('forceModeAlert').style.display = 'none';
+            document.getElementById('redStats').classList.remove('force-mode-active');
+            document.getElementById('greenStats').classList.remove('force-mode-active');
+            
+            Swal.fire({
+                title: 'Mode Forcé Désactivé',
+                text: 'Un gain a été enregistré, retour au mode normal.',
+                icon: 'success',
+                timer: 2000
+            });
+        }
+        return;
+    }
+    
+    // Activer le mode forcé après 2 pertes consécutives
+    if (consecutiveLosses >= 2 && !isForceModeActive) {
+        isForceModeActive = true;
+        
+        // Déterminer quelle couleur forcer (celle avec le meilleur taux de réussite)
+        const redTotal = redSuccesses + redFailures;
+        const greenTotal = greenSuccesses + greenFailures;
+        
+        const redRate = redTotal > 0 ? redSuccesses / redTotal : 0;
+        const greenRate = greenTotal > 0 ? greenSuccesses / greenTotal : 0;
+        
+        forcedColor = redRate >= greenRate ? 'rouge' : 'vert';
+        
+        // Mettre à jour l'interface
+        document.getElementById('forceModeAlert').style.display = 'block';
+        document.getElementById('forcedColorText').textContent = forcedColor;
+        document.getElementById('forcedColorText').style.color = forcedColor === 'rouge' ? '#dc3545' : '#28a745';
+        
+        if (forcedColor === 'rouge') {
+            document.getElementById('redStats').classList.add('force-mode-active');
+        } else {
+            document.getElementById('greenStats').classList.add('force-mode-active');
+        }
+        
+        Swal.fire({
+            title: 'Mode Forcé Activé!',
+            html: `2 pertes consécutives détectées. Le bot forcera maintenant les prédictions sur <strong style="color:${forcedColor === 'rouge' ? '#dc3545' : '#28a745'}">${forcedColor}</strong> jusqu'au prochain gain.`,
+            icon: 'warning',
+            confirmButtonText: 'Compris'
+        });
+    }
+}
     </script>
 </body>
 </html>
