@@ -1159,7 +1159,7 @@
         margin-bottom: 25px;
         color: white;
         position: relative;
-        overflow: hidden;
+       
     }
 
     .header::before {
@@ -1314,6 +1314,17 @@
         transform: scale(1.1);
         transition: all 0.3s ease;
     }
+    html, body {
+    overflow-x: hidden;
+
+    margin: 0;           
+    padding: 0;         
+    }
+    .container {
+    
+     overflow-x: hidden; 
+    
+}
 
 </style>
 </head>
@@ -2873,7 +2884,7 @@ function predictColor() {
     const greenCount = colorCount['V'] || 0;
     
     // Vérification explicite des ratios 6R/4V et 6V/4R
-    if ((redCount === 6 && greenCount === 4) || (redCount === 4 && greenCount === 6)) {
+    /*if ((redCount === 6 && greenCount === 4) || (redCount === 4 && greenCount === 6)) {
         Swal.fire({
             title: 'RATIO INTERDIT ⛔',
             html: `
@@ -2887,7 +2898,7 @@ function predictColor() {
             confirmButtonColor: '#dc3545'
         });
         return;
-    }
+    }*/
 
     const frequentColor = redCount * 10 >= greenCount * 10 
         ? `${redCount * 10}% Rouge` 
@@ -2913,6 +2924,59 @@ function predictColor() {
     completePrediction(colorInput, lastColors, frequentColor);
 }
 
+function completePrediction(colorInput, lastColors, frequentColor) {
+    // 1. D'abord essayer avec les motifs répétés
+    let nextColor = predictBasedOnRepeatedPatterns(colorInput);
+
+    // 2. Si aucun motif répété, essayer avec les motifs prédéfinis
+    if (!nextColor) {
+        nextColor = predictBasedOnSimilarity(colorInput);
+        
+        // 3. Si aucun motif prédéfini trouvé, utiliser la nouvelle règle par défaut
+        if (!nextColor) {
+            const lastColor = colorInput.slice(-1); // Prendre la dernière couleur
+            nextColor = lastColor === 'R' ? 'rouge' : 'vert';
+        }
+    }
+
+    // Enregistrement de la prédiction
+    history.push({
+        tradeNumber: history.length + 1,
+        colors: lastColors.join(', '),
+        prediction: nextColor,
+        frequentColor: frequentColor,
+        result: '',
+        date: document.getElementById('dateInput').value || new Date().toLocaleDateString(),
+        method: nextColor ? 'pattern' : 'statistical'
+    });
+
+    // Affichage du résultat
+    const predictionResult = document.getElementById('predictionResult');
+    predictionResult.className = `prediction-container prediction-${nextColor === 'rouge' ? 'red' : 'green'}`;
+    predictionResult.innerHTML = `
+        <span class="prediction-icon">${nextColor === 'rouge' ? '🔴' : '🟢'}</span>
+        <span>PRÉDICTION : MISER SUR <strong>${nextColor.toUpperCase()}</strong></span>
+        <span class="prediction-icon">${nextColor === 'rouge' ? '🔴' : '🟢'}</span>
+    `;
+
+    document.getElementById('colorInput').value = '';
+    updateHistory();
+    enableFeedbackButtons();
+    
+    Swal.fire({
+        title: 'Prédiction Enregistrée!',
+        html: `
+            <p>Mise recommandée: <strong>${nextColor.toUpperCase()}</strong></p>
+            <p>${frequentColor}</p>
+        `,
+        icon: 'success',
+        confirmButtonText: 'Continuer'
+    });
+    
+    updateStats();
+    saveHistoryToLocalStorage();
+    return true;
+}
 // Nouvelle fonction pour les prédictions forcées
 function completeForcedPrediction() {
     const colorInput = document.getElementById('colorInput').value.toUpperCase();
@@ -3362,7 +3426,7 @@ function displayPreviousResult(previousResult) {
 
         // Gestion des interdictions progressives
         bannedPatterns = ['RRR','VVV'];
-        if (consecutiveLosses >= 3) bannedPatterns.push('VVR','RRV');
+        //if (consecutiveLosses >= 3) bannedPatterns.push('VVR','RRV');//
 
         lastHistoryItem.result = 'Échec';
         failures++;
@@ -3511,7 +3575,7 @@ function checkPredictionRestrictions(colorSeries) {
     }
 
     // 2. Vérification des ratios interdits (6R/4V et 6V/4R)
-    if ((redCount === 6 && greenCount === 4) || (redCount === 4 && greenCount === 6)) {
+   /* if ((redCount === 6 && greenCount === 4) || (redCount === 4 && greenCount === 6)) {
         Swal.fire({
             title: 'RATIO INTERDIT ⛔',
             html: `
@@ -3525,7 +3589,7 @@ function checkPredictionRestrictions(colorSeries) {
             confirmButtonColor: '#dc3545'
         });
         return false;
-    }
+    }*/
 
     // 3. Vérification des motifs bloqués après une perte (s'applique même en mode forcé)
     if (bannedPatterns.includes(lastThree)) {
@@ -4507,6 +4571,17 @@ function checkForceMode() {
             confirmButtonText: 'Compris'
         });
     }
+}
+function predictBasedOnSimilarity(inputPattern) {
+    // 1. D'abord essayer avec les motifs connus
+    const mostSimilarPattern = findMostSimilarPattern(inputPattern);
+    if (mostSimilarPattern && patterns[mostSimilarPattern]) {
+        return patterns[mostSimilarPattern];
+    }
+    
+    // 2. Si aucun motif connu, utiliser la règle par défaut
+    const lastColor = inputPattern.slice(-1); // Prendre la dernière couleur
+    return lastColor === 'R' ? 'rouge' : 'vert';
 }
     </script>
 </body>
