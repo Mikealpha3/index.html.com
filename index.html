@@ -9,6 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
     <style>
         /* Styles pour la popup de notification */
         .notification-popup {
@@ -1325,7 +1326,118 @@
      overflow-x: hidden; 
     
 }
+/* Style minimaliste vert & blanc avec typographie noire */
+#externalDBInterface {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    overflow: hidden;
+}
 
+#externalPatternInput {
+    width: 100%;
+    padding: 12px 16px;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    font-family: monospace;
+    font-size: 14px;
+    color: black;
+    background: white;
+    margin-bottom: 16px;
+    transition: border 0.2s ease;
+}
+
+#externalPatternInput:focus {
+    border-color: #4CAF50; /* vert discret */
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+}
+
+#externalPatternsList {
+    overflow-y: auto;
+    max-height: 400px;
+}
+
+#externalPatternsList table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: sans-serif;
+}
+
+#externalPatternsList th {
+    background: white;
+    color: black;
+    position: sticky;
+    top: 0;
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+#externalPatternsList td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    color: black;
+}
+
+#externalPatternsList tr:hover {
+    background-color: #f9f9f9;
+}
+
+/* Boutons version vert discret */
+.action-button {
+    background: white;
+    color: black;
+    border: 1px solid #e0e0e0;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.action-button:hover {
+    background: #f5f5f5;
+    border-color: #4CAF50; /* vert seulement au survol */
+}
+
+.action-button.primary {
+    background: #4CAF50;
+    color: white;
+    border-color: #4CAF50;
+}
+
+/* Éléments interactifs avec accent vert */
+.interactive-element {
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.interactive-element:hover {
+    color: #4CAF50; /* vert discret au survol */
+}
+
+/* Scrollbar stylisée */
+#externalPatternsList::-webkit-scrollbar {
+    width: 8px;
+}
+
+#externalPatternsList::-webkit-scrollbar-thumb {
+    background: #e0e0e0;
+    border-radius: 4px;
+}
+
+#externalPatternsList::-webkit-scrollbar-thumb:hover {
+    background: #4CAF50; /* vert discret */
+}
+button:hover {
+    background-color: #f5f5f5 !important;
+}
+button[onclick="addExternalPattern()"]:hover {
+    border-color: #2E7D32 !important;
+}
 </style>
 </head>
 <div class="strategy-popup" id="strategyPopup" style="display: none;">
@@ -1462,7 +1574,34 @@
                 <p id="haitiTime">Heure en Haïti : <span id="currentTime"></span></p>
             </div>
         </div>
-        
+ <!-- Bouton d'accès à la base externe -->
+<button class="btn-analyze" onclick="toggleExternalDBInterface()" style="background: white; color: black; border: 1px solid #e0e0e0;">
+    <i class="fas fa-database" style="color: black;"></i> Base Externe
+</button>
+
+<!-- Interface de la base de données externe -->
+<div id="externalDBInterface" style="display:none; margin-top:20px; padding:15px; background:white; border-radius:8px; border:1px solid #e0e0e0; box-shadow:0 2px 4px rgba(0,0,0,0.05);">
+    <h3 style="color: black; margin-top:0;"><i class="fas fa-database" style="color: black;"></i> Base de Données Externe</h3>
+    
+    <div style="margin-bottom:15px;">
+        <textarea id="externalPatternInput" style="width:100%; padding:12px; border-radius:6px; border:1px solid #e0e0e0; font-family:monospace; background:white; color:black;" 
+                  rows="5" placeholder="Collez vos motifs ici (format: date - couleurs - prédiction - % - résultat)"></textarea>
+    </div>
+    
+    <div style="margin-bottom:15px; display:flex; gap:10px;">
+        <button onclick="addExternalPattern()" style="background:white; color:black; border:1px solid #4CAF50; padding:8px 12px; border-radius:4px; cursor:pointer;">
+            <i class="fas fa-plus" style="color:black;"></i> Ajouter
+        </button>
+        <button onclick="clearExternalPatterns()" style="background:white; color:black; border:1px solid #e0e0e0; padding:8px 12px; border-radius:4px; cursor:pointer;">
+            <i class="fas fa-trash" style="color:black;"></i> Effacer
+        </button>
+        <button onclick="exportExternalDB()" style="background:white; color:black; border:1px solid #e0e0e0; padding:8px 12px; border-radius:4px; cursor:pointer;">
+            <i class="fas fa-download" style="color:black;"></i> Exporter
+        </button>
+    </div>
+    
+    <div id="externalPatternsList" style="margin-top:15px; max-height:300px; overflow-y:auto; background:white; border:1px solid #e0e0e0; border-radius:6px;"></div>
+</div>
         <div class="timer-container">
             <div class="bankroll-container">
                 <h3>💰 Gestion de Bankroll</h3>
@@ -1656,6 +1795,164 @@
 </audio>
     </div>
     <script>
+        // Variables pour la base de données externe
+let externalPatterns = JSON.parse(localStorage.getItem('externalPatterns')) || [];
+
+// Fonction pour basculer l'interface
+function toggleExternalDBInterface() {
+    const interface = document.getElementById('externalDBInterface');
+    interface.style.display = interface.style.display === 'none' ? 'block' : 'none';
+    if (interface.style.display === 'block') {
+        loadExternalPatterns();
+    }
+}
+
+// Fonction pour ajouter un motif
+function addExternalPattern() {
+    const input = document.getElementById('externalPatternInput').value.trim();
+    if (!input) {
+        Swal.fire('Erreur', 'Veuillez entrer des données valides', 'error');
+        return;
+    }
+
+    // Traitement des lignes
+    const lines = input.split('\n').filter(line => line.trim());
+    const newPatterns = [];
+
+    lines.forEach(line => {
+        const parts = line.split('-').map(part => part.trim());
+        if (parts.length >= 5) {
+            const pattern = {
+                date: parts[0],
+                colors: parts[1],
+                prediction: parts[2].toLowerCase().includes('vert') ? 'vert' : 'rouge',
+                percentage: parts[3],
+                result: parts[4].toLowerCase().includes('échec') ? 'Échec' : 'Succès',
+                source: 'external',
+                timestamp: new Date().toISOString()
+            };
+            newPatterns.push(pattern);
+        }
+    });
+
+    if (newPatterns.length === 0) {
+        Swal.fire('Format incorrect', 'Utilisez le format: date - couleurs - prédiction - % - résultat', 'warning');
+        return;
+    }
+
+    externalPatterns = [...externalPatterns, ...newPatterns];
+    localStorage.setItem('externalPatterns', JSON.stringify(externalPatterns));
+    
+    Swal.fire({
+        title: 'Succès!',
+        html: `${newPatterns.length} motif(s) ajouté(s) à la base externe`,
+        icon: 'success'
+    });
+    
+    loadExternalPatterns();
+    document.getElementById('externalPatternInput').value = '';
+}
+
+// Fonction pour charger les motifs externes
+function loadExternalPatterns() {
+    const container = document.getElementById('externalPatternsList');
+    container.innerHTML = '';
+
+    if (externalPatterns.length === 0) {
+        container.innerHTML = '<p>Aucun motif externe enregistré</p>';
+        return;
+    }
+
+    const table = document.createElement('table');
+    table.className = 'table table-striped';
+    table.innerHTML = `
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Couleurs</th>
+                <th>Prédiction</th>
+                <th>Résultat</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    `;
+
+    externalPatterns.forEach((pattern, index) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${pattern.date}</td>
+            <td>${pattern.colors}</td>
+            <td style="color:${pattern.prediction === 'vert' ? '#28a745' : '#dc3545'}">
+                ${pattern.prediction}
+            </td>
+            <td>${pattern.result === 'Succès' ? '✅' : '❌'}</td>
+            <td>
+                <button class="btn btn-sm btn-danger" onclick="removeExternalPattern(${index})">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </td>
+        `;
+        table.querySelector('tbody').appendChild(row);
+    });
+
+    container.appendChild(table);
+}
+
+// Fonction pour supprimer un motif
+function removeExternalPattern(index) {
+    Swal.fire({
+        title: 'Confirmer la suppression',
+        text: 'Voulez-vous vraiment supprimer ce motif?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Oui, supprimer',
+        cancelButtonText: 'Annuler'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            externalPatterns.splice(index, 1);
+            localStorage.setItem('externalPatterns', JSON.stringify(externalPatterns));
+            loadExternalPatterns();
+            Swal.fire('Supprimé!', 'Le motif a été supprimé.', 'success');
+        }
+    });
+}
+
+// Fonction pour effacer toute la base
+function clearExternalPatterns() {
+    Swal.fire({
+        title: 'Confirmer la suppression',
+        text: 'Voulez-vous vraiment supprimer TOUS les motifs externes?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Oui, tout supprimer',
+        cancelButtonText: 'Annuler'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            externalPatterns = [];
+            localStorage.removeItem('externalPatterns');
+            loadExternalPatterns();
+            Swal.fire('Supprimé!', 'Tous les motifs ont été effacés.', 'success');
+        }
+    });
+}
+
+// Fonction pour exporter la base
+function exportExternalDB() {
+    const dataStr = JSON.stringify(externalPatterns, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    
+    const exportName = `external_patterns_${new Date().toISOString().slice(0,10)}.json`;
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportName);
+    linkElement.click();
+    
+    Swal.fire('Export réussi!', `Fichier ${exportName} téléchargé.`, 'success');
+}
+
+
         function forceStatisticalAnalysis() {
     const colorInput = document.getElementById('seriesInput').value.toUpperCase().replace(/[^RV]/g, '');
     
@@ -2920,10 +3217,67 @@ function predictColor() {
         return;
     }
 
-    // 8. Exécution normale
-    completePrediction(colorInput, lastColors, frequentColor);
-}
+    // 8. Nouvelle stratégie après une perte
+    if (lastResultWasLoss) {
+        const lastThree = colorInput.slice(-3);
+        const threeColorPatterns = {
+            'RVV': 'rouge',
+            'VRR': 'vert',
+            'VVR': 'vert',
+            'RRV': 'rouge'
+        };
 
+        if (threeColorPatterns[lastThree]) {
+            const nextColor = threeColorPatterns[lastThree];
+            
+            // Création de l'entrée historique
+            const newRecord = {
+                tradeNumber: history.length + 1,
+                colors: lastColors.join(', '),
+                prediction: nextColor,
+                frequentColor: frequentColor,
+                result: '',
+                date: document.getElementById('dateInput').value || new Date().toLocaleDateString(),
+                method: '3-color-pattern',
+                patternUsed: lastThree
+            };
+
+            // Ajout à l'historique
+            history.push(newRecord);
+            
+            // Mise à jour IMMÉDIATE de l'affichage
+            updateHistory();
+            saveHistoryToLocalStorage();
+
+            // Affichage de la prédiction
+            const predictionResult = document.getElementById('predictionResult');
+            predictionResult.className = `prediction-container prediction-${nextColor === 'rouge' ? 'red' : 'green'}`;
+            predictionResult.innerHTML = `
+                <span class="prediction-icon">${nextColor === 'rouge' ? '🔴' : '🟢'}</span>
+                <span>PRÉDICTION: <strong>${nextColor.toUpperCase()}</strong> (Stratégie ${lastThree})</span>
+                <span class="prediction-icon">${nextColor === 'rouge' ? '🔴' : '🟢'}</span>
+                <div class="alert alert-info" style="margin-top:10px;padding:5px;">
+                    Stratégie anti-perte activée
+                </div>
+            `;
+
+            // Alertes SweetAlert conservées
+            Swal.fire({
+                title: 'Stratégie spéciale activée',
+                html: `Après une perte, détection du motif <strong>${lastThree}</strong><br>
+                       Prédiction: <strong style="color:${nextColor === 'rouge' ? '#dc3545' : '#28a745'}">${nextColor.toUpperCase()}</strong>`,
+                icon: 'info',
+                confirmButtonText: 'Compris'
+            });
+
+            document.getElementById('colorInput').value = '';
+            enableFeedbackButtons();
+            return;
+        }
+    }
+
+    // 9. Exécution normale    completePrediction(colorInput, lastColors, frequentColor);
+}
 function completePrediction(colorInput, lastColors, frequentColor) {
     // 1. D'abord essayer avec les motifs répétés
     let nextColor = predictBasedOnRepeatedPatterns(colorInput);
@@ -3317,11 +3671,25 @@ function displayPreviousResult(previousResult) {
             document.getElementById('previousResult').textContent = '';
             enableFeedbackButtons();
         }
+        function checkLastThreePattern(colorInput) {
+    const lastThree = colorInput.slice(-3); // Prend les 3 dernières couleurs
+    
+    // Liste des motifs et leurs prédictions associées
+    const threeColorPatterns = {
+        'RVV': 'rouge',
+        'VRR': 'vert',
+        'VVR': 'vert',
+        'RRV': 'rouge'
+        // Ajoute d'autres motifs ici si nécessaire
+    };
+    
+    return threeColorPatterns[lastThree] || null;
+}
 
-        function giveFeedback(correct) {
+function giveFeedback(correct) {
     const lastHistoryItem = history[history.length - 1];
     
-    // Vérification si le feedback a déjà été donné
+    // Vérification si le feedback a déjà été donné (inchangé)
     if (lastHistoryItem.result !== '') {
         Swal.fire({
             title: 'Déjà évalué ⚠️',
@@ -3333,12 +3701,12 @@ function displayPreviousResult(previousResult) {
         return;
     }
 
-    // Configuration du trading
+    // Configuration du trading (inchangé)
     const odds = parseFloat(document.getElementById('oddsInput').value) || 97;
     const currentBet = getCurrentBet();
     const nextBet = martingaleSequence[Math.min(currentMartingaleIndex + 1, martingaleSequence.length - 1)] || martingaleSequence[0];
 
-    // Vérification de la bankroll
+    // Vérification de la bankroll (inchangé)
     if (!correct && currentBankroll < currentBet) {
         Swal.fire({
             title: 'Fonds insuffisants ⛔',
@@ -3353,7 +3721,7 @@ function displayPreviousResult(previousResult) {
         return;
     }
 
-    // Mise à jour des statistiques par couleur
+    // Mise à jour des statistiques par couleur (inchangé)
     if (correct) {
         if (lastHistoryItem.prediction === 'rouge') {
             redSuccesses++;
@@ -3369,41 +3737,53 @@ function displayPreviousResult(previousResult) {
     }
 
     if (correct) {
-        // Mettre à jour la barre de progression
+        // ===== RÉINITIALISATION COMPLÈTE APRÈS GAIN =====
+        // Traitement gain (inchangé)
         updateProgressBar(1);
-        // Traitement gain
         const profit = currentBet * (odds / 100);
         currentBankroll = parseFloat((currentBankroll + profit).toFixed(2));
+        
+        // Réinitialisation des compteurs et stratégies
         consecutiveLosses = 0;
         currentMartingaleIndex = 0;
-        bannedPatterns = []; // Réinitialiser les motifs interdits après un gain
+        bannedPatterns = [];
+        lastResultWasLoss = false;
+        
+        // Nouveau: Réinitialisation des tendances forcées
+        if (isForceModeActive) {
+            isForceModeActive = false;
+            forcedColor = '';
+            document.getElementById('forceModeAlert').style.display = 'none';
+            document.getElementById('redStats').classList.remove('force-mode-active');
+            document.getElementById('greenStats').classList.remove('force-mode-active');
+            
+            Swal.fire({
+                title: 'Réinitialisation complète',
+                text: 'Mode forcé désactivé après gain',
+                icon: 'success',
+                timer: 1500
+            });
+        }
 
         lastHistoryItem.result = 'Succès';
         successes++;
         points += 10;
         progressPercentage = Math.min(progressPercentage + 1, 100);
 
-        // Désactiver le mode forcé si actif
-        if (isForceModeActive) {
-            isForceModeActive = false;
-            document.getElementById('forceModeAlert').style.display = 'none';
-            document.getElementById('redStats').classList.remove('force-mode-active');
-            document.getElementById('greenStats').classList.remove('force-mode-active');
-            
-            Swal.fire({
-                title: 'Mode Forcé Désactivé',
-                text: 'Un gain a été enregistré, retour au mode normal.',
-                icon: 'success',
-                timer: 2000
-            });
-        }
-
         Swal.fire({
-            title: 'Gagné! 🎉',
+            title: 'Gagné! 🎉 + Réinitialisation',
             html: `
                 <div style="font-size: 3rem;">💰</div>
                 <p><strong>+${profit.toFixed(2)} R</strong> (${odds}%)</p>
                 <hr>
+                <div style="text-align:left; margin:10px 0; padding:10px; background:#e8f5e9; border-radius:5px;">
+                    <p>✅ Tous compteurs réinitialisés :</p>
+                    <ul>
+                        <li>Pertes consécutives: 0</li>
+                        <li>Martingale: Niveau 1</li>
+                        <li>Motifs bloqués: Aucun</li>
+                    </ul>
+                </div>
                 <p>Bankroll: <strong>${currentBankroll.toFixed(2)} R</strong></p>
                 <p>Prochaine mise: <strong>${nextBet.toFixed(2)} R</strong></p>
                 <p style="color:#28a745">+10 points</p>
@@ -3419,14 +3799,13 @@ function displayPreviousResult(previousResult) {
             }
         });
     } else {
-        // Traitement perte
+        // ===== TRAITEMENT PERTE (INCHANGÉ) =====
         currentBankroll = parseFloat((currentBankroll - currentBet).toFixed(2));
         consecutiveLosses++;
         currentMartingaleIndex = Math.min(currentMartingaleIndex + 1, martingaleSequence.length - 1);
 
-        // Gestion des interdictions progressives
         bannedPatterns = ['RRR','VVV'];
-        //if (consecutiveLosses >= 3) bannedPatterns.push('VVR','RRV');//
+        lastResultWasLoss = true;
 
         lastHistoryItem.result = 'Échec';
         failures++;
@@ -3446,11 +3825,9 @@ function displayPreviousResult(previousResult) {
             `;
         }
 
-        // Activer le mode forcé après 2 pertes consécutives
-        if (consecutiveLosses >= 2 && !isForceModeActive) {
+        if (consecutiveLosses >= 5 && !isForceModeActive) {
             isForceModeActive = true;
             
-            // Déterminer la couleur à forcer (meilleur taux de réussite)
             const redTotal = redSuccesses + redFailures;
             const greenTotal = greenSuccesses + greenFailures;
             
@@ -3459,7 +3836,6 @@ function displayPreviousResult(previousResult) {
             
             forcedColor = redRate >= greenRate ? 'rouge' : 'vert';
             
-            // Mettre à jour l'interface
             document.getElementById('forceModeAlert').style.display = 'block';
             document.getElementById('forcedColorText').textContent = forcedColor;
             document.getElementById('forcedColorText').style.color = forcedColor === 'rouge' ? '#dc3545' : '#28a745';
@@ -3472,12 +3848,11 @@ function displayPreviousResult(previousResult) {
             
             warningMessage += `
                 <div style="margin-top:10px; background:#fff3cd; padding:10px; border-radius:5px;">
-                    <p style="color:#856404;">⚠️ Mode forcé activé: Prochaines prédictions sur <strong>${forcedColor}</strong></p>
+                    <p style="color:#856404;">⚠️ Mode forcé activé (5 pertes): Prédictions sur <strong>${forcedColor}</strong></p>
                 </div>
             `;
         }
         
-         
         Swal.fire({
             title: 'Perdu ❌',
             html: `
@@ -3498,45 +3873,31 @@ function displayPreviousResult(previousResult) {
                 popup: 'animate__animated animate__headShake'
             }
         });
-    Swal.fire({
-        title: '🚨 ALERTE STRATÉGIE ANTI-PERDANTE 🚨',
-        html: `
-            <div style="text-align:left; font-size:16px; color:#333; background:#fff8e1; padding:15px; border-radius:10px; border-left:5px solid #ffc107;">
-                <p><strong>🔥 LA MÉTHODE "STRIKE BACK" (Même pour les débutants) :</strong></p>
-                
-                <div style="margin:10px 0; padding:10px; background:#ffebee; border-radius:5px;">
-                    <p>1️⃣ <strong>OBSERVEZ</strong> tant que le bot <span style="color:#28a745;">gagne</span> ✅</p>
-                    <p>2️⃣ <strong>INTERVENEZ SEULEMENT</strong> quand le bot <span style="color:#dc3545;">perd</span> ❌</p>
-                    <p>3️⃣ <strong>MISEZ L'INVERSE</strong> de sa prédiction (Il dit Rouge ? Vous misez Vert 🟢)</p>
-                </div>
-                
-                <p style="color:#d32f2f; font-weight:bold;">📉 POURQUOI ÇA MARCHE À TOUS LES COUPS :</p>
-                <ul style="padding-left:20px;">
-                    <li>Vous <strong>évitez 90% des pertes</strong> en ne suivant pas le bot aveuglément</li>
-                    <li>Vous <strong>exploitez ses failles</strong> quand il montre des signes de faiblesse</li>
-                    <li>Vos gains <strong>compensent toujours</strong> vos pertes</li>
-                </ul>
-                
-                <div style="margin-top:15px; padding:10px; background:#e8f5e9; border-radius:5px; border-left:5px solid #4caf50;">
-                    <p>💎 <strong>EXEMPLE CONCRET :</strong></p>
-                    <p>Bot perd (disait Rouge ❌) → Vous misez Vert 🟢 → Vous gagnez ✅ → Vous stoppez et observez</p>
-                    <p>Bot regagne → Vous le suivez à nouveau</p>
-                </div>
-                
-                <p style="margin-top:15px; font-weight:bold; color:#ff5722;">⚠️ LA SEULE RÈGLE : DISCIPLINE TOTALE ! Pas d'émotion, pas de "je tente quand même"</p>
-            </div>
-        `,
-        width: '750px',
-        background: '#fff',
-        confirmButtonText: 'J\'AI COMPRIS, GO ! 💪',
-        confirmButtonColor: '#ff5722',
-        customClass: {
-            container: 'animate__animated animate__fadeInDown'
-        }
-    });
-}
 
-    // Mise à jour de l'interface
+        Swal.fire({
+            title: '🚨 ALERTE STRATÉGIE ANTI-PERDANTE 🚨',
+            html: `
+                <div style="text-align:left; font-size:16px; color:#333; background:#fff8e1; padding:15px; border-radius:10px; border-left:5px solid #ffc107;">
+                    <p><strong>🔥 LA MÉTHODE "STRIKE BACK" :</strong></p>
+                    <div style="margin:10px 0; padding:10px; background:#ffebee; border-radius:5px;">
+                        <p>1️⃣ <strong>OBSERVEZ</strong> tant que le bot <span style="color:#28a745;">gagne</span> ✅</p>
+                        <p>2️⃣ <strong>INTERVENEZ SEULEMENT</strong> quand le bot <span style="color:#dc3545;">perd</span> ❌</p>
+                        <p>3️⃣ <strong>MISEZ L'INVERSE</strong> de sa prédiction</p>
+                    </div>
+                    <div style="margin-top:15px; padding:10px; background:#e8f5e9; border-radius:5px; border-left:5px solid #4caf50;">
+                        <p>💎 <strong>EXEMPLE :</strong></p>
+                        <p>Bot perd (Rouge ❌) → Vous misez Vert 🟢 → Vous gagnez ✅ → Vous stoppez</p>
+                    </div>
+                </div>
+            `,
+            width: '750px',
+            background: '#fff',
+            confirmButtonText: 'J\'AI COMPRIS, GO ! 💪',
+            confirmButtonColor: '#ff5722'
+        });
+    }
+
+    // ===== MISE À JOUR DE L'INTERFACE =====
     updateBankrollDisplay();
     updateMartingaleDisplay();
     updateHistory();
@@ -3544,10 +3905,9 @@ function displayPreviousResult(previousResult) {
     updatePoints();
     updateLevelButtons();
     updatePieChart();
-    updateColorStatsDisplay(); // Mettre à jour les stats par couleur
+    updateColorStatsDisplay();
     saveHistoryToLocalStorage();
     
-    // Réinitialisation des champs
     document.getElementById('seriesInput').value = '';
     document.getElementById('colorPercentage').value = '';
     document.getElementById('predictionResult').textContent = '';
@@ -4522,7 +4882,7 @@ function updateTrendIndicators(redRate, greenRate) {
 
 // Fonction pour vérifier si on doit activer le mode forcé
 function checkForceMode() {
-    // Désactiver le mode forcé si on a un gain
+    // Désactiver le mode forcé si on a un gain (inchangé)
     if (history.length > 0 && history[history.length - 1].result === 'Succès') {
         if (isForceModeActive) {
             isForceModeActive = false;
@@ -4540,11 +4900,11 @@ function checkForceMode() {
         return;
     }
     
-    // Activer le mode forcé après 2 pertes consécutives
-    if (consecutiveLosses >= 2 && !isForceModeActive) {
+    // MODIFICATION PRINCIPALE : Activation après 5 pertes au lieu de 2
+    if (consecutiveLosses >= 5 && !isForceModeActive) {
         isForceModeActive = true;
         
-        // Déterminer quelle couleur forcer (celle avec le meilleur taux de réussite)
+        // Déterminer quelle couleur forcer (inchangé)
         const redTotal = redSuccesses + redFailures;
         const greenTotal = greenSuccesses + greenFailures;
         
@@ -4553,7 +4913,7 @@ function checkForceMode() {
         
         forcedColor = redRate >= greenRate ? 'rouge' : 'vert';
         
-        // Mettre à jour l'interface
+        // Mettre à jour l'interface (inchangé)
         document.getElementById('forceModeAlert').style.display = 'block';
         document.getElementById('forcedColorText').textContent = forcedColor;
         document.getElementById('forcedColorText').style.color = forcedColor === 'rouge' ? '#dc3545' : '#28a745';
@@ -4564,9 +4924,10 @@ function checkForceMode() {
             document.getElementById('greenStats').classList.add('force-mode-active');
         }
         
+        // Message d'alerte mis à jour pour refléter 5 pertes
         Swal.fire({
             title: 'Mode Forcé Activé!',
-            html: `2 pertes consécutives détectées. Le bot forcera maintenant les prédictions sur <strong style="color:${forcedColor === 'rouge' ? '#dc3545' : '#28a745'}">${forcedColor}</strong> jusqu'au prochain gain.`,
+            html: `5 pertes consécutives détectées. Le bot forcera maintenant les prédictions sur <strong style="color:${forcedColor === 'rouge' ? '#dc3545' : '#28a745'}">${forcedColor}</strong> jusqu'au prochain gain.`,
             icon: 'warning',
             confirmButtonText: 'Compris'
         });
