@@ -3068,23 +3068,6 @@ function predictColor() {
     const redCount = colorCount['R'] || 0;
     const greenCount = colorCount['V'] || 0;
     
-    // Vérification explicite des ratios 6R/4V et 6V/4R
-    /*if ((redCount === 6 && greenCount === 4) || (redCount === 4 && greenCount === 6)) {
-        Swal.fire({
-            title: 'RATIO INTERDIT ⛔',
-            html: `
-                <div style="font-size: 2rem;">🚫</div>
-                <p>Le ratio <strong>${redCount}R/${greenCount}V</strong> est interdit.</p>
-                <p>Motif : Ces ratios montrent une instabilité statistique trop importante.</p>
-                <p style="color: #dc3545;">Veuillez entrer une nouvelle séquence.</p>
-            `,
-            icon: 'error',
-            confirmButtonText: 'Compris',
-            confirmButtonColor: '#dc3545'
-        });
-        return;
-    }*/
-
     const frequentColor = redCount * 10 >= greenCount * 10 
         ? `${redCount * 10}% Rouge` 
         : `${greenCount * 10}% Vert`;
@@ -3164,7 +3147,8 @@ function predictColor() {
         }
     }
 
-    // 9. Exécution normale    completePrediction(colorInput, lastColors, frequentColor);
+    // 9. Exécution normale
+    completePrediction(colorInput, lastColors, frequentColor);
 }
 function completePrediction(colorInput, lastColors, frequentColor) {
     // 1. D'abord essayer avec les motifs répétés
