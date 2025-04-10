@@ -3180,8 +3180,11 @@ function predictColor() {
             'RVV': 'rouge',
             'VRR': 'vert',
             'VVR': 'vert',
-            'RRV': 'rouge'
-        };
+            'RRV': 'rouge',
+            'RRR': 'vert',
+            'VVV': 'rouge'
+        };  
+
 
         if (threeColorPatterns[lastThree]) {
             const nextColor = threeColorPatterns[lastThree];
@@ -3761,7 +3764,7 @@ function giveFeedback(correct) {
         consecutiveLosses++;
         currentMartingaleIndex = Math.min(currentMartingaleIndex + 1, martingaleSequence.length - 1);
 
-        bannedPatterns = ['RRR','VVV'];
+        //bannedPatterns = ['RRR','VVV'];
         lastResultWasLoss = true;
 
         lastHistoryItem.result = 'Échec';
@@ -3775,7 +3778,7 @@ function giveFeedback(correct) {
                     <p>Évitez: RRR, VVV, VVR, RRV</p>
                 </div>
             `;
-        } else if (consecutiveLosses >= 1) {
+        } else if (consecutiveLosses >= 9) {
             warningMessage = `
                 <p style="color:#fb8c00">⚠️ ${consecutiveLosses} perte(s) consécutive(s)</p>
                 <p>Évitez: RRR, VVV</p>
@@ -3917,7 +3920,7 @@ function checkPredictionRestrictions(colorSeries) {
                 <p>La séquence <strong>${lastThree}</strong> est temporairement bloquée.</p>
                 <p>Motif : Cette séquence a récemment entraîné une perte.</p>
                 <p style="color: #ffc107;">Attendez un gain pour débloquer ce motif.</p>
-                ${consecutiveLosses >= 3 ? `<p style="margin-top:10px;">🚨 Vous avez ${consecutiveLosses} pertes consécutives - Soyez prudent!</p>` : ''}
+                ${consecutiveLosses >= 0 ? `<p style="margin-top:10px;">🚨 Vous avez ${consecutiveLosses} pertes consécutives - Soyez prudent!</p>` : ''}
             `,
             icon: 'warning',
             confirmButtonText: 'Compris',
