@@ -5,11 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>📈Signal b🤖t 97 Trx 📈</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/docx@7.8.2/build/index.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Sons pour les feedbacks -->
+<audio id="winSound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" preload="auto"></audio>
+<audio id="lossSound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-retro-game-over-213.mp3" preload="auto"></audio>
     <style>
         /* Styles pour la popup de notification */
         .notification-popup {
@@ -91,8 +94,18 @@
         }
 
         .user-profile {
-            margin-right: 20px;
-        }
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 15px;
+    text-align: center;
+    margin-left: 20px;  /* Marge à gauche comme WhatsApp */
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 150px;  /* Même largeur */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
         h1 {
             color: #5b5b5b;
@@ -174,12 +187,14 @@
           background-color: #e0a800; /* Jaune plus foncé */
          }
 
-         .btn-export {
-          background-color: #28a745; /* Vert */
-          }
-          .btn-export:hover {
-           background-color: #218838; /* Vert plus foncé */
-           }
+         .btn-export[onclick="exportToTxt()"] {
+    background-color: hsl(128, 79%, 41%);
+    margin-left: 10px;
+}
+
+.btn-export[onclick="exportToTxt()"]:hover {
+    background-color: #208a29;
+}
 
         .color-input, .series-input, .level-selection, #colorPercentage {
             padding: 10px;
@@ -326,47 +341,7 @@
         .tips {
             margin-bottom: 20px;
         }
-        .progress-bar-container {
-    position: relative;
-    width: 100%;
-    margin: 20px 0;
-}
-
-.progress-bar {
-    width: 100%;
-    height: 30px;
-    background-color: #e0e0e0;
-    border-radius: 15px;
-    overflow: hidden;
-    position: relative;
-}
-
-.progress-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%);
-    width: 0%;
-    transition: width 0.5s ease;
-    position: relative;
-}
-
-.progress-text {
-    position: absolute;
-    width: 100%;
-    text-align: center;
-    line-height: 30px;
-    color: white;
-    font-weight: bold;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-    z-index: 1;
-}
-
-.progress-percentage {
-    margin-top: 5px;
-    text-align: center;
-    font-weight: bold;
-}
-
-
+       
         .global-stats {
             margin-bottom: 20px;
         }
@@ -1391,129 +1366,420 @@
     color: #6c757d;
     background-color: rgba(108, 117, 125, 0.1);
 }
+.password-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    animation: fadeIn 0.3s;
+}
 
+.password-content {
+    background: #121a25;
+    padding: 30px;
+    border-radius: 20px;
+    width: 300px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+.password-header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.password-header h2 {
+    color: #4e9af1;
+    margin: 0 0 10px 0;
+    font-size: 1.5rem;
+}
+
+.password-header p {
+    color: #a0a8b8;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.code-display {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.code-dot {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+    border: 2px solid rgba(255,255,255,0.1);
+    transition: all 0.2s;
+}
+
+.code-dot.filled {
+    background: #4e9af1;
+    border-color: #4e9af1;
+    box-shadow: 0 0 10px rgba(78,154,241,0.3);
+}
+
+.numeric-keypad {
+    display: grid;
+    grid-template-rows: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.keypad-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.keypad-btn {
+    width: 70px;
+    height: 50px;
+    border-radius: 10px;
+    background: rgba(30,40,55,0.8);
+    border: none;
+    color: white;
+    font-size: 1.3rem;
+    font-weight: 300;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+}
+
+.keypad-btn:hover {
+    background: rgba(40,50,65,0.9);
+    transform: translateY(-2px);
+}
+
+.keypad-btn:active {
+    transform: translateY(0);
+    background: rgba(50,60,75,1);
+}
+
+.clear-btn {
+    background: rgba(220,53,69,0.7);
+    font-size: 0.9rem;
+    flex-grow: 1;
+    border-radius: 10px;
+}
+
+.confirm-btn {
+    background: rgba(40,167,69,0.7);
+    font-size: 1.2rem;
+    flex-grow: 1;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+}
+
+.shake {
+    animation: shake 0.4s;
+}
+.whatsapp-profile {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 15px;
+    border-radius: 15px;
+    text-align: center;
+    margin-right: 70px; /* Changé de margin-left à margin-right */
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 150px;
+    order: -1; /* Pour le placer en premier dans le flex container */
+}
+
+.profile-image-container {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+#profileImage {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #25D366;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+#profileImage:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(37, 211, 102, 0.5);
+}
+
+.btn-change-profile {
+    background: #25D366;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.btn-change-profile:hover {
+    background: #128C7E;
+}
+
+.whatsapp-status {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+    padding: 4px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+#whatsappStatus::before {
+    content: "•";
+    color: #25D366;
+    font-size: 16px;
+    margin-right: 5px;
+}
+#maxConsecutiveLosses span {
+    color: #dc3545; /* Rouge pour les pertes */
+    background-color: rgba(220, 53, 69, 0.1);
+    padding: 3px 8px;
+    border-radius: 10px;
+}
+
+#lionCoins span {
+    color: #ff9800; /* Orange pour les Lion Coins */
+    background-color: rgba(255, 152, 0, 0.1);
+    padding: 3px 8px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+.external-patterns-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+
+.external-patterns-table th {
+    background-color: #f8f9fa;
+    position: sticky;
+    top: 0;
+}
+
+.external-patterns-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.external-patterns-table tr:hover {
+    background-color: #e9ecef;
+}
+
+
+
+#externalPatternsList {
+    max-height: 400px;
+    overflow-y: auto;
+    margin-top: 15px;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+}
+
+.red-dot, .green-dot {
+    font-size: 1.2em;
+    margin: 0 2px;
+}
+.btn-edit, .btn-delete {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    width: 100px;
+}
+
+.btn-edit {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.btn-edit:hover {
+    background-color: #e0a800;
+}
+
+.btn-delete {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-delete:hover {
+    background-color: #c82333;
+}
+
+.external-patterns-table td {
+    vertical-align: middle;
+}
+.db-buttons-container {
+    display: flex;
+    flex-direction: row; /* Alignement horizontal */
+    justify-content: space-between;
+    gap: 10px;
+    margin: 15px 0;
+    padding: 10px;
+}
+
+.db-button {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    background: white;
+    color: black;
+    min-width: 120px; /* Largeur minimale pour chaque bouton */
+}
+.db-button i {
+    font-size: 16px;
+    color: black !important; /* Change la couleur de l'icône en noir */
+}
+
+.db-button:hover i {
+    color: black !important; /* Garde la couleur noire au survol */
+}
+.btn-edit, .btn-delete {
+    padding: 8px 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    background: white;
+    color: black;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.btn-edit i, .btn-delete i {
+    font-size: 16px;
+    color: #000;
+}
+.btn-analyze i.fas.fa-database {
+    color: black !important;
+    font-size: 16px;
+    margin-right: 8px;
+}
+
+.btn-edit:hover, .btn-delete:hover {
+    transform: translateY(-2px);
+    background-color: #f5f5f5;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.btn-copy {
+    background-color: #17a2b8;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 10px;
+    transition: background-color 0.3s;
+}
+
+.btn-copy:hover {
+    background-color: #138496;
+}
+
+.btn-copy i {
+    margin-right: 8px;
+}
+/* Styles pour les icônes des boutons spécifiques tout en gardant les couleurs de fond d'origine */
+.btn-predict i,
+.btn-clear i, 
+.btn-level i,
+.btn-analyze i,
+.btn-export i {
+    color: white !important;
+}
+
+/* Pour s'assurer que tous les symboles de ces boutons sont bien en blanc */
+.action-buttons button i {
+    color: white !important;
+}
 </style>
 </head>
-<div class="strategy-popup" id="strategyPopup" style="display: none;">
-    <div class="strategy-content">
-        <h2>🦁 STRATÉGIE DU "LANCER DE DAVID"</h2>
-        <p style="text-align: center; font-style: italic; margin-bottom: 20px;">
-            "À Dieu, source de toute inspiration – Mon courage, ma force."<br>
-            <strong>Proverbes 28:1</strong> "Le juste est intrépide comme un lion."
-        </p>
-        <div class="session-plan" style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 25px;">
-            <h2 style="color: #27ae60; border-bottom: 2px solid #27ae60; padding-bottom: 5px;">📅 PLAN DE CHASSE QUOTIDIEN</h2>
-            <ul style="list-style-type: none; padding: 0;">
-                <li style="padding: 8px 0; border-bottom: 1px dashed #eee; display: flex;">
-                    <span style="font-weight: bold; width: 100px;">SESSION 1:</span>
-                    <span>1h00 AM - Objectif: 20 points</span>
-                </li>
-                <li style="padding: 8px 0; border-bottom: 1px dashed #eee; display: flex;">
-                    <span style="font-weight: bold; width: 100px;">SESSION 2:</span>
-                    <span>3h00 AM - Objectif: 20 points</span>
-                </li>
-                <li style="padding: 8px 0; display: flex;">
-                    <span style="font-weight: bold; width: 100px;">SESSION 3:</span>
-                    <span>4h00 AM - Objectif: 20 points</span>
-                </li>
-            </ul>
-            <p style="background: #e8f8f5; padding: 10px; border-radius: 5px; margin-top: 15px;">
-                <strong>Total quotidien:</strong> 60 points | <strong>Temps investi:</strong> 3h max
-            </p>
+<div class="password-popup" id="passwordPopup" style="display: none;">
+    <div class="password-content">
+        <div class="password-header">
+            <h2>🔒 ACCÈS SÉCURISÉ</h2>
+            <p>Entrez votre code à 6 chiffres</p>
         </div>
-        <div class="step">
-            <h3>⚔️ PRINCIPE FONDAMENTAL</h3>
-            <div class="lion-principle">
-                <p><strong>Le bot sait gagner, mais il subit des séries de pertes.</strong><br>
-                Notre stratégie consiste à <span style="color: #28a745; font-weight: bold;">profiter de ses victoires</span> 
-                et à <span style="color: #dc3545; font-weight: bold;">éviter ses défaites</span>.</p>
+        
+        <div class="password-body">
+            <div class="code-display">
+                <div class="code-dot" id="dot1"></div>
+                <div class="code-dot" id="dot2"></div>
+                <div class="code-dot" id="dot3"></div>
+                <div class="code-dot" id="dot4"></div>
+                <div class="code-dot" id="dot5"></div>
+                <div class="code-dot" id="dot6"></div>
             </div>
-        </div>
-
-        <div class="step">
-            <h3>📜 LES 3 COMMANDEMENTS DU LION</h3>
-            <div class="commandments">
-                <div class="commandment">
-                    <span class="commandment-icon">1️⃣</span>
-                    <span class="commandment-text">
-                        <strong>Quand le bot gagne :</strong><br>
-                        - Tu <span style="color: #28a745;">suis ses prédictions</span><br>
-                        - Tu <span style="color: #28a745;">continues à miser</span><br>
-                        - Tu enregistres les séquences
-                    </span>
+            
+            <input type="text" id="passwordInput" maxlength="6" pattern="\d*" inputmode="numeric" style="opacity: 0; position: absolute; height: 0;">
+            
+            <div class="numeric-keypad">
+                <div class="keypad-row">
+                    <button class="keypad-btn" data-value="1">1</button>
+                    <button class="keypad-btn" data-value="2">2</button>
+                    <button class="keypad-btn" data-value="3">3</button>
                 </div>
-                <div class="commandment">
-                    <span class="commandment-icon">2️⃣</span>
-                    <span class="commandment-text">
-                        <strong>Quand le bot perd :</strong><br>
-                        - Tu <span style="color: #dc3545; font-weight: bold;">STOPPES immédiatement</span><br>
-                        - Tu <span style="color: #dc3545;">n'engages plus de fonds</span><br>
-                        - Tu notes les séquences (sans miser)
-                    </span>
+                <div class="keypad-row">
+                    <button class="keypad-btn" data-value="4">4</button>
+                    <button class="keypad-btn" data-value="5">5</button>
+                    <button class="keypad-btn" data-value="6">6</button>
                 </div>
-                <div class="commandment">
-                    <span class="commandment-icon">3️⃣</span>
-                    <span class="commandment-text">
-                        <strong>Quand le bot retrouve un gain :</strong><br>
-                        - Tu <span style="color: #28a745;">reprends tes mises</span><br>
-                        - Tu <span style="color: #28a745;">suis à nouveau ses prédictions</span>
-                    </span>
+                <div class="keypad-row">
+                    <button class="keypad-btn" data-value="7">7</button>
+                    <button class="keypad-btn" data-value="8">8</button>
+                    <button class="keypad-btn" data-value="9">9</button>
+                </div>
+                <div class="keypad-row">
+                    <button class="keypad-btn clear-btn" data-action="clear">Effacer</button>
+                    <button class="keypad-btn" data-value="0">0</button>
+                    <button class="keypad-btn confirm-btn" data-action="confirm">✓</button>
                 </div>
             </div>
         </div>
-
-        <div class="step">
-            <h3>🎯 TECHNIQUE DU "STRIKE BACK"</h3>
-            <div class="strike-back">
-                <p>Quand le bot échoue (1 seule fois suffit) :</p>
-                <div class="strike-example">
-                    <div class="step">
-                        <span class="step-number">1</span>
-                        <span class="step-text">Le bot perd (il disait Rouge ❌)</span>
-                    </div>
-                    <div class="arrow">↓</div>
-                    <div class="step">
-                        <span class="step-number">2</span>
-                        <span class="step-text">Il va recommander <span style="color: #dc3545;">Rouge (🔴)</span></span>
-                    </div>
-                    <div class="arrow">↓</div>
-                    <div class="step" style="background-color: #e8f5e9; border-left: 4px solid #4caf50;">
-                        <span class="step-number">3</span>
-                        <span class="step-text">Toi, tu mises <span style="color: #28a745; font-weight: bold;">Vert (🟢)</span></span>
-                    </div>
-                </div>
-                <p class="note">Si tu gagnes → Retour en observation<br>
-                Si tu perds → Patience, attends le prochain signal</p>
-            </div>
-        </div>
-
-        <div class="step">
-            <h3>💎 POURQUOI ÇA FONCTIONNE ?</h3>
-            <div class="advantages">
-                <div class="advantage">
-                    <span class="advantage-icon">🛡️</span>
-                    <span class="advantage-text">Évite 90% des séries de pertes</span>
-                </div>
-                <div class="advantage">
-                    <span class="advantage-icon">💎</span>
-                    <span class="advantage-text">Exploite les failles du bot</span>
-                </div>
-                <div class="advantage">
-                    <span class="advantage-icon">📊</span>
-                    <span class="advantage-text">Gains > Pertes (équilibre parfait)</span>
-                </div>
-            </div>
-            <p class="performance" style="text-align: center; margin-top: 15px; font-weight: bold;">
-                Performance: 72% de réussite | Risque minimal
-            </p>
-        </div>
-
-        <div class="lion-footer">
-            <p>🦁 <strong>THE LION Trader</strong></p>
-            <p>"La patience est la force du lion. Frappe au bon moment, et tu domineras."</p>
-        </div>
-
-        <button class="btn-confirm" onclick="closeStrategyPopup()">J'ai compris, je suis prêt 🦁</button>
     </div>
 </div>
 <!-- Popup de notification -->
@@ -1530,6 +1796,19 @@
 <body>
     <div class="container">
         <div class="header">
+            <div class="whatsapp-profile">
+                <div class="profile-image-container">
+                    <img id="profileImage" src="https://cdn-icons-png.flaticon.com/512/124/124034.png" alt="Profil WhatsApp">
+                    <input type="file" id="profileUpload" accept="image/*" style="display: none;">
+                </div>
+              
+                <button class="btn-change-profile" onclick="document.getElementById('profileUpload').click()">
+                    <i class="fas fa-camera"></i> Changer la photo
+                </button>
+                <div class="whatsapp-status">
+                    <span id="whatsappStatus">En ligne</span>
+                </div>
+            </div>
             <div class="logo-title">
                 <div class="trading-badge">TRADING 🤖 BOT</div>
                 <h1>
@@ -1540,13 +1819,26 @@
                 <div class="version-badge">v3.0 • 97% Accuracy</div>
             </div>
             <div class="user-profile">
-                <i class="fas fa-user"></i>
-                <strong>Profil d'utilisateur</strong>
                 <p id="userName">Nom : Utilisateur</p>
                 <p id="userLevel">Niveau : <span id="userLevelSpan"></span></p>
-                <p id="haitiTime">Heure en Haïti : <span id="currentTime"></span></p>
+                <p id="haitiTime">Heure : <span id="currentTime"></span></p>
             </div>
         </div>
+        <!-- Citation Motivante (3 phrases clés) -->
+<div id="trx-quote" style="
+text-align: center;
+margin: 5px 0 15px 0;
+padding: 8px;
+font-size: 14px;
+font-weight: 500;
+color: #2E7D32;
+background: rgba(46, 125, 50, 0.08);
+border-radius: 6px;
+border-top: 1px solid #4CAF50;
+font-family: 'Open Sans', sans-serif;
+">
+<span id="quote-text">"L'algorithme ne doute pas. Il calcule et conquiert."</span>
+</div>
  <!-- Bouton d'accès à la base externe -->
 <button class="btn-analyze" onclick="toggleExternalDBInterface()" style="background: white; color: black; border: 1px solid #e0e0e0;">
     <i class="fas fa-database" style="color: black;"></i> Base Externe
@@ -1558,20 +1850,24 @@
     
     <div style="margin-bottom:15px;">
         <textarea id="externalPatternInput" style="width:100%; padding:12px; border-radius:6px; border:1px solid #e0e0e0; font-family:monospace; background:white; color:black;" 
-                  rows="5" placeholder="Collez vos motifs ici (format: date - couleurs - prédiction - % - résultat)"></textarea>
+                  rows="5" placeholder="Collez vos motifs ici (format: date - couleurs - prédiction - résultat)"></textarea>
     </div>
     
-    <div style="margin-bottom:15px; display:flex; gap:10px;">
-        <button onclick="addExternalPattern()" style="background:white; color:black; border:1px solid #4CAF50; padding:8px 12px; border-radius:4px; cursor:pointer;">
-            <i class="fas fa-plus" style="color:black;"></i> Ajouter
-        </button>
-        <button onclick="clearExternalPatterns()" style="background:white; color:black; border:1px solid #e0e0e0; padding:8px 12px; border-radius:4px; cursor:pointer;">
-            <i class="fas fa-trash" style="color:black;"></i> Effacer
-        </button>
-        <button onclick="exportExternalDB()" style="background:white; color:black; border:1px solid #e0e0e0; padding:8px 12px; border-radius:4px; cursor:pointer;">
-            <i class="fas fa-download" style="color:black;"></i> Exporter
-        </button>
-    </div>
+   <!-- Remplacez les boutons existants par ce code -->
+<div class="db-buttons-container">
+    <button class="db-button" onclick="addExternalPattern()">
+        <i class="fas fa-plus"></i> Ajouter
+    </button>
+    <button class="db-button" onclick="copyExternalDatabase()">
+        <i class="fas fa-copy"></i> Copier
+    </button>
+    <button class="db-button" onclick="clearExternalPatterns()">
+        <i class="fas fa-trash"></i> Effacer
+    </button>
+    <button class="db-button" onclick="exportToTxt()">
+        <i class="fas fa-file-export"></i> Exporter
+    </button>
+</div>
     
     <div id="externalPatternsList" style="margin-top:15px; max-height:300px; overflow-y:auto; background:white; border:1px solid #e0e0e0; border-radius:6px;"></div>
 </div>
@@ -1620,8 +1916,8 @@
                     <i class="fas fa-eraser"></i> Effacer
                 </button>
                 
-                <button class="btn-level" onclick="showLevelInfo()">
-                    <i class="fas fa-user-shield"></i> Niveau
+                <button class="btn-level" onclick="showPasswordPopup()">
+                    <i class="fas fa-lock"></i> Accès Sécurisé
                 </button>
                 
                 <button class="btn-analyze" onclick="analyzeAllLosses()">
@@ -1646,6 +1942,7 @@
         <div class="input-container">
             <input type="text" id="colorPercentage" class="color-input" readonly placeholder="Pourcentage de couleurs">
         </div>
+        <p id="predictionResult"></p>
         <div class="color-buttons-grid">
             <!-- Colonne R -->
             <div class="button-column">
@@ -1663,25 +1960,15 @@
                 <button class="btn-green" onclick="appendMultiple('V', 4)">VVVV</button>
             </div>
         </div>
-        
-        <div class="progress-bar-container">
-            <div class="progress-bar">
-                <div class="progress-bar-fill" id="progressBarFill" style="width: 0%;">
-                    <div class="progress-text" id="progressText">☢️☢️☢️☢️Tuer ⚔️le ⚔️Boss☢️☢️☢️☢️</div>
-                </div>
-            </div>
-            <div class="progress-percentage" id="progressPercentage">0%</div>
-        </div>
-        <p id="predictionResult"></p>
-
-        <div class="history-header">
+           <div class="history-header">
             <div style="display: flex; justify-content: space-between; width: 100%;">
                 <div>
                     <button class="btn-undo" onclick="undoLastPrediction()">Annuler la prédiction</button>
                 </div>
                 <div>
-                    <button class="btn-copy" onclick="copyHistory()">Copier</button>
-                    <button class="btn-export" onclick="exportHistory()">Exporter</button>
+                    <button class="btn-export" onclick="exportToTxt()" style="margin-left: 10px;">
+                        <i class="fas fa-file-text"></i> Exporter
+                    </button>
                 </div>
             </div>
         </div>
@@ -1701,7 +1988,12 @@
                 <div id="greenTrend" style="margin-top:10px;"></div>
             </div>
         </div>
-        
+        <div class="db-buttons-container">
+            <!-- Vos autres boutons... -->
+            <button class="db-button" onclick="copyHistoryInDBFormat()">
+                <i class="fas fa-copy"></i> Copier
+            </button>
+        </div>
         <div id="forceModeAlert" class="alert alert-warning" style="display:none; background:#fff3cd; padding:15px; border-radius:5px; border-left:5px solid #ffc107; margin-bottom:20px;">
             <strong>⚠️ Mode Forcé Activé</strong> 
             <p>2 pertes consécutives détectées. Le bot force maintenant les prédictions sur <span id="forcedColorText"></span> jusqu'au prochain gain.</p>
@@ -1739,6 +2031,9 @@
             <p id="totalPredictions">Total des Prédictions : <span>0</span></p>
             <p id="totalSuccesses">Total des Réussites : <span>0</span></p>
             <p id="totalFailures">Total des Pertes : <span>0</span></p>
+            <!-- Mets ça juste après la ligne des points -->
+            <p id="maxConsecutiveLosses">Plus grande série de pertes : <span>0</span></p>
+            <p id="lionCoins">Lion Coins : <span>0</span> LC</p>
             <p id="points">Points : <span>0</span></p>
         </div>
         <canvas id="pieChart" width="400" height="400"></canvas>
@@ -1747,25 +2042,7 @@
     <div class="level-info-popup" id="levelInfoPopup">
         <button class="close-btn" onclick="hideLevelInfo()">X</button>
         <h2>Information de Niveau</h2>
-        <p id="currentPoints">Points actuels : 0</p>
-        <p>Points nécessaires pour le niveau Intermédiaire : 1000</p>
-        <p>Points nécessaires pour le niveau Avancé : 10000</p>
-        <!-- Popup de pause -->
-<div id="timerPopup" class="notification-popup">
-    <div class="notification-content">
-        <h2>Pause obligatoire ⏳</h2>
-        <p>Vous avez atteint <span id="lossCount"></span> trades perdants consécutifs. Le bot est désactivé pendant <span id="timer"></span> minutes.</p>
-        <div class="progress-bar-timer">
-            <div class="progress-bar-fill-timer" id="progressBarTimer"></div>
-        </div>
-    </div>
-</div>
 
-<!-- Notification sonore -->
-<audio id="notificationSound">
-    <source src="notification.mp3" type="audio/mpeg">
-    Votre navigateur ne supporte pas l'élément audio.
-</audio>
     </div>
     <script>
         // Variables pour la base de données externe
@@ -1779,73 +2056,79 @@ function toggleExternalDBInterface() {
         loadExternalPatterns();
     }
 }
-
-// Fonction pour ajouter un motif
-function addExternalPattern() {
-    const input = document.getElementById('externalPatternInput').value.trim();
-    if (!input) {
-        Swal.fire('Erreur', 'Veuillez entrer des données valides', 'error');
-        return;
-    }
-
-    // Traitement des lignes
-    const lines = input.split('\n').filter(line => line.trim());
-    const newPatterns = [];
-
-    lines.forEach(line => {
-        const parts = line.split('-').map(part => part.trim());
-        if (parts.length >= 5) {
-            const pattern = {
-                date: parts[0],
-                colors: parts[1],
-                prediction: parts[2].toLowerCase().includes('vert') ? 'vert' : 'rouge',
-                percentage: parts[3],
-                result: parts[4].toLowerCase().includes('échec') ? 'Échec' : 'Succès',
-                source: 'external',
-                timestamp: new Date().toISOString()
-            };
-            newPatterns.push(pattern);
-        }
-    });
-
-    if (newPatterns.length === 0) {
-        Swal.fire('Format incorrect', 'Utilisez le format: date - couleurs - prédiction - % - résultat', 'warning');
-        return;
-    }
-
-    externalPatterns = [...externalPatterns, ...newPatterns];
-    localStorage.setItem('externalPatterns', JSON.stringify(externalPatterns));
+function updateExternalStats() {
+    externalStats.total = externalPatterns.length;
+    externalStats.successes = externalPatterns.filter(p => p.result === 'Succès').length;
+    externalStats.failures = externalPatterns.filter(p => p.result === 'Échec').length;
+    externalStats.successRate = externalStats.total > 0 ? 
+        ((externalStats.successes / externalStats.total) * 100).toFixed(1) : 0;
     
-    Swal.fire({
-        title: 'Succès!',
-        html: `${newPatterns.length} motif(s) ajouté(s) à la base externe`,
-        icon: 'success'
-    });
-    
-    loadExternalPatterns();
-    document.getElementById('externalPatternInput').value = '';
+    displayExternalStats();
 }
+// Fonction pour afficher les statistiques
+function displayExternalStats() {
+    const statsHtml = `
+        <div style="background:#f8f9fa; padding:15px; border-radius:8px; margin:10px 0; border:1px solid #dee2e6;">
+            <h4 style="margin:0 0 10px 0; color:#333;">📊 Statistiques de la Base</h4>
+            <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; text-align:center;">
+                <div>
+                    <strong style="color:#007bff;">${externalStats.total}</strong>
+                    <div style="font-size:12px; color:#666;">Total</div>
+                </div>
+                <div>
+                    <strong style="color:#28a745;">${externalStats.successes}</strong>
+                    <div style="font-size:12px; color:#666;">Succès</div>
+                </div>
+                <div>
+                    <strong style="color:#dc3545;">${externalStats.failures}</strong>
+                    <div style="font-size:12px; color:#666;">Échecs</div>
+                </div>
+                <div>
+                    <strong style="color:#17a2b8;">${externalStats.successRate}%</strong>
+                    <div style="font-size:12px; color:#666;">Taux de réussite</div>
+                </div>
+            </div>
+        </div>
+    `;
 
-// Fonction pour charger les motifs externes
+    // Insérer les stats avant la liste des motifs
+    const container = document.getElementById('externalDBInterface');
+    const patternsList = document.getElementById('externalPatternsList');
+    
+    // Supprimer les anciennes stats si elles existent
+    const oldStats = container.querySelector('.external-stats');
+    if (oldStats) {
+        oldStats.remove();
+    }
+
+    // Créer et insérer les nouvelles stats
+    const statsDiv = document.createElement('div');
+    statsDiv.className = 'external-stats';
+    statsDiv.innerHTML = statsHtml;
+    container.insertBefore(statsDiv, patternsList);
+}
+// Fonction pour ajouter un motif
 function loadExternalPatterns() {
     const container = document.getElementById('externalPatternsList');
     container.innerHTML = '';
 
     if (externalPatterns.length === 0) {
-        container.innerHTML = '<p>Aucun motif externe enregistré</p>';
+        container.innerHTML = '<p style="padding:15px;color:#666">Aucun motif externe enregistré</p>';
         return;
     }
 
     const table = document.createElement('table');
-    table.className = 'table table-striped';
+    table.className = 'external-patterns-table';
     table.innerHTML = `
         <thead>
             <tr>
+                <th>N°</th>
                 <th>Date</th>
                 <th>Couleurs</th>
                 <th>Prédiction</th>
+                <th>% Couleurs</th>
                 <th>Résultat</th>
-                <th>Action</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -1853,16 +2136,32 @@ function loadExternalPatterns() {
 
     externalPatterns.forEach((pattern, index) => {
         const row = document.createElement('tr');
+        
+        // Formatage des couleurs pour l'affichage
+        const colorsDisplay = pattern.colors.split(', ').map(c => 
+            c === 'rouge' ? '<span class="red-dot">🔴</span>' : 
+            '<span class="green-dot">🟢</span>'
+        ).join(' ');
+        
         row.innerHTML = `
+            <td>${pattern.tradeNumber}</td>
             <td>${pattern.date}</td>
-            <td>${pattern.colors}</td>
-            <td style="color:${pattern.prediction === 'vert' ? '#28a745' : '#dc3545'}">
-                ${pattern.prediction}
+            <td>${colorsDisplay}</td>
+            <td style="color:${pattern.prediction === 'rouge' ? '#dc3545' : '#28a745'};font-weight:bold">
+                ${pattern.prediction.toUpperCase()}
             </td>
-            <td>${pattern.result === 'Succès' ? '✅' : '❌'}</td>
-            <td>
-                <button class="btn btn-sm btn-danger" onclick="removeExternalPattern(${index})">
-                    <i class="fas fa-trash"></i>
+            <td>${pattern.frequentColor}</td>
+            <td>${pattern.result ? 
+                (pattern.result === 'Succès' ? 
+                    '<span style="color:#28a745">✅ Succès</span>' : 
+                    '<span style="color:#dc3545">❌ Échec</span>'
+                ) : '⏳ En attente'}</td>
+            <td style="display:flex; flex-direction:column; gap:5px; align-items:center; padding:8px;">
+                <button onclick="editExternalPattern(${index})" class="btn-edit" style="margin-bottom:5px; width:100%;">
+                    <i class="fas fa-edit"></i> Modifier
+                </button>
+                <button onclick="removeExternalPattern(${index})" class="btn-delete" style="width:100%;">
+                    <i class="fas fa-trash"></i> Supprimer
                 </button>
             </td>
         `;
@@ -1870,63 +2169,308 @@ function loadExternalPatterns() {
     });
 
     container.appendChild(table);
+    updateExternalStats();
+}
+function copyExternalDatabase() {
+    const formattedData = externalPatterns.map(pattern => {
+        return `${pattern.date} - ${pattern.colors} - ${pattern.prediction} - ${pattern.result}`;
+    }).join('\n');
+
+    navigator.clipboard.writeText(formattedData).then(() => {
+        Swal.fire({
+            title: 'Base de données copiée !',
+            text: `${externalPatterns.length} entrées copiées dans le presse-papiers`,
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false
+        });
+    });
+}
+function addExternalPattern() {
+    const input = document.getElementById('externalPatternInput').value.trim();
+    if (!input) {
+        Swal.fire({
+            title: 'Erreur',
+            text: 'Veuillez entrer un motif',
+            icon: 'error'
+        });
+        return;
+    }
+
+    try {
+        // Séparer les lignes
+        const patternLines = input.split('\n');
+        const newPatterns = [];
+        
+        for (const line of patternLines) {
+            if (!line.trim()) continue;
+            
+            // Extraire les parties selon le format
+            const parts = line.split(' - ').map(p => p.trim());
+            if (parts.length < 3) {
+                throw new Error(`Format invalide pour la ligne: "${line}"`);
+            }
+            
+            const date = parts[0];
+            const colorsPart = parts[1];
+            const predictionPart = parts[2];
+            const resultPart = parts[3] || ''; // Résultat optionnel
+            
+            // Valider et convertir les couleurs
+            const colors = colorsPart.split(', ').map(c => {
+                if (!['rouge', 'vert', 'R', 'V'].includes(c)) {
+                    throw new Error(`Couleur invalide: "${c}"`);
+                }
+                return c === 'rouge' || c === 'R' ? 'rouge' : 'vert';
+            });
+            
+            if (colors.length !== 10) {
+                throw new Error(`Doit avoir exactement 10 couleurs (${colors.length} fournies)`);
+            }
+            
+            // Valider la prédiction
+            const prediction = predictionPart === 'rouge' || predictionPart === 'R' ? 'rouge' : 
+                             predictionPart === 'vert' || predictionPart === 'V' ? 'vert' : '';
+            if (!prediction) {
+                throw new Error(`Prédiction invalide: "${predictionPart}"`);
+            }
+            
+            // Valider le résultat si présent
+            const result = resultPart ? 
+                (resultPart === 'Succès' || resultPart === 'Échec' ? resultPart : '') : '';
+            
+            // Calculer le pourcentage de couleur
+            const redCount = colors.filter(c => c === 'rouge').length;
+            const greenCount = colors.filter(c => c === 'vert').length;
+            
+            newPatterns.push({
+                tradeNumber: externalPatterns.length + newPatterns.length + 1,
+                date: date,
+                colors: colors.join(', '),
+                prediction: prediction,
+                frequentColor: redCount >= greenCount ? 
+                    `${(redCount/colors.length*100).toFixed(0)}% Rouge` : 
+                    `${(greenCount/colors.length*100).toFixed(0)}% Vert`,
+                result: result,
+                method: 'external'
+            });
+        }
+
+        // Ajouter tous les nouveaux motifs
+        externalPatterns.push(...newPatterns);
+        localStorage.setItem('externalPatterns', JSON.stringify(externalPatterns));
+        
+        loadExternalPatterns();
+        document.getElementById('externalPatternInput').value = '';
+        
+        Swal.fire({
+            title: 'Succès',
+            html: `${newPatterns.length} motif(s) ajouté(s) au bon format`,
+            icon: 'success'
+        });
+
+    } catch (error) {
+        Swal.fire({
+            title: 'Erreur de format',
+            html: `
+                <p>${error.message}</p>
+                <p>Format attendu pour chaque ligne :</p>
+                <p><strong>JJ/MM/AAAA - V,V,V,V,V,V,V,V,V,V - V - Succès</strong></p>
+                <p>Exemple :</p>
+                <p>16/04/2025 - vert, vert, vert, vert, vert, vert, vert, vert, vert, vert - vert - Succès</p>
+            `,
+            icon: 'error'
+        });
+    }
+}
+function sortPatterns(field) {
+    if (currentSortField === field) {
+        sortDirection *= -1; // Inverse la direction
+    } else {
+        currentSortField = field;
+        sortDirection = 1;
+    }
+
+    externalPatterns.sort((a, b) => {
+        // Pour les dates
+        if (field === 'date') {
+            return (new Date(a.date) - new Date(b.date)) * sortDirection;
+        }
+        // Pour les résultats (Succès avant Échec)
+        if (field === 'result') {
+            return (a.result.localeCompare(b.result)) * sortDirection;
+        }
+        // Par défaut : tri alphabétique
+        return (a[field].localeCompare(b[field])) * sortDirection;
+    });
+
+    loadExternalPatterns();
 }
 
-// Fonction pour supprimer un motif
+function filterPatterns() {
+    const searchText = document.getElementById('patternSearch').value.toLowerCase();
+    const filtered = externalPatterns.filter(pattern => 
+        pattern.date.toLowerCase().includes(searchText) ||
+        pattern.colors.toLowerCase().includes(searchText) ||
+        pattern.prediction.toLowerCase().includes(searchText) ||
+        pattern.result.toLowerCase().includes(searchText)
+    );
+    
+    // Afficher les résultats filtrés
+    const rows = document.querySelectorAll('.external-patterns-table tbody tr');
+    rows.forEach(row => {
+        const rowText = row.textContent.toLowerCase();
+        row.style.display = rowText.includes(searchText) ? '' : 'none';
+    });
+}
+
+function editExternalPattern(index) {
+    const pattern = externalPatterns[index];
+    
+    // Convertir les couleurs au format RV (ex: "vert, rouge" -> "V, R")
+    const colorsToRV = pattern.colors.split(', ').map(c => 
+        c === 'rouge' ? 'R' : 'V'
+    ).join(', ');
+    
+    Swal.fire({
+        title: 'Modifier le motif',
+        html: `
+            <div style="text-align:left;margin:15px 0">
+                <div style="margin-bottom:10px">
+                    <label>Date (JJ/MM/AAAA):</label>
+                    <input id="editDate" value="${pattern.date}" class="swal2-input" placeholder="16/04/2025">
+                </div>
+                <div style="margin-bottom:10px">
+                    <label>Couleurs (R,V,R,V...):</label>
+                    <input id="editColors" value="${colorsToRV}" class="swal2-input" placeholder="V,V,V,V,V,V,V,V,V,V">
+                </div>
+                <div style="margin-bottom:10px">
+                    <label>Prédiction:</label>
+                    <select id="editPrediction" class="swal2-input">
+                        <option value="R" ${pattern.prediction === 'rouge' ? 'selected' : ''}>Rouge (R)</option>
+                        <option value="V" ${pattern.prediction === 'vert' ? 'selected' : ''}>Vert (V)</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Résultat:</label>
+                    <select id="editResult" class="swal2-input">
+                        <option value="Succès" ${pattern.result === 'Succès' ? 'selected' : ''}>Succès</option>
+                        <option value="Échec" ${pattern.result === 'Échec' ? 'selected' : ''}>Échec</option>
+                    </select>
+                </div>
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Enregistrer',
+        cancelButtonText: 'Annuler',
+        preConfirm: () => {
+            // Validation des données
+            const dateInput = document.getElementById('editDate').value.trim();
+            const colorsInput = document.getElementById('editColors').value.trim().toUpperCase();
+            
+            if (!dateInput || !colorsInput) {
+                Swal.showValidationMessage('Tous les champs sont obligatoires');
+                return false;
+            }
+            
+            // Valider le format des couleurs
+            if (!/^[RV](,[RV]){9}$/.test(colorsInput)) {
+                Swal.showValidationMessage('Format couleurs invalide. Doit être 10 couleurs séparées par des virgules (ex: V,V,V,R,V,V,R,V,V,V)');
+                return false;
+            }
+            
+            return {
+                date: dateInput,
+                colors: colorsInput.split(',').map(c => c.trim() === 'R' ? 'rouge' : 'vert').join(', '),
+                prediction: document.getElementById('editPrediction').value === 'R' ? 'rouge' : 'vert',
+                result: document.getElementById('editResult').value,
+                tradeNumber: pattern.tradeNumber, // Conserver le numéro original
+                timestamp: new Date().toISOString()
+            };
+        }
+    }).then(result => {
+        if (result.isConfirmed) {
+            // Calculer le pourcentage de couleurs
+            const colors = result.value.colors.split(', ');
+            const redCount = colors.filter(c => c === 'rouge').length;
+            const greenCount = colors.filter(c => c === 'vert').length;
+            
+            externalPatterns[index] = {
+                ...result.value,
+                frequentColor: redCount >= greenCount ? 
+                    `${(redCount/colors.length*100).toFixed(0)}% Rouge` : 
+                    `${(greenCount/colors.length*100).toFixed(0)}% Vert`
+            };
+            
+            localStorage.setItem('externalPatterns', JSON.stringify(externalPatterns));
+            loadExternalPatterns();
+            Swal.fire('Succès!', 'Motif mis à jour avec le bon format', 'success');
+        }
+    });
+}
 function removeExternalPattern(index) {
     Swal.fire({
         title: 'Confirmer la suppression',
-        text: 'Voulez-vous vraiment supprimer ce motif?',
+        html: `
+            <p>Voulez-vous vraiment supprimer ce motif?</p>
+            <div style="background:#f8f9fa;padding:10px;border-radius:5px;margin-top:10px">
+                <p><strong>Date:</strong> ${externalPatterns[index].date}</p>
+                <p><strong>Couleurs:</strong> ${externalPatterns[index].colors}</p>
+                <p><strong>Résultat:</strong> ${externalPatterns[index].result}</p>
+            </div>
+        `,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Oui, supprimer',
-        cancelButtonText: 'Annuler'
+        cancelButtonText: 'Annuler',
+        confirmButtonColor: '#dc3545'
     }).then((result) => {
         if (result.isConfirmed) {
             externalPatterns.splice(index, 1);
             localStorage.setItem('externalPatterns', JSON.stringify(externalPatterns));
             loadExternalPatterns();
+            updateExternalStats(); // Ajouter cette ligne
             Swal.fire('Supprimé!', 'Le motif a été supprimé.', 'success');
         }
     });
 }
-
-// Fonction pour effacer toute la base
 function clearExternalPatterns() {
+    if (externalPatterns.length === 0) {
+        Swal.fire('Info', 'La base est déjà vide', 'info');
+        return;
+    }
+
     Swal.fire({
-        title: 'Confirmer la suppression',
-        text: 'Voulez-vous vraiment supprimer TOUS les motifs externes?',
+        title: 'Confirmer la suppression complète',
+        html: `
+            <p>Voulez-vous vraiment supprimer <strong>TOUS</strong> les motifs (${externalPatterns.length})?</p>
+            <p style="color:#dc3545">Cette action est irréversible!</p>
+        `,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Oui, tout supprimer',
-        cancelButtonText: 'Annuler'
+        cancelButtonText: 'Annuler',
+        confirmButtonColor: '#dc3545',
+        backdrop: `
+            rgba(220,53,69,0.4)
+            url("/images/delete.gif")
+            left top
+            no-repeat
+        `
     }).then((result) => {
         if (result.isConfirmed) {
             externalPatterns = [];
             localStorage.removeItem('externalPatterns');
             loadExternalPatterns();
-            Swal.fire('Supprimé!', 'Tous les motifs ont été effacés.', 'success');
+            Swal.fire(
+                'Supprimé!',
+                'Tous les motifs ont été effacés.',
+                'success'
+            );
         }
     });
 }
-
-// Fonction pour exporter la base
-function exportExternalDB() {
-    const dataStr = JSON.stringify(externalPatterns, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    
-    const exportName = `external_patterns_${new Date().toISOString().slice(0,10)}.json`;
-    
-    const linkElement = document.createElement('a');
-    linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', exportName);
-    linkElement.click();
-    
-    Swal.fire('Export réussi!', `Fichier ${exportName} téléchargé.`, 'success');
-}
-
-
-        function forceStatisticalAnalysis() {
+function forceStatisticalAnalysis() {
     const colorInput = document.getElementById('seriesInput').value.toUpperCase().replace(/[^RV]/g, '');
     
     // Validation
@@ -2207,7 +2751,9 @@ updateHaitiTime();
             localStorage.setItem('totalPredictions', history.length);
             localStorage.setItem('totalSuccesses', successes);
             localStorage.setItem('totalFailures', failures);
-            localStorage.setItem('progress', progressBarFill.style.width); // Sauvegarder la barre de progression
+            localStorage.setItem('maxConsecutiveLosses', maxConsecutiveLosses);
+             localStorage.setItem('totalPoints', points);
+
         }
 
         // Fonction pour charger les statistiques depuis le localStorage
@@ -2215,7 +2761,8 @@ updateHaitiTime();
             const storedTotalPredictions = localStorage.getItem('totalPredictions');
             const storedTotalSuccesses = localStorage.getItem('totalSuccesses');
             const storedTotalFailures = localStorage.getItem('totalFailures');
-            const storedProgress = localStorage.getItem('progress'); // Charger la barre de progression
+            maxConsecutiveLosses = parseInt(localStorage.getItem('maxConsecutiveLosses')) || 0;
+            points = parseInt(localStorage.getItem('totalPoints')) || 0;
 
             if (storedTotalPredictions) {
                 history.length = parseInt(storedTotalPredictions);
@@ -2225,10 +2772,6 @@ updateHaitiTime();
             }
             if (storedTotalFailures) {
                 failures = parseInt(storedTotalFailures);
-            }
-            if (storedProgress) {
-                document.getElementById('progressBarFill').style.width = storedProgress;
-                document.getElementById('progressPercentage').textContent = storedProgress;
             }
         }
 
@@ -2253,6 +2796,9 @@ updateHaitiTime();
             updateStats();
             updateSuccessRate();
             updatePoints();
+            updateLionCoins();
+            document.getElementById('maxConsecutiveLosses').innerHTML = 
+            `Plus grande série de pertes : <span>${maxConsecutiveLosses}</span>`;
         });
 
           // Variables globales existantes
@@ -2274,6 +2820,18 @@ let greenSuccesses = 0;
 let greenFailures = 0;
 let isForceModeActive = false;
 let forcedColor = '';
+// Variables globales
+// Variables pour les pertes consécutives
+let maxConsecutiveLosses = parseInt(localStorage.getItem('maxConsecutiveLosses')) || 0;
+let currentConsecutiveLosses = 0;
+// Mets ça avec les autres variables (let history = [], etc.)
+const LION_COIN_RATE = 0.1; // 10 points = 1 Lion Coin
+let externalStats = {
+    total: 0,
+    successes: 0,
+    failures: 0,
+    successRate: 0
+};
 
 
 
@@ -2581,489 +3139,628 @@ function getLossAdvice(reason) {
 }
 const patterns = {
     // Anciens motifs 13 mars 2024
-    "RVRVRVRVRV": "rouge", // 1R1V
-    "VRVRVRVRVR": "vert",  // 1V1R
-    "RRVVRRVVRR": "vert",  // 2R2V
-    "RVVRRVVRRV": "vert",  // 2R2V
-    "VVRRVVRRVV": "rouge", // 2V2R
-    "VRRVVRRVVR": "rouge", // 2V2R
-    "RRRVVVRRR": "vert",   // 3R3V
-    "RRVVVRRRVV": "vert",  // 3R3V
-    "VVVRRRVVVR": "rouge", // 3V3R
-    "VVRRRVVVRR": "rouge", // 3V3R
-    "RRRRVVVVRR": "rouge", // 4R4V
-    "RRRVVVVRRR": "rouge", // 4R4V
-    "RRVVVVRRRR": "vert",  // 4R4V
-    "RVVVVRRRRV": "vert",  // 4R4V
-    "VVVVRRRRVV": "vert",  // 4V4R
-    "VVVRRRRVVV": "vert",  // 4V4R
-    "VVRRRRVVVV": "rouge", // 4V4R
-    "VRRRRVVVVR": "rouge", // 4V4R
-    "RRRRVRRRRV": "rouge", // 4R1V
-    "RRRVRRRRVR": "rouge", // 4R1V
-    "RRVRRRRVRR": "rouge", // 4R1V
-    "RVRRRRVRRR": "rouge", // 4R1V
-    "VRRRRVRRRR": "vert",  // 4R1V
-    "VVVVRVVVVR": "vert",  // 4R1V
-    "VVVRVVVVRV": "vert",  // 4R1V
-    "VVRVVVVRVV": "vert",  // 4R1V
-    "VRVVVVRVVV": "vert",  // 4R1V
-    "RVVVVRVVVV": "rouge", // 4R1V
-    "VVVVRRVVVV": "rouge", // 4V2R
-    "VVVRRVVVVR": "rouge", // 4V2R
-    "RRRRVVRRRR": "vert",  // 4R2V
-    "RRRVVRRRRV": "vert",  // 4R2V
-    "RRRVVVRRR": "rouge",  // 4R3V
-    "RRVVVRRRRV": "vert",  // 4R3V
-    "RVVVRRRRVV": "vert",  // 4R3V
-    "VVVVVRRRVVV": "vert", // 4V3R
-    "VVVRRRVVVV": "rouge", // 4V3R
-    "VVRRRVVVVR": "rouge", // 4V3R
-    "VRRRVVVVRR": "rouge", // 4V3R
-    "RRVRRVRRVR": "rouge", // 2R1V
-    "RVRRVRRVRR": "vert",  // 2R1V
-    "VVRVVRVVRV": "vert",  // 2V1R
-    "VRVVRVVRVV": "rouge", // 2V1R
-    "RRRVRRRVRR": "rouge", // 3R1V
-    "RRVRRRVRRR": "vert",  // 3R1V
-    "VVVRVVVRVV": "vert",  // 3V1R
-    "VVRVVVRVVV": "rouge", // 3V1R
-    "RRRVVRRRVV": "rouge", // 3R2V
-    "VVVRRVVVRR": "vert",  // 3V2R
-    "RRRRRRRRRR": "rouge", // long
-    "VVVVVVVVVV": "vert",  // long
-
-    // Nouveaux motifs à ajouter 17 mars 2024
-    "RRRRRRRRVR": "vert",
-    "RRRRRRRVRV": "rouge",
-    "RRRRRVRVRV": "vert",
-    "RRRVRVRVVV": "rouge",
-    "RRVRVRVVVR": "rouge",
-    "RVRVRVVVRR": "vert",
-    "VRVRVVVRRV": "vert",
-    "RVRVVVRRVV": "rouge",
-    "VRVVVRRVVR": "vert",
-    "RVVVRRVVRV": "vert",
-    "VVVRRVVRVV": "vert",
-    "VVRRVVRVVV": "rouge",
-    "VRRVVRVVVR": "vert",
-    "RRVVRVVVRV": "vert",
-    "RVVRVVVRVV": "vert",
-    "VVRVVVRVVV": "vert",
-    "VRVVVRVVVV": "vert",
-    "RVVVRVVVVV": "vert",
-    "VVVRVVVVVV": "vert",
-    "VVRVVVVVVV": "vert",
-    "VRVVVVVVVV": "vert",
-    "RVVVVVVVVV": "vert",
-    "RVVVVVVVVV": "rouge",
-    "VVVVVVVVVR": "rouge",
-    "VVVVVVVRRR": "vert",
-    "VVVVVVRRRV": "rouge",
-    "VVVVVRRRVR": "vert",
-    "VVVVRRRVRV": "rouge",
-    "VVVRRRVRVR": "rouge",
-    "VVRRRVRVRR": "rouge",
-    "VRRRVRVRRR": "rouge",
-    "RRRVRVRRRR": "rouge",
-    "RRVRVRRRRR": "vert",
-    "RVRVRRRRRV": "rouge",
-    "VRVRRRRRVR": "vert",
-    "RVRRRRRVRV": "vert",
-    "VRRRRRVRVV": "rouge",
-    "RRRRRVRVVR": "vert",
-    "RRRRVRVVRV": "vert",
-    "RRRVRVVRVV": "vert",
-    "RRVRVVRVVV": "rouge",
-    "RVRVVRVVVR": "rouge",
-    "VRVVRVVVRR": "rouge",
-    "RVVRVVVRRR": "rouge",
-    "VVRVVVRRRR": "vert",
-    "VRVVVRRRRV": "rouge",
-    "RVVVRRRRVR": "vert",
-    "VVVRRRRVRV": "rouge",
-    "VVRRRRVRVR": "rouge",
-    "VRRRRVRVRR": "rouge",
-    "RRRRVRVRRR": "rouge",
-    "RRRVRVRRRR": "rouge",
-    "RRVRVRRRRR": "vert",
-    "RVRVRRRRRV": "vert",
-    "VRVRRRRRVV": "vert",
-    "RVRRRRRVVV": "vert",
-    "VRRRRRVVVV": "vert",
-    "RRRRRVVVVV": "vert",
-    "RRRRVVVVVV": "vert",
-    "RRRVVVVVVV": "vert",
-    "RRVVVVVVVV": "vert",
-    "RVVVVVVVVV": "vert",
-    "VVVVVVVVVV": "rouge",
-    "VVVVVVVVVR": "vert",
-    "VVVVVVVVRV": "vert",
-    "VVVVVVVRVV": "vert",
-    "VVVVVVRVVV": "rouge",
-    "VVVVVRVVVR": "vert",
-    "VVVVRVVVRV": "vert",
-    "VVVRVVVRVV": "rouge",
-    "VVRVVVRVVR": "rouge",
-    "VRVVVRVVRR": "vert",
-    "RVVVRVVRRV": "rouge",
-    "VVVRVVRRVR": "rouge",
-    "VVRVVRRVRR": "vert",
-    "VRVVRRVRRV": "rouge",
-    "RVVRRVRRVR": "rouge",
-    "VVRRVRRVRR": "vert",
-    "VRRVRRVRRV": "vert",
-    "RRVRRVRRVV": "rouge",
-    "RVRRVRRVVR": "vert",
-    "VRRVRRVVRV": "rouge",
-    "RRVRRVVRVR": "vert",
-    "RVRRVVRVRV": "rouge",
-    "VRRVVRVRVR": "rouge",
-    "RRVVRVRVRR": "rouge",
-    "RVVRVRVRRR": "vert",
-    "VVRVRVRRRV": "rouge",
-    "VRVRVRRRVR": "vert",
-    "RVRVRRRVRV": "vert",
-    "VRVRRRVRVV": "rouge",
-    "RVRRRVRVVR": "vert",
-    "VRRRVRVVRV": "vert",
-    "RRRVRVVRVV": "vert",
-    "RRVRVVRVVV": "rouge",
-    "RVRVVRVVVR": "vert",
-    "VRVVRVVVRV": "vert",
-    "RVVRVVVRVV": "vert",
-    "VVRVVVRVVV": "vert",
-    "VRVVVRVVVV": "vert",
-    "RVVVRVVVVV": "vert",
-    "VVVRVVVVVV": "vert",
-    "VVRVVVVVVV": "rouge",
-    "VRVVVVVVVR": "rouge",
-    "RVVVVVVVRR": "vert",
-    "VVVVVVVRRV": "rouge",
-    "VVVVVVRRVR": "vert",
-    "VVVVVRRVRV": "rouge",
-    "VVVVRRVRVR": "vert",
-    "VVVRRVRVRV": "rouge",
-    "VVRRVRVRVR": "rouge",
-    "VRRVRVRVRR": "vert",
-    "RRVRVRVRRV": "rouge",
-    "RVRVRVRRVR": "rouge",
-    "VRVRVRRVRR": "rouge",
-    "RVRVRRVRRR": "rouge",
-    "VRVRRVRRRR": "vert",
-    "RVRRVRRRRV": "vert",
-    "VRRVRRRRVV": "rouge",
-    "RRVRRRRVVR": "vert",
-    "RVRRRRVVRV": "vert",
-    "VRRRRVVRVV": "vert",
-    "RRRRVVRVVV": "rouge",
-    "RRRVVRVVVR": "vert",
-    "RRVVRVVVRV": "vert",
-    "RVVRVVVRVV": "rouge",
-    "VVRVVVRVVR": "vert",
-    "VRVVVRVVRV": "rouge",
-    "RVVVRVVRVR": "vert",
-    "VVVRVVRVRV": "rouge",
-    "VVRVVRVRVR": "rouge",
-    "VRVVRVRVRR": "rouge",
-    "RVVRVRVRRR": "vert",
-    "VVRVRVRRRV": "vert",
-    "VRVRVRRRVV": "rouge",
-    "RVRVRRRVVR": "rouge",
-    "VRVRRRVVRR": "rouge",
-    "RVRRRVVRRR": "vert",
-    "VRRRVVRRRV": "vert",
-    "RRRVVRRRVV": "rouge",
-    "RRVVRRRVVR": "vert",
-    "RVVRRRVVRV": "vert",
-    "VVRRRVVRVV": "rouge",
-    "VRRRVVRVVR": "vert",
-    "RRRVVRVVRV": "vert",
-    "RRVVRVVRVV": "vert",
-    "RVVRVVRVVV": "vert",
-     // Motifs du 19 mars
-     "RRVRRRRRVR": "vert",
-     "RVRRRRRVRV": "vert",
-     "VRRRRRVRVV": "rouge",
-     "RRRRRVRVVR": "vert",
-     "RRRRVRVVRV": "rouge",
-    "RRRVRVVRVR": "vert",
-    "RRVRVVRVRV": "rouge",
-     "RVRVVRVRVR": "vert",
-     "VRVVRVRVRV": "vert",
-     "RVVRVRVRVV": "vert",
-     "VVRVRVRVVV": "rouge",
-     "VRVRVRVVVR": "vert",
-     "RVRVRVVVRV": "vert",
-     "VRVRVVVRVV": "rouge",
-     "VRVVRVRRRV": "rouge",
-     "RVVRVRRRVR": "vert",
-     "VVRVRRRVRV": "rouge",
-     "VRVRRRVRVR": "rouge",
-     "RVRRRVRVRR": "vert",
-     "VRRRVRVRRV": "vert",
-     "RRRVRVRRVV": "vert",
-     "RRVRVRRVVV": "rouge",
-     "RVRVRRVVVR": "rouge",
-     "VRVRRVVVRR": "rouge",
-    "RVRRVVVRRR": "rouge",
-     "VRRVVVRRRR": "vert",
-     "RRVVVRRRRV": "rouge",
-     "RVRRVVVVRR": "rouge",
-     "VRRVVVVRRR": "rouge",
-     "RRVVVVRRRR": "rouge",
-     "RVVVVRRRRR": "vert",
-     "VVVVRRRRRV": "vert",
-     "VVVRRRRRVV": "rouge",
-     "VVRRRRRVVR": "vert",
-     "VRRRRRVVRV": "rouge",
-     "RRRRRVVRVR": "vert",
-     "RRRRVVRVRV": "rouge",
-     "RRRVVRVRVR": "rouge",
-     "RRVVRVRVRR": "vert",
-     "RVVRVRVRRV": "rouge",
-     "VVRVRVRRVR": "vert",
-     "VRVRVRRVRV": "vert",
-     "RVRVRRVRVV": "vert",
-     "VRVRRVRVVV": "rouge",
-     "RVRRVRVVVR": "vert",
-     "VRRVRVVVRV": "vert",
-     "RRVRVVVRVV": "rouge",
-     "RVRVVVRVVR": "vert",
-     "VRVVVRVVRV": "rouge",
-     "RVVVRVVRVR": "vert",
-     "VVVRVVRVRV": "vert",
-     //20 mars 2025 nouvelle motifs. 
-     "RVRVVVVRVV": "vert",
-     "VRVVVVRVVV": "rouge",
-     "VVVVVRRVRR": "vert",
-     "VVVVRRVRRV": "rouge",
-     "VVVRRVRRVR": "rouge",
-     "VVRRVRRVRR": "rouge",
-     "VRRVRRVRRR": "vert",
-     "RRVRRVRRRV": "rouge",
-     "RVRRVRRRVR": "vert",
-     "VRRVRRRVRV": "vert",
-     "RRVRRRVRVV": "vert",
-     "RVRRRVRVVV": "vert",
-     "VRRRVRVVVV": "rouge",
-     "RRRVRVVVVR": "vert",
-     "RRVRVVVVRV": "rouge",
-     "RVRVVVVRVR": "rouge",
-     "VRVVVVRVRV": "vert",
-     "RVVVVRVRVV": "rouge",
-     "VVVVRVRVVR": "rouge",
-     "VVVRVRVVRR": "rouge",
-     "VVRVRVVRRR": "rouge",
-     "VRVRVVRRRR": "vert",
-     "RVRVVRRRRV": "rouge",
-     "VRVRRRVVRV": "rouge",
-     "RVRRRVVRVR": "vert",
-     "VRRRVVRVRV": "vert",
-     "RRRVVRVRVV": "vert",
-    "RRVVRVRVVV": "rouge",
-    "RVVRVRVVVR": "vert",
-     "VRVRRRRVRV": "rouge",
-     "RVRRRRVRVR": "rouge",
-    "RVRVRRRRRR": "rouge",
-      "VRVRRRRRRR": "vert",
-     "RVRRRRRRRV": "vert",
-      "VRRRRRRRRV": "rouge",
-      "VRRRRRRRVV": "rouge",
-      "RRRRRRVVRR": "rouge",
-  "RRRRRVVRRR": "vert",
-  "RRRRVVRRRV": "vert",
-  "RRRVVRRRVV": "rouge",
-  "RRVVRRRVVR": "rouge",
-  "VVRRRVVRRR": "rouge",
-  "VRRRVVRRRR": "rouge",
-  "RRRVVRRRRR": "vert",
-  "RRVVRRRRRV": "rouge",
-  "RVVRRRRRVR": "vert",
-  "VVRRRRRVRV": "vert",
-  "RRRRVRVVRR": "vert",
-  "RRRVRVVRRV": "rouge",
-  "RRVRVVRRVR": "rouge",
-  "RVRVVRRVRR": "rouge",
-  "VRVVRRVRRR": "vert",
-  "RVVRRVRRRV": "vert",
-  "VVRRVRRRVV": "rouge",
-  "VRRVRRRVVR": "rouge",
-  "RRVRRRVVRR": "rouge",
-  "RVRRRVVRRR": "vert",
-  "VRRRVVRRRV": "vert",
-  "RRRVVRRRVV": "rouge",
-  "RVVRRRVVRV": "vert",
-  "VVRRRVVRVV": "rouge",
-  "VRRRVVRVVR": "vert",
-  "RRRVVRVVRV": "rouge",
-  "RRVVRVVRVR": "vert",
-  "RVVRVVRVRV": "vert",
-  "VVRVVRVRVV": "vert",
-  "VRVVRVRVVV": "rouge",
-  "VVRVRVVVRV": "vert",
-  "VVRVVRVRVR": "vert",
-  "VRVVRVRVRV": "vert",
-  "VVRVRVRVVR": "vert",
-  "VRVRVRVVRV": "rouge",
-  "RVRVRVVRVR": "rouge",
-  "VRVRVVRVRR": "vert",
-  "RVRVVRVRRV": "rouge",
-  "VRVVRVRRVR": "rouge",
-  "RVVRVRRVRR": "rouge",
-  "VVRVRRVRRR": "vert",
-  "VRVRRVRRRV": "rouge",
-  "VRRRVRRRVRR": "rouge",
-  "RRVRRRVRRR": "vert",
-  "VRVRRVRVVR": "vert",
-  "RVRRVRVVRV": "vert",
-  "VRRVRVVRVV": "rouge",
-  "RRVRVVRVVR": "rouge",
-  "RVRVVRVVRR": "vert",
-  "VRVVRVVRRV": "rouge",
-  "RVVRVVRRVR": "rouge",
-  "VVRVVRRVRR": "rouge",
-  "VRVVRRVRRR": "rouge",
-  "RVVRRVRRRR": "vert",
-  "VVRRVRRRRV": "vert",
-  "VRRVRRRRVV": "vert",
-  "RRVRRRRVVV": "rouge",
-  "RVRRRRVVVR": "rouge",
-  "VRRRRVVVRR": "rouge",
-  "RRRRVVVRRR": "rouge",
-  "RRRVVVRRRR": "rouge",
-  "RRVVVRRRRR": "rouge",
-  "RVVVRRRRRR": "rouge",
-  "VVVRRRRRRR": "rouge",
-  "VVRRRRRRRR": "vert",
-  "VRRRRRRRRV": "vert",
-  "RRRRRRRRVV": "rouge",
-  "RRRRRRRVVR": "vert",
-  "RRRRRRVVRV": "rouge",
-  "RVVRVRVRRR": "rouge",
-  "VVRVRVRRRR": "vert",
-  "VRVRVRRRRV": "rouge",
-  "RVRVRRRRVR": "vert",
-  "VRVRRRRVRV": "vert",
-  "RVRRRRVRVV": "rouge",
-  "VRRRRVRVVR": "vert",
-  "VVVRRVRRVV": "vert",
-  "VVRRVRRVVV": "rouge",
-  "RVRRVVVRVV": "rouge",
-  "VRRVVVRVVR": "vert",
-  "RRVVVRVVRV": "rouge",
-  "VVRVVRVRVR": "rouge",
-  "VRVVRVRVRR": "rouge",
-  "RVVRVRVRRR": "vert",
-  "VVRVRVRRRV": "rouge",
-  "VRVRVRRRVR": "rouge",
-  "RVRVRRRVRR": "vert",
-  "VRVRRRVRRV": "vert",
-  "RRVVVRVVVR": "vert",
-  "RVVVRVVVRV": "rouge",
-  "VVVRVVVRVR": "vert",
-  "VVRVVVRVRV": "rouge",
-  "VRVVVRVRVR": "rouge",
-  "RVVVRVRVRR": "vert",
-  "VVRVRVRRVV": "vert",
-  "VRVRRRVVVV": "rouge",
-  "RVRVRRVVVR": "rouge",
-  "VRVRRVVVRR": "rouge",
-  "RVRRVVVRRR": "rouge",
-  "RRVVVRRRRR": "vert",
-  "RVVVRRRRRV": "vert",
-  "VVRRRRRVVV": "rouge",
-  "VRRRRRVVVR": "rouge",
-  "RRRRRVVVRV": "rouge",
-  "RRRRVVVRVR": "vert",
-  "RRRVVVRVRV": "vert",
-  "RRVVVRVRVV": "rouge",
-  "RVVVRVRVVR": "vert",
-  "VVVRVRVVRV": "vert",
-  "VVRVRVVRVV": "rouge",
-  "VRVRVVRVVR": "vert",
-  "RVRVVRVVRV": "vert",
-  "VRVVRVVRVV": "rouge",
-  "RVVRVVRVVR": "vert",
-  "VVRVVRVVRV": "rouge",
-  "VRVVRVVRVR": "vert",
-  "RVVRVVRVRV": "vert",
-  "VVRVVRVRVV": "vert",
-  "VRVVRVRVVV": "vert",
-  "RVVRVRVVVV": "rouge",
-  "VVRVRVVVVR": "rouge",
-  "VRVRVVVVRR": "vert",
-  "RVRVVVVRRV": "vert",
-  "VRVVVVRRVV": "rouge",
-  "VVRVVVVRVR": "rouge",
-  "VRVVVVRVRR": "vert",
-  "RVVVVRVRRV": "vert",
-  "VVVVRVRRVV": "rouge",
-  "VVVRVRRVVR": "vert",
-  "VVRVRRVVRV": "vert",
-  "VRVRRVVRVV": "rouge",
-  "RVRRVVRVVR": "rouge",
-  "VRRVVRVVRR": "rouge",
-  "RRVVRVVRRR": "rouge",
-  "RVVRVVRRRR": "rouge",
-  "VVRVVRRRRV": "rouge",
-  "VRVVRRRRVR": "rouge",
-  "RVVRRRRVRR": "vert",
-  "VVRRRRVRRV": "rouge",
-  "VRRRRVRRVR": "rouge",
-  "RRRRVRRVRR": "rouge",
-  "RRRVRRVRRR": "vert",
-  "RVRRVRRRVV": "rouge",
-  "RRVRRRVVRV": "vert",
-  "RVRRRVVRVV": "vert",
-  "VRRRVVRVVV": "rouge",
-  "RRRVVRVVVR": "rouge",
-  "RRVVRVVVRR": "rouge",
-  "VRVVVRRRRR": "vert",
-  "RRRRRVRVVV": "vert",
-  "RRRRVRVVVV": "rouge",
-  "RVRRRVRRRR": "rouge",
-  "VRRRVRRRRR": "rouge",
-  "RRRVRRRRRR": "rouge",
-  "RRVRRRRRRR": "vert",
-  "VRRRRRRRVR": "vert",
-  "RRRRRRVRVV": "vert",
-  "RRRRRVRVVV": "vert",
-  "RRRRVRVVVV": "vert",
-  "RRRVRVVVVV": "vert",
-  "RRVRVVVVVV": "vert",
-  "RVRVVVVVVV": "rouge",
-  "VRVVVVVVVR": "rouge",
-  "RVVVVVVVRR": "rouge",
-  "VVVVVVVRRR": "vert",
-  "VVVVVVRRRV": "rouge",
-  "VVVVVRRRVR": "vert",
-  "VVVVRRRVRV": "rouge",
-  "VVVRRRVRVR": "vert",
-  "VVRRRVRVRV": "vert",
-  "VRRRVRVRVV": "vert",
-  "RVRVVVRVVV": "rouge",
-  "VRVVVRVVVR": "rouge",
-  "RVVVRVVVRR": "vert",
-  "VVVRVVVRRV": "rouge",
-  "VVRVVVRRVR": "vert",
-  "VRVVVRRVRV": "rouge",
-  "RVVVRRVRVR": "rouge",
-  "VVVRRVRVRR": "rouge",
-  "VVRRVRVRRR": "rouge",
-  "VRRVRVRRRR": "rouge",
-  "VRRRRRVRVR": "rouge",
-  "RRRRRVRVRR": "rouge",
-  "RRRRVRVRRR": "rouge",
-  "RRVRVRRRRV": "vert",
-  "RVRVRRRRVV": "vert",
-  "VRVRRRRVVV": "rouge",
-  "VRRRRVVVRR": "vert",
-  "RRRRVVVRRV": "rouge",
-  "RRRVVVRRVR": "rouge",
-  "RRVVVRRVRR": "vert",
-  "RVVVRRVRRV": "rouge",
-  "VVRRVRRVRV": "rouge"
+    "RVRVRVRVRV": "rouge",
+"VRVRVRVRVR": "vert",
+"RRVVRRVVRR": "vert",
+"RVVRRVVRRV": "vert",
+"VVRRVVRRVV": "rouge",
+"VRRVVRRVVR": "rouge",
+"RRRVVVRRR": "vert",
+"RRVVVRRRVV": "vert",
+"VVVRRRVVVR": "rouge",
+"VVRRRVVVRR": "rouge",
+"RRRRVVVVRR": "rouge",
+"RRRVVVVRRR": "rouge",
+"RRVVVVRRRR": "vert",
+"RVVVVRRRRV": "vert",
+"VVVVRRRRVV": "vert",
+"VVVRRRRVVV": "vert",
+"VVRRRRVVVV": "rouge",
+"VRRRRVVVVR": "rouge",
+"RRRRVRRRRV": "rouge",
+"RRRVRRRRVR": "rouge",
+"RRVRRRRVRR": "rouge",
+"RVRRRRVRRR": "rouge",
+"VRRRRVRRRR": "vert",
+"VVVVRVVVVR": "vert",
+"VVVRVVVVRV": "vert",
+"VVRVVVVRVV": "vert",
+"VRVVVVRVVV": "vert",
+"RVVVVRVVVV": "rouge",
+"VVVVRRVVVV": "rouge",
+"VVVRRVVVVR": "rouge",
+"RRRRVVRRRR": "vert",
+"RRRVVRRRRV": "vert",
+"RRVVVRRRRV": "vert",
+"RVVVRRRRVV": "vert",
+"VVVVVRRRVVV": "vert",
+"VVVRRRVVVV": "rouge",
+"VVRRRVVVVR": "rouge",
+"VRRRVVVVRR": "rouge",
+"RRVRRVRRVR": "rouge",
+"RVRRVRRVRR": "vert",
+"VVRVVRVVRV": "vert",
+"VRVVRVVRVV": "rouge",
+"RRRVRRRVRR": "rouge",
+"RRVRRRVRRR": "vert",
+"VVVRVVVRVV": "vert",
+"VVRVVVRVVV": "rouge",
+"RRRVVRRRVV": "rouge",
+"VVVRRVVVRR": "vert",
+"RRRRRRRRRR": "rouge",
+"VVVVVVVVVV": "vert",
+"RRRRRRRRVR": "vert",
+"RRRRRRRVRV": "rouge",
+"RRRRRVRVRV": "vert",
+"RRRVRVRVVV": "rouge",
+"RRVRVRVVVR": "rouge",
+"RVRVRVVVRR": "vert",
+"VRVRVVVRRV": "vert",
+"RVRVVVRRVV": "rouge",
+"VRVVVRRVVR": "vert",
+"RVVVRRVVRV": "vert",
+"VVVRRVVRVV": "vert",
+"VVRRVVRVVV": "rouge",
+"VRRVVRVVVR": "vert",
+"RRVVRVVVRV": "vert",
+"RVVRVVVRVV": "vert",
+"VRVVVRVVVV": "vert",
+"RVVVRVVVVV": "vert",
+"VVVRVVVVVV": "vert",
+"VVRVVVVVVV": "vert",
+"VRVVVVVVVV": "vert",
+"RVVVVVVVVV": "vert",
+"VVVVVVVVVR": "rouge",
+"VVVVVVVRRR": "vert",
+"VVVVVVRRRV": "rouge",
+"VVVVVRRRVR": "vert",
+"VVVVRRRVRV": "rouge",
+"VVVRRRVRVR": "rouge",
+"VVRRRVRVRR": "rouge",
+"VRRRVRVRRR": "rouge",
+"RRRVRVRRRR": "rouge",
+"RRVRVRRRRR": "vert",
+"RVRVRRRRRV": "rouge",
+"VRVRRRRRVR": "vert",
+"RVRRRRRVRV": "vert",
+"VRRRRRVRVV": "rouge",
+"RRRRRVRVVR": "vert",
+"RRRRVRVVRV": "vert",
+"RRRVRVVRVV": "vert",
+"RRVRVVRVVV": "rouge",
+"RVRVVRVVVR": "rouge",
+"VRVVRVVVRR": "rouge",
+"RVVRVVVRRR": "rouge",
+"VVRVVVRRRR": "vert",
+"VRVVVRRRRV": "rouge",
+"RVVVRRRRVR": "vert",
+"VVVRRRRVRV": "rouge",
+"VVRRRRVRVR": "rouge",
+"VRRRRVRVRR": "rouge",
+"RRRRVRVRRR": "rouge",
+"VRVRRRRRVV": "vert",
+"RVRRRRRVVV": "vert",
+"VRRRRRVVVV": "vert",
+"RRRRRVVVVV": "vert",
+"RRRRVVVVVV": "vert",
+"RRRVVVVVVV": "vert",
+"RRVVVVVVVV": "vert",
+"VVVVVVVVRV": "vert",
+"VVVVVVVRVV": "vert",
+"VVVVVVRVVV": "rouge",
+"VVVVVRVVVR": "vert",
+"VVVVRVVVRV": "vert",
+"VVRVVVRVVR": "rouge",
+"VRVVVRVVRR": "vert",
+"RVVVRVVRRV": "rouge",
+"VVVRVVRRVR": "rouge",
+"VVRVVRRVRR": "vert",
+"VRVVRRVRRV": "rouge",
+"RVVRRVRRVR": "rouge",
+"VVRRVRRVRR": "vert",
+"VRRVRRVRRV": "vert",
+"RRVRRVRRVV": "rouge",
+"RVRRVRRVVR": "vert",
+"VRRVRRVVRV": "rouge",
+"RRVRRVVRVR": "vert",
+"RVRRVVRVRV": "rouge",
+"VRRVVRVRVR": "rouge",
+"RRVVRVRVRR": "rouge",
+"RVVRVRVRRR": "vert",
+"VVRVRVRRRV": "rouge",
+"VRVRVRRRVR": "vert",
+"RVRVRRRVRV": "vert",
+"VRVRRRVRVV": "rouge",
+"RVRRRVRVVR": "vert",
+"VRRRVRVVRV": "vert",
+"VRVVRVVVRV": "vert",
+"VRVVVVVVVR": "rouge",
+"RVVVVVVVRR": "vert",
+"VVVVVVVRRV": "rouge",
+"VVVVVVRRVR": "vert",
+"VVVVVRRVRV": "rouge",
+"VVVVRRVRVR": "vert",
+"VVVRRVRVRV": "rouge",
+"VVRRVRVRVR": "rouge",
+"VRRVRVRVRR": "vert",
+"RRVRVRVRRV": "rouge",
+"RVRVRVRRVR": "rouge",
+"VRVRVRRVRR": "rouge",
+"RVRVRRVRRR": "rouge",
+"VRVRRVRRRR": "vert",
+"RVRRVRRRRV": "vert",
+"VRRVRRRRVV": "rouge",
+"RRVRRRRVVR": "vert",
+"RVRRRRVVRV": "vert",
+"VRRRRVVRVV": "vert",
+"RRRRVVRVVV": "rouge",
+"RRRVVRVVVR": "vert",
+"VRVVVRVVRV": "rouge",
+"RVVVRVVRVR": "vert",
+"VVVRVVRVRV": "rouge",
+"VVRVVRVRVR": "rouge",
+"VRVVRVRVRR": "rouge",
+"VRVRVRRRVV": "rouge",
+"RVRVRRRVVR": "rouge",
+"VRVRRRVVRR": "rouge",
+"RVRRRVVRRR": "vert",
+"VRRRVVRRRV": "vert",
+"RRVVRRRVVR": "vert",
+"RVVRRRVVRV": "vert",
+"VVRRRVVRVV": "rouge",
+"VRRRVVRVVR": "vert",
+"RRRVVRVVRV": "vert",
+"RRVVRVVRVV": "vert",
+"RVVRVVRVVV": "vert",
+"RRVRRRRRVR": "vert",
+"RRRVRVVRVR": "vert",
+"RRVRVVRVRV": "rouge",
+"RVRVVRVRVR": "vert",
+"VRVVRVRVRV": "vert",
+"RVVRVRVRVV": "vert",
+"VVRVRVRVVV": "rouge",
+"VRVRVRVVVR": "vert",
+"RVRVRVVVRV": "vert",
+"VRVRVVVRVV": "rouge",
+"VRVVRVRRRV": "rouge",
+"RVVRVRRRVR": "vert",
+"VVRVRRRVRV": "rouge",
+"VRVRRRVRVR": "rouge",
+"RVRRRVRVRR": "vert",
+"VRRRVRVRRV": "vert",
+"RRRVRVRRVV": "vert",
+"RRVRVRRVVV": "rouge",
+"RVRVRRVVVR": "rouge",
+"VRVRRVVVRR": "rouge",
+"RVRRVVVRRR": "rouge",
+"VRRVVVRRRR": "vert",
+"RVRRVVVVRR": "rouge",
+"VRRVVVVRRR": "rouge",
+"RVVVVRRRRR": "vert",
+"VVVVRRRRRV": "vert",
+"VVVRRRRRVV": "rouge",
+"VVRRRRRVVR": "vert",
+"VRRRRRVVRV": "rouge",
+"RRRRRVVRVR": "vert",
+"RRRRVVRVRV": "rouge",
+"RRRVVRVRVR": "rouge",
+"RVVRVRVRRV": "rouge",
+"VVRVRVRRVR": "vert",
+"VRVRVRRVRV": "vert",
+"RVRVRRVRVV": "vert",
+"VRVRRVRVVV": "rouge",
+"RVRRVRVVVR": "vert",
+"VRRVRVVVRV": "vert",
+"RRVRVVVRVV": "rouge",
+"RVRVVVRVVR": "vert",
+"RVRVVVVRVV": "vert",
+"VVVVVRRVRR": "vert",
+"VVVVRRVRRV": "rouge",
+"VVVRRVRRVR": "rouge",
+"VRRVRRVRRR": "vert",
+"RRVRRVRRRV": "rouge",
+"RVRRVRRRVR": "vert",
+"VRRVRRRVRV": "vert",
+"RRVRRRVRVV": "vert",
+"RVRRRVRVVV": "vert",
+"VRRRVRVVVV": "rouge",
+"RRRVRVVVVR": "vert",
+"RRVRVVVVRV": "rouge",
+"RVRVVVVRVR": "rouge",
+"VRVVVVRVRV": "vert",
+"RVVVVRVRVV": "rouge",
+"VVVVRVRVVR": "rouge",
+"VVVRVRVVRR": "rouge",
+"VVRVRVVRRR": "rouge",
+"VRVRVVRRRR": "vert",
+"RVRVVRRRRV": "rouge",
+"VRVRRRVVRV": "rouge",
+"RVRRRVVRVR": "vert",
+"VRRRVVRVRV": "vert",
+"RRRVVRVRVV": "vert",
+"RRVVRVRVVV": "rouge",
+"RVVRVRVVVR": "vert",
+"VRVRRRRVRV": "rouge",
+"RVRRRRVRVR": "rouge",
+"RVRVRRRRRR": "rouge",
+"VRVRRRRRRR": "vert",
+"RVRRRRRRRV": "vert",
+"VRRRRRRRRV": "rouge",
+"VRRRRRRRVV": "rouge",
+"RRRRRRVVRR": "rouge",
+"RRRRRVVRRR": "vert",
+"RRRRVVRRRV": "vert",
+"VVRRRVVRRR": "rouge",
+"VRRRVVRRRR": "rouge",
+"RRRVVRRRRR": "vert",
+"RRVVRRRRRV": "rouge",
+"RVVRRRRRVR": "vert",
+"VVRRRRRVRV": "vert",
+"RRRRVRVVRR": "vert",
+"RRRVRVVRRV": "rouge",
+"RRVRVVRRVR": "rouge",
+"RVRVVRRVRR": "rouge",
+"VRVVRRVRRR": "vert",
+"RVVRRVRRRV": "vert",
+"VVRRVRRRVV": "rouge",
+"VRRVRRRVVR": "rouge",
+"RRVRRRVVRR": "rouge",
+"RRVVRVVRVR": "vert",
+"RVVRVVRVRV": "vert",
+"VVRVVRVRVV": "vert",
+"VRVVRVRVVV": "rouge",
+"VVRVRVVVRV": "vert",
+"VVRVRVRVVR": "vert",
+"VRVRVRVVRV": "rouge",
+"RVRVRVVRVR": "rouge",
+"VRVRVVRVRR": "vert",
+"RVRVVRVRRV": "rouge",
+"VRVVRVRRVR": "rouge",
+"RVVRVRRVRR": "rouge",
+"VVRVRRVRRR": "vert",
+"VRVRRVRRRV": "rouge",
+"VRRRVRRRVRR": "rouge",
+"VRVRRVRVVR": "vert",
+"RVRRVRVVRV": "vert",
+"VRRVRVVRVV": "rouge",
+"RRVRVVRVVR": "rouge",
+"RVRVVRVVRR": "vert",
+"VRVVRVVRRV": "rouge",
+"RVVRVVRRVR": "rouge",
+"RVVRRVRRRR": "vert",
+"VVRRVRRRRV": "vert",
+"RRVRRRRVVV": "rouge",
+"RVRRRRVVVR": "rouge",
+"VRRRRVVVRR": "rouge",
+"RRRRVVVRRR": "rouge",
+"RRRVVVRRRR": "rouge",
+"RRVVVRRRRR": "rouge",
+"RVVVRRRRRR": "rouge",
+"VVVRRRRRRR": "rouge",
+"VVRRRRRRRR": "vert",
+"RRRRRRRRVV": "rouge",
+"RRRRRRRVVR": "vert",
+"RRRRRRVVRV": "rouge",
+"VVRVRVRRRR": "vert",
+"VRVRVRRRRV": "rouge",
+"RVRVRRRRVR": "vert",
+"RVRRRRVRVV": "rouge",
+"VRRRRVRVVR": "vert",
+"VVVRRVRRVV": "vert",
+"VVRRVRRVVV": "rouge",
+"RVRRVVVRVV": "rouge",
+"VRRVVVRVVR": "vert",
+"RRVVVRVVRV": "rouge",
+"RVRVRRRVRR": "vert",
+"VRVRRRVRRV": "vert",
+"RRVVVRVVVR": "vert",
+"RVVVRVVVRV": "rouge",
+"VVVRVVVRVR": "vert",
+"VVRVVVRVRV": "rouge",
+"VRVVVRVRVR": "rouge",
+"RVVVRVRVRR": "vert",
+"VVRVRVRRVV": "vert",
+"VRVRRRVVVV": "rouge",
+"RVVVRRRRRV": "vert",
+"VVRRRRRVVV": "rouge",
+"VRRRRRVVVR": "rouge",
+"RRRRRVVVRV": "rouge",
+"RRRRVVVRVR": "vert",
+"RRRVVVRVRV": "vert",
+"RRVVVRVRVV": "rouge",
+"RVVVRVRVVR": "vert",
+"VVVRVRVVRV": "vert",
+"VVRVRVVRVV": "rouge",
+"VRVRVVRVVR": "vert",
+"RVRVVRVVRV": "vert",
+"RVVRVVRVVR": "vert",
+"VRVVRVVRVR": "vert",
+"RVVRVRVVVV": "rouge",
+"VVRVRVVVVR": "rouge",
+"VRVRVVVVRR": "vert",
+"RVRVVVVRRV": "vert",
+"VRVVVVRRVV": "rouge",
+"VVRVVVVRVR": "rouge",
+"VRVVVVRVRR": "vert",
+"RVVVVRVRRV": "vert",
+"VVVVRVRRVV": "rouge",
+"VVVRVRRVVR": "vert",
+"VVRVRRVVRV": "vert",
+"VRVRRVVRVV": "rouge",
+"RVRRVVRVVR": "rouge",
+"VRRVVRVVRR": "rouge",
+"RRVVRVVRRR": "rouge",
+"RVVRVVRRRR": "rouge",
+"VVRVVRRRRV": "rouge",
+"VRVVRRRRVR": "rouge",
+"RVVRRRRVRR": "vert",
+"VVRRRRVRRV": "rouge",
+"VRRRRVRRVR": "rouge",
+"RRRRVRRVRR": "rouge",
+"RRRVRRVRRR": "vert",
+"RVRRVRRRVV": "rouge",
+"RRVRRRVVRV": "vert",
+"RVRRRVVRVV": "vert",
+"VRRRVVRVVV": "rouge",
+"RRVVRVVVRR": "rouge",
+"VRVVVRRRRR": "vert",
+"RRRRRVRVVV": "vert",
+"RRRRVRVVVV": "rouge",
+"RVRRRVRRRR": "rouge",
+"VRRRVRRRRR": "rouge",
+"RRRVRRRRRR": "rouge",
+"RRVRRRRRRR": "vert",
+"VRRRRRRRVR": "vert",
+"RRRRRRVRVV": "vert",
+"RRRVRVVVVV": "vert",
+"RRVRVVVVVV": "vert",
+"RVRVVVVVVV": "rouge",
+"VVRRRVRVRV": "vert",
+"VRRRVRVRVV": "vert",
+"RVRVVVRVVV": "rouge",
+"VRVVVRVVVR": "rouge",
+"RVVVRVVVRR": "vert",
+"VVVRVVVRRV": "rouge",
+"VVRVVVRRVR": "vert",
+"VRVVVRRVRV": "rouge",
+"RVVVRRVRVR": "rouge",
+"VVVRRVRVRR": "rouge",
+"VVRRVRVRRR": "rouge",
+"VRRVRVRRRR": "rouge",
+"VRRRRRVRVR": "rouge",
+"RRRRRVRVRR": "rouge",
+"RRVRVRRRRV": "vert",
+"RVRVRRRRVV": "vert",
+"VRVRRRRVVV": "rouge",
+"RRRRVVVRRV": "rouge",
+"RRRVVVRRVR": "rouge",
+"RRVVVRRVRR": "vert",
+"RVVVRRVRRV": "rouge",
+"VVRRVRRVRV": "rouge",
+"RRRVRRVVVR": "vert",
+"VRRVVVRVRR": "vert",
+"RRVVVRVRRV": "vert",
+"RVVVRVRRVV": "rouge",
+"RVVRVVRVRR": "rouge",
+"VVRVVRVRRR": "vert",
+"VVRVRRRVRR": "vert",
+"VRRRVRRVRR": "vert",
+"RRRVRRVRRV": "vert",
+"RVRRVRRVVV": "rouge",
+"VRRVRRVVVR": "vert",
+"VVVRVRVRRV": "rouge",
+"VRVRRVRVRR": "rouge",
+"RVRRVRVRRR": "rouge",
+"RRRVVVVRRV": "rouge",
+"VVVVRRVRVV": "rouge",
+"VVVRRVRVVR": "rouge",
+"VVRRVRVVRR": "vert",
+"VRRVRVVRRV": "vert",
+"VVRVRVRVRR": "rouge",
+"VRVRVRVRRR": "rouge",
+"RVRVRVRRRR": "vert",
+"VRVRRRRVRR": "vert",
+"RVRRRRVRRV": "vert",
+"RRRVRVRRRV": "vert",
+"RRVRVRRRVV": "vert",
+"RVRVRRRVVV": "rouge",
+"VRVRRRVVVR": "vert",
+"VRRRVVVRVV": "rouge",
+"RRRVVVRVVR": "rouge",
+"RRVVVRVVRR": "rouge",
+"RVVVRVVRRR": "vert",
+"VVVRVVRRRV": "rouge",
+"RVVRRRVRVV": "vert",
+"VVRRRVRVVV": "vert",
+"RRVRVVVVVR": "rouge",
+"RVRVVVVVRR": "rouge",
+"VRVVVVVRRR": "vert",
+"RVVVVVRRRV": "rouge",
+"VVVVRRRVRR": "rouge",
+"VVVRRRRVVR": "rouge",
+"VVRRRRVVRR": "vert",
+"VRRRRVVRRV": "vert",
+"RRRRVVRRVV": "vert",
+"RRRVVRRVVV": "vert",
+"RRVVRRVVVV": "vert",
+"RVVRRVVVVV": "vert",
+"VVRRVVVVVV": "rouge",
+"VRRVVVVVVR": "vert",
+"VVVVVRVRVV": "vert",
+"RVVVVRVVVR": "vert",
+"VVVRVVRVRR": "rouge",
+"VRVRRVRRVV": "rouge",
+"RRVRRVVRVV": "rouge",
+"RRVVRVVRRV": "vert",
+"RVVRVVRRVV": "vert",
+"VRVVRRVVVR": "vert",
+"VRVVVRRVRR": "vert",
+"VRVVRVVVVV": "vert",
+"VRVVVVVVRR": "vert",
+"RVVVVVVRRV": "vert",
+"VVVVVVRRVV": "rouge",
+"VVVVVRRVVR": "vert",
+"RVVVRRRVVR": "rouge",
+"VVVRRRVVRR": "rouge",
+"RRRRVVRVRR": "rouge",
+"RRRRRRRVRR": "vert",
+"RRRRRRVRRV": "vert",
+"RRRRRVRRVV": "rouge",
+"RRRRVRRVVR": "vert",
+"VRRVVRVVVV": "rouge",
+"RVVRRRRRRV": "vert",
+"VRRRRRRVVR": "rouge",
+"RRRRRVVVRR": "rouge",
+"VRRRVRRRRV": "vert",
+"RVVVRVRRRV": "rouge",
+"VRVRRRVRRR": "vert",
+"RVRRRVRRRV": "vert",
+"VVRRRRVRVV": "rouge",
+"VVVRVRVRRR": "vert",
+"RVRVVVRRRV": "vert",
+"VVVVRVVVRR": "vert",
+"RRRVRRRRVV": "rouge",
+"RRVVRVVVVV": "vert",
+"VVRVVVVVVR": "vert",
+"VVVVVVRVRR": "vert",
+"VVVVVRVRRV": "vert",
+"VVVVVRRRVV": "vert",
+"RRRRVVVVVR": "rouge",
+"RRRVVVVVRR": "rouge",
+"RRVVVVVRRR": "vert",
+"VRRRVRVVRR": "vert",
+"RVVRRVRRVV": "vert",
+"RRVRRVVVRR": "rouge",
+"VVRRRRRRRV": "vert",
+"RVVRRRVVVR": "rouge",
+"VRRRVVVRRV": "vert",
+"RRRVVVRRVV": "vert",
+"RRVVVRRVVV": "rouge",
+"RVVVRRVVVR": "vert",
+"VVRRVVVRVV": "rouge",
+"RVVRVRRRRV": "vert",
+"VVRVRRRRVV": "rouge",
+"VRVRRRRVVR": "vert",
+"RRRVVRVRRV": "rouge",
+"VVRVRRVRRV": "vert",
+"VRRVRRVVRR": "vert",
+"RRVRRVVRRV": "rouge",
+"VRRVVRRVRR": "vert",
+"RRVVRRVRRV": "rouge",
+"VRRVRRVRVV": "rouge",
+"RRVRRVRVVR": "rouge",
+"RVRRVRVVRR": "rouge",
+"VRVVRRRRRV": "rouge",
+"VVRRRRRVRR": "vert",
+"VRRRRRVRRV": "rouge",
+"RRVRRRRRRV": "rouge",
+"RRRRVRRVVV": "vert",
+"VRRVRRVVVV": "rouge",
+"RRVRRVVVVR": "rouge",
+"VRRVVVVRRV": "rouge",
+"VRRRVVRVRR": "rouge",
+"RRRVVRVRRR": "rouge",
+"RRVVRVRRRR": "vert",
+"RVRVRRVVRR": "vert",
+"VRVRRVVRRV": "rouge",
+"VRVRVRVRVV": "rouge",
+"RVRVRVRVVR": "rouge",
+"VRVRVRVVRR": "vert",
+"RVRVRVVRRV": "vert",
+"VRVVRRRRVV": "rouge",
+"RVVRRRRVVR": "vert",
+"VRVRVRVVVV": "rouge",
+"RVRVRVVVVR": "rouge",
+"RVVVVRRVVR": "vert",
+"VRRVVRVRVV": "rouge",
+"RRVVRVRVVR": "vert",
+"VRVRVVRVVV": "vert",
+"RVRVVRVVVV": "rouge",
+"VRVVRVVVVR": "rouge",
+"RVVRVVVVRR": "vert",
+"VVRVVVVRRV": "rouge",
+"VVRVVRVRRV": "vert",
+"VRVVRVRRVV": "rouge",
+"RVVRVRRVVR": "rouge",
+"RRVVRRVRVV": "vert",
+"RVRVVVVVVR": "rouge",
+"VVVVRRVRRR": "vert",
+"VVVRRVRRRV": "rouge",
+"RRVRVRVRVV": "vert",
+"RVRVRVRVVV": "rouge",
+"VRVVVRRRVV": "vert",
+"RRVVVRRVVR": "rouge",
+"RVVVRRVVRR": "vert",
+"VVVRRVVRRV": "vert",
+"VVRRVVRRRV": "rouge",
+"RRVVRRRVRR": "rouge",
+"RVVRRRVRRR": "vert",
+"VVRRRVRRRV": "rouge",
+"RVRRRVVVVR": "rouge",
+"RVRVVRVRVV": "vert",
+"RVRRRRRRRR": "vert",
+"RRRRRRRVVV": "rouge",
+"RRRRRRVVVR": "vert",
+"RRRRVVVRVV": "rouge",
+"RVVVRVVVVR": "vert",
+"VVVRVRVRVV": "vert",
+"VVVRRVRVVV": "rouge",
+"VVRRVRVVVR": "vert",
+"RVRVVVRVRR": "vert",
+"VRVVVRVRRV": "vert",
+"VVRVRRVVRR": "vert",
+"RVRRVVRRVV": "rouge",
+"RVVRVRVVRR": "rouge",
+"VRVRVVRRRV": "vert",
+"RVRVVRRRVV": "vert",
+"VRVVRRRVVV": "rouge",
+"RRRVVVRVRR": "vert",
+"VVRVRRVRVV": "vert",
+"RVRRVRVVVV": "rouge",
+"VRRVRVVVVR": "vert",
+"VRRVRVVVVV": "rouge",
+"VVVVRVRVVV": "vert",
+"VVVRVRVVVV": "rouge",
+"VVRVRVVVRR": "rouge",
+"VRVRVVVRRR": "vert",
+"RVVVRRRVVV": "rouge",
+"RVVVRVVRVV": "rouge",
+"VVVRVVRVVR": "vert",
+"RVRVRRVRRV": "rouge",
+"VRRVRVVRRR": "vert",
+"RRVRVVRRRV": "vert",
+"VRVVRRRVVR": "vert",
+"VRRRRVRRRV": "rouge",
+"RRVRRRVRRV": "rouge",
+"RVRVVVRRRR": "vert",
+"RRVRVVRVRR": "rouge",
+"RVRVVRVRRR": "rouge",
+"VRVVRVRRRR": "vert",
+"RVRRRRVVVV": "vert",
+"VRRRRVVVVV": "vert",
+"RRRVVVVVVR": "rouge",
+"RRVVVVVVRR": "vert",
+"VVVVVRRVVV": "rouge",
+"VVVVRRVVVR": "rouge",
+"VVRRVVVRRR": "rouge",
+"VRRRRVRVVV": "rouge",
+"RRRRVRVVVR": "rouge",
+"RRRVRVVVRR": "rouge",
+"RRVRVVVRRR": "vert",
+"VVRRRVVVVV": "vert",
+"VRRRVVVVVV": "vert",
+"RRVVVVVVVR": "rouge",
+"VVVRRRVRRV": "rouge",
+"RRRVRRVRVV": "rouge",
+"VRVRVRRVVR": "rouge",
+"VRRVVRRVVV": "rouge",
+"RRVVRRVVVR": "vert",
+"VVRVRVVVVV": "vert",
+"VRVRVVVVVV": "vert",
+"RVVRVVVVVR": "rouge",
+"VVRVVVVVRR": "rouge",
+"VRRRVVVVVR": "rouge",
+"RRVVVVVRRV": "rouge"
 };
 function analyzeAndRecommend(sequence) {
     // Convertir la séquence en emojis 🔴/🟢 pour l'analyse
@@ -3649,7 +4346,7 @@ function displayPreviousResult(previousResult) {
 function giveFeedback(correct) {
     const lastHistoryItem = history[history.length - 1];
     
-    // Vérification si le feedback a déjà été donné (inchangé)
+// Vérification si le feedback a déjà été donné
     if (lastHistoryItem.result !== '') {
         Swal.fire({
             title: 'Déjà évalué ⚠️',
@@ -3661,12 +4358,12 @@ function giveFeedback(correct) {
         return;
     }
 
-    // Configuration du trading (inchangé)
+    // Configuration du trading
     const odds = parseFloat(document.getElementById('oddsInput').value) || 97;
     const currentBet = getCurrentBet();
     const nextBet = martingaleSequence[Math.min(currentMartingaleIndex + 1, martingaleSequence.length - 1)] || martingaleSequence[0];
 
-    // Vérification de la bankroll (inchangé)
+    // Vérification de la bankroll
     if (!correct && currentBankroll < currentBet) {
         Swal.fire({
             title: 'Fonds insuffisants ⛔',
@@ -3674,14 +4371,14 @@ function giveFeedback(correct) {
                    <strong>${currentBet.toFixed(2)} R</strong> requis`,
             icon: 'error',
             willClose: () => {
-                currentMartingaleIndex = 0; // Reset martingale après impossibilité de miser
+                currentMartingaleIndex = 0;
                 updateMartingaleDisplay();
             }
         });
         return;
     }
-
-    // Mise à jour des statistiques par couleur (inchangé)
+     
+    // Mise à jour des statistiques par couleur
     if (correct) {
         if (lastHistoryItem.prediction === 'rouge') {
             redSuccesses++;
@@ -3698,8 +4395,6 @@ function giveFeedback(correct) {
 
     if (correct) {
         // ===== RÉINITIALISATION COMPLÈTE APRÈS GAIN =====
-        // Traitement gain (inchangé)
-        updateProgressBar(1);
         const profit = currentBet * (odds / 100);
         currentBankroll = parseFloat((currentBankroll + profit).toFixed(2));
         
@@ -3709,7 +4404,7 @@ function giveFeedback(correct) {
         bannedPatterns = [];
         lastResultWasLoss = false;
         
-        // Nouveau: Réinitialisation des tendances forcées
+        // Réinitialisation des tendances forcées
         if (isForceModeActive) {
             isForceModeActive = false;
             forcedColor = '';
@@ -3728,64 +4423,89 @@ function giveFeedback(correct) {
         lastHistoryItem.result = 'Succès';
         successes++;
         points += 10;
-        progressPercentage = Math.min(progressPercentage + 1, 100);
-
+        currentConsecutiveLosses = 0; // Reset compteur
+        updateLionCoins(+1);
+        pertesConsecutivesActuelles = 0; // Réinitialise le compteur actuel
         Swal.fire({
-            title: 'Gagné! 🎉 + Réinitialisation',
-            html: `
-                <div style="font-size: 3rem;">💰</div>
-                <p><strong>+${profit.toFixed(2)} R</strong> (${odds}%)</p>
-                <hr>
-                <div style="text-align:left; margin:10px 0; padding:10px; background:#e8f5e9; border-radius:5px;">
-                    <p>✅ Tous compteurs réinitialisés :</p>
-                    <ul>
-                        <li>Pertes consécutives: 0</li>
-                        <li>Martingale: Niveau 1</li>
-                        <li>Motifs bloqués: Aucun</li>
-                    </ul>
+    title: 'Victoire Impériale 🦁✨',
+    html: `
+        <div style="position:relative; margin:20px 0;">
+            <!-- Élément central lion + argent -->
+            <div style="display:flex; flex-direction:column; align-items:center; margin-bottom:15px;">
+                <div style="font-size:3rem; line-height:1;">
+                    <span style="color:#FFD700;">🦁</span><span style="color:#4CAF50; margin:0 5px;">→</span><span style="color:#28a745;">💰</span>
                 </div>
-                <p>Bankroll: <strong>${currentBankroll.toFixed(2)} R</strong></p>
-                <p>Prochaine mise: <strong>${nextBet.toFixed(2)} R</strong></p>
-                <p style="color:#28a745">+10 points</p>
-                <div style="margin-top: 15px; background: #e9ecef; height: 20px; border-radius: 10px; overflow: hidden;">
-                    <div style="width: ${progressPercentage}%; background: linear-gradient(90deg, #28a745 0%, #5cb85c 100%); height: 100%; transition: width 0.5s ease;"></div>
+                <div style="font-size:1.8rem; font-weight:bold; color:#2E7D32; margin:5px 0;">
+                    +${profit.toFixed(2)} R
                 </div>
-                <p style="margin-top: 5px; font-size: 0.9em;">Progression: ${progressPercentage}%</p>
-            `,
-            icon: 'success',
-            background: 'linear-gradient(135deg, #f0f9f0 0%, #e6f7e6 100%)',
-            showClass: {
-                popup: 'animate__animated animate__bounceIn'
-            }
-        });
+                <div style="font-size:0.85rem; color:#78909C; background:#f5f5f5; padding:2px 8px; border-radius:10px;">
+                    ${odds}% de chance
+                </div>
+            </div>
+
+            <!-- Récompense Lion Coin - version compacte -->
+            <div style="background:#FFF9C4; border-radius:8px; padding:8px; margin:0 auto 15px; width:fit-content;">
+                <p style="margin:0; font-size:0.95rem;">
+                    <span style="font-weight:bold; color:#FF6D00;">+1 Lion Coin</span> <span style="font-size:0.8rem; color:#616161;">(récompense exclusive)</span>
+                </p>
+            </div>
+
+            <!-- Bankroll + Mise suivante - version compacte -->
+            <div style="display:flex; justify-content:center; gap:20px; text-align:center; background:#f8f9fa; padding:10px; border-radius:8px;">
+                <div>
+                    <p style="margin:0 0 3px 0; font-size:0.75rem; color:#607d8b;">Bankroll</p>
+                    <p style="margin:0; font-weight:bold; font-size:0.95rem;">${currentBankroll.toFixed(2)} R</p>
+                </div>
+                <div style="border-left:1px solid #e0e0e0;"></div>
+                <div>
+                    <p style="margin:0 0 3px 0; font-size:0.75rem; color:#607d8b;">Mise suivante</p>
+                    <p style="margin:0; font-weight:bold; font-size:0.95rem;">${nextBet.toFixed(2)} R</p>
+                </div>
+            </div>
+        </div>
+    `,
+    icon: false,
+    background: '#ffffff',
+    showConfirmButton: true,
+    showClass: {
+        popup: 'animate__animated animate__fadeIn animate__faster'
+    },
+    customClass: {
+        popup: 'custom-swal-popup',
+        title: 'custom-swal-title'
+    }
+});
     } else {
-        // ===== TRAITEMENT PERTE (INCHANGÉ) =====
+        // ===== TRAITEMENT PERTE =====
         currentBankroll = parseFloat((currentBankroll - currentBet).toFixed(2));
         consecutiveLosses++;
         currentMartingaleIndex = Math.min(currentMartingaleIndex + 1, martingaleSequence.length - 1);
 
-        //bannedPatterns = ['RRR','VVV'];
         lastResultWasLoss = true;
+        currentConsecutiveLosses++;
+        localStorage.setItem('currentConsecutiveLosses', currentConsecutiveLosses);
+        if (currentConsecutiveLosses > maxConsecutiveLosses) {
+            maxConsecutiveLosses = currentConsecutiveLosses;
+        }
 
+        document.getElementById('maxConsecutiveLosses').innerHTML = 
+            `Record de pertes consécutives : <span>${maxConsecutiveLosses}</span>`;
+
+        // ===== FIN DE L'AJOUT =====
         lastHistoryItem.result = 'Échec';
         failures++;
-
-        let warningMessage = '';
-        if (consecutiveLosses >= 3) {
+         let warningMessage = '';
+        /*if (consecutiveLosses >= 3) {
             warningMessage = `
                 <div style="background:#ffebee;padding:10px;border-radius:5px;margin:10px 0;">
                     <p style="color:#d32f2f">🚨 3 pertes consécutives - Pause recommandée</p>
                     <p>Évitez: RRR, VVV, VVR, RRV</p>
                 </div>
             `;
-        } else if (consecutiveLosses >= 9) {
-            warningMessage = `
-                <p style="color:#fb8c00">⚠️ ${consecutiveLosses} perte(s) consécutive(s)</p>
-                <p>Évitez: RRR, VVV</p>
-            `;
-        }
+        }*/
 
-        if (consecutiveLosses >= 5 && !isForceModeActive) {
+        // Gestion du mode forcé
+        if (consecutiveLosses >= 4 && !isForceModeActive) {
             isForceModeActive = true;
             
             const redTotal = redSuccesses + redFailures;
@@ -3821,10 +4541,6 @@ function giveFeedback(correct) {
                 <hr>
                 <p>Bankroll: <strong>${currentBankroll.toFixed(2)} R</strong></p>
                 <p>Prochaine mise: <strong>${nextBet.toFixed(2)} R</strong></p>
-                <div style="margin-top: 15px; background: #e9ecef; height: 20px; border-radius: 10px; overflow: hidden;">
-                    <div style="width: ${progressPercentage}%; background: linear-gradient(90deg, #6c757d 0%, #adb5bd 100%); height: 100%;"></div>
-                </div>
-                <p style="margin-top: 5px; font-size: 0.9em;">Progression: ${progressPercentage}% (inchangé)</p>
                 ${warningMessage}
             `,
             icon: 'error',
@@ -3834,27 +4550,7 @@ function giveFeedback(correct) {
             }
         });
 
-        Swal.fire({
-            title: '🚨 ALERTE STRATÉGIE ANTI-PERDANTE 🚨',
-            html: `
-                <div style="text-align:left; font-size:16px; color:#333; background:#fff8e1; padding:15px; border-radius:10px; border-left:5px solid #ffc107;">
-                    <p><strong>🔥 LA MÉTHODE "STRIKE BACK" :</strong></p>
-                    <div style="margin:10px 0; padding:10px; background:#ffebee; border-radius:5px;">
-                        <p>1️⃣ <strong>OBSERVEZ</strong> tant que le bot <span style="color:#28a745;">gagne</span> ✅</p>
-                        <p>2️⃣ <strong>INTERVENEZ SEULEMENT</strong> quand le bot <span style="color:#dc3545;">perd</span> ❌</p>
-                        <p>3️⃣ <strong>MISEZ L'INVERSE</strong> de sa prédiction</p>
-                    </div>
-                    <div style="margin-top:15px; padding:10px; background:#e8f5e9; border-radius:5px; border-left:5px solid #4caf50;">
-                        <p>💎 <strong>EXEMPLE :</strong></p>
-                        <p>Bot perd (Rouge ❌) → Vous misez Vert 🟢 → Vous gagnez ✅ → Vous stoppez</p>
-                    </div>
-                </div>
-            `,
-            width: '750px',
-            background: '#fff',
-            confirmButtonText: 'J\'AI COMPRIS, GO ! 💪',
-            confirmButtonColor: '#ff5722'
-        });
+       
     }
 
     // ===== MISE À JOUR DE L'INTERFACE =====
@@ -3871,6 +4567,9 @@ function giveFeedback(correct) {
     document.getElementById('seriesInput').value = '';
     document.getElementById('colorPercentage').value = '';
     document.getElementById('predictionResult').textContent = '';
+     // Mettre à jour l'affichage
+     document.getElementById('maxConsecutiveLosses').innerHTML = 
+        `Plus grande série de pertes : <span>${maxConsecutiveLosses}</span>`;
 }
 function checkPredictionRestrictions(colorSeries) {
     const lastThree = colorSeries.slice(-3); // Récupère les 3 dernières couleurs
@@ -3893,6 +4592,42 @@ function checkPredictionRestrictions(colorSeries) {
         });
         return false;
     }
+    // 2. Vérification des ratios interdits EN PHASE DE PERTES SEULEMENT
+if (consecutiveLosses > 0) {
+    const redCount = (colorSeries.match(/R/g) || []).length;
+    const greenCount = (colorSeries.match(/V/g) || []).length;
+    
+    // Liste des ratios interdits
+    const bannedRatios = [
+        {r:7, v:3}, {r:3, v:7},
+        {r:8, v:2}, {r:2, v:8},
+        {r:9, v:1}, {r:1, v:9},
+        {r:10, v:0}, {r:0, v:10}
+    ];
+
+    // Vérifier si le ratio actuel est interdit
+    const isBannedRatio = bannedRatios.some(ratio => 
+        (redCount === ratio.r && greenCount === ratio.v) ||
+        (redCount === ratio.v && greenCount === ratio.r)
+    );
+
+    if (isBannedRatio) {
+        Swal.fire({
+            title: 'RATIO INTERDIT EN PHASE DE PERTES ⛔',
+            html: `
+                <div style="font-size: 2rem;">🚫</div>
+                <p>Le ratio <strong>${redCount}R/${greenCount}V</strong> est interdit pendant les phases de pertes.</p>
+                <p>Motif : Ces ratios extrêmes sont trop risqués après une perte.</p>
+                <p style="color: #dc3545;">Veuillez entrer une nouvelle séquence.</p>
+                <p>Pertes consécutives : ${consecutiveLosses}</p>
+            `,
+            icon: 'error',
+            confirmButtonText: 'Compris',
+            confirmButtonColor: '#dc3545'
+        });
+        return false;
+    }
+}
 
     // 2. Vérification des ratios interdits (6R/4V et 6V/4R)
    /* if ((redCount === 6 && greenCount === 4) || (redCount === 4 && greenCount === 6)) {
@@ -3960,175 +4695,6 @@ function getLossAdvice(reason) {
     }
     return "Maintenez votre stratégie, ce type de perte est statistiquement normal.";
 }
-let progress = 0;
-const progressMessages = {
-    20: "20% atteint - Prenez une pause de 20 minutes avant de continuer",
-    40: "40% atteint - Prenez une pause de 20 minutes avant de continuer",
-    60: "60% atteint - Prenez une pause de 20 minutes avant de continuer",
-    80: "80% atteint - Prenez une pause de 20 minutes avant de continuer",
-    100: "Félicitations ! Vous avez tué le boss ! Vous pouvez maintenant changer de niveau"
-};
-           function updateProgressBar(change) {
-            const progressBarFill = document.getElementById('progressBarFill');
-            const progressPercentage = document.getElementById('progressPercentage');
-            let currentWidth = parseInt(progressBarFill.style.width);
-            let newWidth = currentWidth + change;
-
-            if (newWidth < 0) newWidth = 0;
-            if (newWidth > 100) newWidth = 100;
-
-            progressBarFill.style.width = newWidth + '%';
-            progressPercentage.textContent = newWidth + '%';
-
-            if (newWidth >= 1 && newWidth <= 25) {
-                progressBarFill.style.backgroundColor = 'red';
-            } else if (newWidth >= 26 && newWidth <= 45) {
-                progressBarFill.style.backgroundColor = 'yellow';
-            } else if (newWidth >= 46 && newWidth <= 76) {
-                progressBarFill.style.backgroundColor = 'blue';
-            } else if (newWidth >= 77 && newWidth <= 100) {
-                progressBarFill.style.backgroundColor = 'green';
-            } else {
-                progressBarFill.style.backgroundColor = '#4caf50';
-                localStorage.setItem('gameProgress', progress);
-                checkProgressMilestones();
-            }
-        }
-        function checkProgressMilestones() {
-    // Vérifier si on a atteint un palier important
-    if (progressMessages[progress]) {
-        showProgressAlert(progress);
-    }
-}
-function showProgressAlert(percentage) {
-    const message = progressMessages[percentage];
-    const isFinal = percentage === 100;
-    
-    Swal.fire({
-        title: isFinal ? '🎉 Félicitations !' : '⏱️ Pause recommandée',
-        html: message,
-        icon: isFinal ? 'success' : 'info',
-        confirmButtonText: 'Compris',
-        confirmButtonColor: isFinal ? '#28a745' : '#007bff',
-        willClose: () => {
-            if (isFinal) {
-                // Proposer de changer de niveau
-                showLevelUpPopup();
-            } else {
-                // Démarrer le minuteur de pause
-                startTimer(20);
-            }
-        }
-    });
-}
-
-function showLevelUpPopup() {
-    Swal.fire({
-        title: 'Changement de niveau disponible',
-        html: 'Vous avez tué le boss de ce niveau ! Souhaitez-vous passer au niveau suivant ?',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonText: 'Oui, niveau suivant',
-        cancelButtonText: 'Non, rester ici',
-        confirmButtonColor: '#28a745',
-        cancelButtonColor: '#dc3545'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Logique pour passer au niveau suivant
-            advanceToNextLevel();
-        }
-    });
-}
-
-function advanceToNextLevel() {
-    const currentLevel = localStorage.getItem('userLevel') || 'débutant';
-    let nextLevel = '';
-    
-    switch(currentLevel) {
-        case 'débutant': nextLevel = 'intermédiaire'; break;
-        case 'intermédiaire': nextLevel = 'avancé'; break;
-        case 'avancé': nextLevel = 'expert'; break;
-        default: nextLevel = 'intermédiaire';
-    }
-    
-    localStorage.setItem('userLevel', nextLevel);
-    document.getElementById('userLevelSpan').textContent = nextLevel;
-    
-    // Réinitialiser la progression pour le nouveau niveau
-    progress = 0;
-    localStorage.setItem('gameProgress', progress);
-    document.getElementById('progressBarFill').style.width = '0%';
-    document.getElementById('progressPercentage').textContent = '0%';
-    
-    Swal.fire({
-        title: 'Niveau supérieur débloqué !',
-        html: `Vous êtes maintenant niveau <strong>${nextLevel}</strong>`,
-        icon: 'success'
-    });
-}
-
-// Au chargement de la page, charger la progression sauvegardée
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. Chargement de la progression du jeu
-    const savedProgress = localStorage.getItem('gameProgress');
-    if (savedProgress) {
-        progress = parseInt(savedProgress);
-        document.getElementById('progressBarFill').style.width = progress + '%';
-        document.getElementById('progressPercentage').textContent = progress + '%';
-    }
-
-    // 2. Initialisation des statistiques par couleur
-    const savedRedStats = localStorage.getItem('redStats');
-    const savedGreenStats = localStorage.getItem('greenStats');
-    
-    if (savedRedStats) {
-        const redStats = JSON.parse(savedRedStats);
-        redSuccesses = redStats.successes || 0;
-        redFailures = redStats.failures || 0;
-    }
-    
-    if (savedGreenStats) {
-        const greenStats = JSON.parse(savedGreenStats);
-        greenSuccesses = greenStats.successes || 0;
-        greenFailures = greenStats.failures || 0;
-    }
-
-    // 3. Chargement de l'état du mode forcé
-    const savedForceMode = localStorage.getItem('forceMode');
-    if (savedForceMode) {
-        const forceModeData = JSON.parse(savedForceMode);
-        isForceModeActive = forceModeData.isActive || false;
-        forcedColor = forceModeData.color || '';
-        consecutiveLosses = forceModeData.consecutiveLosses || 0;
-        
-        if (isForceModeActive) {
-            document.getElementById('forceModeAlert').style.display = 'block';
-            document.getElementById('forcedColorText').textContent = forcedColor;
-            document.getElementById('forcedColorText').style.color = forcedColor === 'rouge' ? '#dc3545' : '#28a745';
-            
-            if (forcedColor === 'rouge') {
-                document.getElementById('redStats').classList.add('force-mode-active');
-            } else {
-                document.getElementById('greenStats').classList.add('force-mode-active');
-            }
-        }
-    }
-
-    // 4. Mise à jour initiale de l'interface
-    updateColorStatsDisplay();
-    updateBankrollDisplay();
-    updateMartingaleDisplay();
-    updateHistory();
-    updateSuccessRate();
-    updatePoints();
-    updateLevelButtons();
-    updatePieChart();
-    
-    // 5. Vérification du tutoriel
-    if (!localStorage.getItem('hideTutorial')) {
-        showTutorial();
-    }
-});
 
 // Nouvelle fonction pour sauvegarder les stats par couleur
 function saveColorStats() {
@@ -4151,13 +4717,59 @@ function saveForceModeState() {
         consecutiveLosses: consecutiveLosses
     }));
 }
-
+function gererPertesConsecutives(estPerte) {
+    if (estPerte) {
+        // Si c'est une perte, on incrémente le compteur
+        pertesConsecutivesActuelles++;
+        
+        // On met à jour le record si nécessaire
+        if (pertesConsecutivesActuelles > plusGrandNombrePertesDAffilees) {
+            plusGrandNombrePertesDAffilees = pertesConsecutivesActuelles;
+            // Sauvegarde dans le localStorage
+            localStorage.setItem('maxConsecutiveLosses', plusGrandNombrePertesDAffilees);
+            
+            // Mise à jour de l'affichage
+            document.getElementById('maxConsecutiveLosses').innerHTML = 
+                `Plus grande série de pertes : <span>${plusGrandNombrePertesDAffilees}</span>`;
+        }
+    } else {
+        // Si c'est un gain, on réinitialise le compteur
+        pertesConsecutivesActuelles = 0;
+    }
+}
 // Modifier la fonction saveHistoryToLocalStorage() pour inclure les nouvelles données
 function saveHistoryToLocalStorage() {
-    localStorage.setItem('predictionHistory', JSON.stringify(history));
-    saveColorStats();
-    saveForceModeState();
-    localStorage.setItem('gameProgress', progress);
+    try {
+        // Filtrer les entrées invalides avant sauvegarde
+        const validHistory = history.filter(entry => 
+            entry && entry.date && entry.colors && entry.prediction
+        );
+        
+        localStorage.setItem('predictionHistory', JSON.stringify(validHistory));
+        console.log("Historique sauvegardé:", validHistory.length, "entrées");
+    } catch (error) {
+        console.error("Erreur de sauvegarde:", error);
+    }
+}
+function checkDataIntegrity() {
+    const problems = [];
+    
+    history.forEach((record, index) => {
+        if (!record.date) problems.push(`Entrée ${index}: date manquante`);
+        if (!record.colors) problems.push(`Entrée ${index}: couleurs manquantes`);
+        // Ajoutez d'autres vérifications...
+    });
+    
+    if (problems.length > 0) {
+        console.warn("Problèmes détectés:", problems);
+        Swal.fire({
+            title: 'Problème de données',
+            html: `${problems.length} anomalies détectées.<br>Voir la console pour les détails.`,
+            icon: 'warning'
+        });
+    } else {
+        console.log("Aucun problème d'intégrité détecté");
+    }
 }
 function analyzeAllLosses() {
     const losses = history.filter(record => record.result === 'Échec'); // Filtrer les pertes
@@ -4291,9 +4903,25 @@ function highlightLatestEntry() {
             updateSuccessRate();
             updateStats();
             updatePoints();
-            updateProgressBar(-100);
             enableFeedbackButtons();
             updatePieChart(); // Mettre à jour le diagramme
+            updateLionCoins();
+            maxConsecutiveLosses = 0;
+    currentConsecutiveLosses = 0;
+    localStorage.setItem('maxConsecutiveLosses', 0);
+    document.getElementById('maxConsecutiveLosses').innerHTML = 
+        `Plus grande série de pertes : <span>0</span>`;
+        
+        // Mise à jour du record si nécessaire
+        if (currentConsecutiveLosses > maxConsecutiveLosses) {
+            maxConsecutiveLosses = currentConsecutiveLosses;
+            localStorage.setItem('maxConsecutiveLosses', maxConsecutiveLosses);
+            
+            // Mise à jour de l'affichage
+            document.getElementById('maxConsecutiveLosses').innerHTML = 
+                `Plus grande série de pertes : <span>${maxConsecutiveLosses}</span>`;
+        
+    }
             Swal.fire({
             title: 'Succès ! 🎉',
             text: 'Historique effacé avec succès !',
@@ -4308,68 +4936,84 @@ function highlightLatestEntry() {
         function undo() {
     if (previousHistory.length === 0) {
         Swal.fire({
-        title: 'Information ℹ️',
-        text: 'Aucune action à restaurer.',
-        icon: 'info',
-        confirmButtonText: 'Compris',
-        confirmButtonColor: '#007bff',
-        background: '#f0f8ff',
-        iconColor: '#007bff',
-        showClass: {
-        popup: 'animate__animated animate__fadeIn'
-        },
-        hideClass: {
-        popup: 'animate__animated animate__fadeOut'
-        }
+            title: 'Information ℹ️',
+            text: 'Aucune action à restaurer.',
+            icon: 'info',
+            confirmButtonText: 'Compris',
+            confirmButtonColor: '#007bff',
+            background: '#f0f8ff',
+            iconColor: '#007bff',
         });
         return;
-        }
+    }
 
-    // Restaurer l'historique précédent
-    history = [...previousHistory];
+    // Demander confirmation avant de restaurer
+    Swal.fire({
+        title: 'Confirmer la restauration ? 🔄',
+        html: `
+            <p>Voulez-vous vraiment restaurer l'historique précédent ?</p>
+            <div style="font-size: 0.9em; color: #666; margin-top: 10px;">
+                Cette action remplacera l'historique actuel.
+            </div>
+        `,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Oui, restaurer',
+        cancelButtonText: 'Annuler',
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#dc3545',
+        background: '#f8f9fa',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Restaurer l'historique précédent
+            history = [...previousHistory];
 
-    // Recalculer les réussites, les échecs et les points à partir de l'historique restauré
-    successes = 0;
-    failures = 0;
-    points = 0;
+            // Recalculer les statistiques
+            successes = 0;
+            failures = 0;
+            points = 0;
 
-    history.forEach(record => {
-        if (record.result === 'Succès') {
-            successes += 1;
-            points += 10;
-        } else if (record.result === 'Échec') {
-            failures += 1;
+            history.forEach(record => {
+                if (record.result === 'Succès') {
+                    successes += 1;
+                    points += 10;
+                } else if (record.result === 'Échec') {
+                    failures += 1;
+                }
+            });
+
+            // Mettre à jour l'interface
+            updateHistory();
+            updateSuccessRate();
+            updatePoints();
+            updateProgressBar(successes);
+            updatePieChart();
+
+            // Effacer les champs
+            document.getElementById('colorInput').value = '';
+            document.getElementById('seriesInput').value = '';
+            document.getElementById('colorPercentage').value = '';
+            document.getElementById('predictionResult').textContent = '';
+            document.getElementById('previousResult').textContent = '';
+
+            // Réactiver les boutons de feedback
+            enableFeedbackButtons();
+
+            // Confirmer la restauration
+            Swal.fire({
+                title: 'Restauration réussie ! 🎉',
+                text: 'L\'historique a été restauré avec succès.',
+                icon: 'success',
+                confirmButtonText: 'Continuer',
+                confirmButtonColor: '#28a745',
+                background: '#f0f9f0',
+                iconColor: '#28a745',
+                timer: 2000,
+                timerProgressBar: true
+            });
         }
     });
-
-    // Mettre à jour l'interface utilisateur
-    updateHistory();
-    updateSuccessRate();
-    updatePoints();
-    updateProgressBar(successes);
-    updatePieChart(); // Mettre à jour le diagramme
-
-    // Effacer les champs de saisie
-    document.getElementById('colorInput').value = '';
-    document.getElementById('seriesInput').value = '';
-    document.getElementById('colorPercentage').value = '';
-    document.getElementById('predictionResult').textContent = '';
-    document.getElementById('previousResult').textContent = '';
-
-    // Réactiver les boutons de feedback
-    enableFeedbackButtons();
-
-    Swal.fire({
-  title: 'Succès ! 🎉',
-  text: 'Historique restauré avec succès !',
-  icon: 'success',
-  confirmButtonText: 'Continuer',
-  confirmButtonColor: '#28a745',
-  background: '#f0f9f0',
-  iconColor: '#28a745',
-});
 }
-
 function undoLastPrediction() {
     if (history.length === 0) {
         Swal.fire({
@@ -4523,16 +5167,7 @@ function updatePieChart() {
 });
         }
 
-        function exportHistory() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-
-    const historyText = history.map((record, index) => 
-        `${index + 1}. Date : ${record.date}, Couleurs : ${record.colors}, Prédiction : ${record.prediction}, Pourcentage de Couleur : ${record.frequentColor}, Résultat : ${record.result}`).join('\n\n');
-
-    doc.text(historyText, 10, 10);
-    doc.save('historique.pdf');
-        }
+        
 
         function showTutorial() {
     Swal.fire({
@@ -4817,7 +5452,25 @@ function updateColorStatsDisplay() {
     // Ajouter des indicateurs de tendance
     updateTrendIndicators(redSuccessRate, greenSuccessRate);
 }
+// Mets ça avec les autres fonctions (updateHistory(), etc.)
+function updateConsecutiveLosses(isLoss) {
+    if (isLoss) {
+        currentConsecutiveLosses++;
+        if (currentConsecutiveLosses > maxConsecutiveLosses) {
+            maxConsecutiveLosses = currentConsecutiveLosses;
+            document.getElementById('maxConsecutiveLosses').innerHTML = 
+                `Plus grande série de pertes : <span>${maxConsecutiveLosses}</span>`;
+        }
+    } else {
+        currentConsecutiveLosses = 0; // Réinitialise si gain
+    }
+}
 
+function updateLionCoins() {
+    const lionCoins = (points * LION_COIN_RATE).toFixed(2);
+    document.getElementById('lionCoins').innerHTML = 
+        `Lion Coins : <span>${lionCoins} LC</span>`;
+}
 // Fonction pour mettre à jour les indicateurs de tendance
 function updateTrendIndicators(redRate, greenRate) {
     const redTrendElement = document.getElementById('redTrend');
@@ -4904,6 +5557,318 @@ function predictBasedOnSimilarity(inputPattern) {
     const lastColor = inputPattern.slice(-1); // Prendre la dernière couleur
     return lastColor === 'R' ? 'rouge' : 'vert';
 }
-    </script>
+// Gestion du mot de passe
+function showPasswordPopup() {
+    document.getElementById('passwordPopup').style.display = 'flex';
+    document.getElementById('passwordInput').focus();
+}
+
+// Afficher le popup au chargement
+document.addEventListener('DOMContentLoaded', function() {
+    // Affiche le popup après un court délai (1 seconde)
+    setTimeout(showPasswordPopup, 1000);
+});
+function closePasswordPopup() {
+    document.getElementById('passwordPopup').style.display = 'none';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const passwordInput = document.getElementById('passwordInput');
+    const dots = document.querySelectorAll('.code-dot');
+    const keypadBtns = document.querySelectorAll('.keypad-btn');
+    const passwordPopup = document.getElementById('passwordPopup');
+    
+    // Focus automatique
+    passwordInput.focus();
+    
+    // Gestion des touches du clavier
+    keypadBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            const value = this.getAttribute('data-value');
+            const action = this.getAttribute('data-action');
+            
+            if (action === 'clear') {
+                passwordInput.value = '';
+                updateDots();
+            } else if (action === 'confirm') {
+                validatePassword();
+            } else if (value && passwordInput.value.length < 6) {
+                passwordInput.value += value;
+                updateDots();
+            }
+        });
+    });
+    
+    // Mise à jour des points visuels
+    function updateDots() {
+        const code = passwordInput.value;
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('filled', index < code.length);
+        });
+    }
+    
+    // Validation du mot de passe
+    function validatePassword() {
+    if (passwordInput.value === '123456') {
+        closePasswordPopup();
+        if (!localStorage.getItem('hideTutorial')) {
+            showTutorial();
+               // Ajoutez ici votre logique après validation réussie
+                Swal.fire({
+                    title: 'Accès autorisé',
+                    text: 'Mot de passe correct',
+                    icon: 'success',
+                    timer: 1500
+                });
+            } else {
+                passwordPopup.classList.add('shake');
+                setTimeout(() => passwordPopup.classList.remove('shake'), 400);
+                
+                Swal.fire({
+                    title: 'Accès refusé',
+                    text: 'Code incorrect',
+                    icon: 'error',
+                    timer: 1500
+                });
+                
+                passwordInput.value = '';
+                updateDots();
+            }
+        } else {
+            passwordPopup.classList.add('shake');
+            setTimeout(() => passwordPopup.classList.remove('shake'), 400);
+        }
+    }
+    
+    // Empêcher la saisie directe autre que numérique
+    passwordInput.addEventListener('input', function(e) {
+        this.value = this.value.replace(/\D/g, '').slice(0, 6);
+        updateDots();
+    });
+    
+    // Empêcher le copier-coller
+    passwordInput.addEventListener('paste', function(e) {
+        e.preventDefault();
+    });
+    
+    // Gestion de la touche Entrée
+    passwordInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            validatePassword();
+        }
+    });
+});
+// Gestion du profil WhatsApp
+document.getElementById('profileUpload').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            document.getElementById('profileImage').src = event.target.result;
+            
+            // Sauvegarder dans le localStorage
+            localStorage.setItem('whatsappProfileImage', event.target.result);
+            
+            Swal.fire({
+                title: 'Photo mise à jour!',
+                text: 'Votre photo de profil WhatsApp a été changée.',
+                icon: 'success',
+                timer: 1500
+            });
+        }
+        reader.readAsDataURL(file);
+    }
+});
+
+// Charger l'image sauvegardée au démarrage
+document.addEventListener('DOMContentLoaded', function() {
+    const savedImage = localStorage.getItem('whatsappProfileImage');
+    if (savedImage) {
+        document.getElementById('profileImage').src = savedImage;
+    }
+});
+function exportToTxt() {
+    // Création de l'en-tête
+    let content = "=".repeat(80) + "\n";
+    content += "HISTORIQUE DES PRÉDICTIONS TRX BOT\n";
+    content += "=".repeat(80) + "\n\n";
+
+    // Statistiques globales
+    content += "STATISTIQUES GLOBALES\n";
+    content += "-".repeat(50) + "\n";
+    const total = successes + failures;
+    const successRate = total > 0 ? (successes / total * 100).toFixed(1) : 0;
+    
+    content += `Total des prédictions    : ${total}\n`;
+    content += `Réussites               : ${successes} (${successRate}%)\n`;
+    content += `Échecs                  : ${failures}\n`;
+    content += `Série max. de pertes    : ${maxConsecutiveLosses}\n\n`;
+
+    // Statistiques par couleur
+    content += "STATISTIQUES PAR COULEUR\n";
+    content += "-".repeat(50) + "\n";
+    
+    const redTotal = redSuccesses + redFailures;
+    const greenTotal = greenSuccesses + greenFailures;
+    const redRate = redTotal > 0 ? (redSuccesses / redTotal * 100).toFixed(1) : 0;
+    const greenRate = greenTotal > 0 ? (greenSuccesses / greenTotal * 100).toFixed(1) : 0;
+
+    content += `ROUGE : ${redSuccesses} gains / ${redFailures} pertes (${redRate}% réussite)\n`;
+    content += `VERT  : ${greenSuccesses} gains / ${greenFailures} pertes (${greenRate}% réussite)\n\n`;
+
+    // En-tête du tableau d'historique
+    content += "HISTORIQUE DÉTAILLÉ\n";
+    content += "-".repeat(80) + "\n";
+    content += "N°    | Date       | Couleurs           | Prédiction  | % Couleur   | Résultat\n";
+    content += "-".repeat(80) + "\n";
+
+    // Données de l'historique
+    history.forEach((record, index) => {
+        const num = (index + 1).toString().padEnd(5);
+        const date = record.date.padEnd(11);
+        const colors = record.colors.replace(/rouge/g, '🔴').replace(/vert/g, '🟢').padEnd(18);
+        const prediction = record.prediction.toUpperCase().padEnd(11);
+        const freqColor = record.frequentColor.padEnd(12);
+        const result = record.result === 'Succès' ? '✅ Gain' : 
+                      record.result === 'Échec' ? '❌ Perte' : '⏳ Attente';
+
+        content += `${num}| ${date}| ${colors}| ${prediction}| ${freqColor}| ${result}\n`;
+    });
+
+    // Pied de page
+    content += "-".repeat(80) + "\n";
+    content += `\nExporté le : ${new Date().toLocaleString('fr-FR')}\n`;
+    content += "Généré par Signal Bot 97 TRX\n";
+
+    // Création et téléchargement du fichier
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `Historique_TRX_${new Date().toISOString().slice(0, 10)}.txt`;
+    link.click();
+
+    // Notification de succès
+    Swal.fire({
+        title: 'Export TXT Réussi! 📄',
+        html: `
+            <p>Le fichier a été généré avec succès.</p>
+            <p>Contient:</p>
+            <ul style="text-align: left;">
+                <li>${total} prédictions</li>
+                <li>Statistiques globales</li>
+                <li>Statistiques par couleur</li>
+                <li>Historique détaillé</li>
+            </ul>
+        `,
+        icon: 'success',
+        confirmButtonText: 'OK'
+    });
+}
+function copyHistoryInDBFormat() {
+    if (history.length === 0) {
+        Swal.fire({
+            title: 'Historique vide',
+            text: 'Aucune donnée à copier',
+            icon: 'warning'
+        });
+        return;
+    }
+
+    // Créer le texte au même format que la base externe
+    let historyText = history.map(record => {
+        // Convertir les couleurs au format R,V
+        const colorsFormatted = record.colors.split(', ')
+            .map(c => c === 'rouge' ? 'R' : 'V')
+            .join(', ');
+        
+        // Formater la date (JJ/MM/AAAA)
+        const dateParts = record.date.split('-');
+        const formattedDate = dateParts.length === 3 ? 
+            `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}` : record.date;
+        
+        return `${formattedDate} - ${colorsFormatted} - ${record.prediction === 'rouge' ? 'R' : 'V'} - ${record.result || 'En attente'}`;
+    }).join('\n');
+
+    // Copier dans le presse-papiers
+    navigator.clipboard.writeText(historyText).then(() => {
+        Swal.fire({
+            title: 'Copié!',
+            html: `
+                <p>${history.length} entrées copiées au format base de données</p>
+                <textarea style="width:100%; height:100px; margin-top:10px;" readonly>${historyText}</textarea>
+            `,
+            icon: 'success',
+            confirmButtonText: 'OK',
+            width: 600
+        });
+    }).catch(err => {
+        Swal.fire({
+            title: 'Erreur',
+            text: 'Échec de la copie: ' + err,
+            icon: 'error'
+        });
+    });
+}
+function analyzeCorrelation(colorInput) {
+    const colors = colorInput.split('');
+    let correlation = 0;
+    
+    for (let i = 1; i < colors.length; i++) {
+        if (colors[i] === colors[i-1]) {
+            correlation++;
+        }
+    }
+    
+    return correlation / (colors.length - 1);
+}
+function detectCycle(colorInput) {
+    const colors = colorInput.split('');
+    for (let length = 2; length <= colors.length / 2; length++) {
+        let isCycle = true;
+        for (let i = 0; i < length; i++) {
+            if (colors[i] !== colors[i + length]) {
+                isCycle = false;
+                break;
+            }
+        }
+        if (isCycle) {
+            return length;
+        }
+    }
+    return 0;
+}
+function hybridPrediction(colorInput) {
+    const patternPrediction = predictBasedOnRepeatedPatterns(colorInput);
+    const trendPrediction = predictBasedOnTrends(colorInput);
+    const similarityPrediction = predictBasedOnSimilarity(colorInput);
+    
+    // Pondération des prédictions
+    if (patternPrediction) return patternPrediction;  // Priorité aux motifs répétés
+    if (similarityPrediction) return similarityPrediction;  // Ensuite aux motifs similaires
+    return trendPrediction;  // Par défaut, utiliser la tendance
+}
+// ====== CITATIONS PUISSANTES ====== //
+const TRX_QUOTES = [
+    "Vos gains sont la somme de nos calculs et de votre discipline.",
+    "Derrière chaque fortune crypto, il y a un bot qui n'a pas dormi.",
+    "Nous automatisons la chance pour que vous héritiez du futur."
+];
+
+function rotateQuote() {
+    const quoteElement = document.getElementById('quote-text');
+    let currentIndex = 0;
+    
+    setInterval(() => {
+        quoteElement.style.opacity = 0;
+        setTimeout(() => {
+            currentIndex = (currentIndex + 1) % TRX_QUOTES.length;
+            quoteElement.textContent = `"${TRX_QUOTES[currentIndex]}"`;
+            quoteElement.style.opacity = 1;
+        }, 500);
+    }, 10000); // Change toutes les 10 secondes
+}
+
+rotateQuote(); // Lance le système
+</script>
 </body>
 </html>
