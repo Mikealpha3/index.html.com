@@ -56,29 +56,44 @@
         }
 
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f0f8ff;
-            color: #333;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow: hidden;
-        }
+    font-family: 'Arial', sans-serif;
+    background-color: #f0f8ff;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Changé de center à flex-start */
+    padding: 20px; /* Ajout de padding */
+    box-sizing: border-box;
+}
 
-        .container {
-            background-color: white;
-            border-radius: 15px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-            padding: 20px;
-            max-width: 800px;
-            width: 100%;
-            height: 95vh;
-            overflow-y: auto;
-            position: relative;
-        }
+.container {
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    width: 100%;
+    max-width: 800px;
+    min-height: min-content; /* Changé de 95vh à min-content */
+    margin: 0 auto; /* Ajout de marge auto */
+    overflow-y: visible; /* Changé de auto à visible */
+    position: relative;
+}
+
+/* Ajout pour améliorer le défilement sur mobile */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    
+    .container {
+        padding: 15px;
+        margin: 0;
+        border-radius: 10px;
+    }
+}
 
         .fas {
             font-size: 24px; /* Taille de l'icône */
@@ -87,11 +102,19 @@
         }
 
         .header {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* Changé de center à flex-start */
+    padding: 15px 20px;
+    background: linear-gradient(135deg, #1e2a3a 0%, #2c3e50 100%);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    margin-bottom: 25px;
+    color: white;
+    position: relative;
+    flex-wrap: wrap; /* Permet le retour à la ligne sur petits écrans */
+}
+
 
         .user-profile {
     background: rgba(255, 255, 255, 0.1);
@@ -107,11 +130,21 @@
     align-items: center;
 }
 
-        h1 {
-            color: #5b5b5b;
-            text-align: center;
-            margin-bottom: 20px;
-        }
+h1 {
+    margin: 0;
+    font-size: 2rem; /* Réduit de 2.8rem à 2rem */
+    font-weight: 800;
+    letter-spacing: -1px;
+    background: linear-gradient(90deg, #ffffff 0%, #c2d6f0 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
 
         label {
             margin: 5px 0;
@@ -224,11 +257,7 @@
     margin-top: 5px;
 }
 
-#currentTime {
-    font-weight: bold;
-    color: #000; /* Noir */
-    font-family: 'Arial', sans-serif; /* Police plus lisible */
-}
+
         .level-popup, .level-info-popup {
             display: none;
             position: fixed;
@@ -1149,10 +1178,10 @@
     }
 
     .logo-title {
-        text-align: center;
-        position: relative;
-    }
-
+    text-align: center;
+    position: relative;
+    flex-grow: 1; /* Prend l'espace disponible */
+}
     .trading-badge {
         position: absolute;
         top: -15px;
@@ -1167,56 +1196,43 @@
         text-transform: uppercase;
         letter-spacing: 1px;
         box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+        font-size: 10px; /* Réduit de 12px à 10px */
+        padding: 2px 12px; /* Réduit légèrement le padding */
     }
 
     h1 {
-        margin: 0;
-        font-size: 2.8rem;
-        font-weight: 800;
-        letter-spacing: -1px;
-        background: linear-gradient(90deg, #ffffff 0%, #c2d6f0 100%);
-        -webkit-background-clip: text;
-        background-clip: text;
-        -webkit-text-fill-color: transparent;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-    }
-
+    margin: 0;
+    font-size: 1.8rem; /* Réduit de 2rem à 1.8rem */
+    font-weight: 800;
+    letter-spacing: -1px;
+    background: linear-gradient(90deg, #ffffff 0%, #c2d6f0 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px; /* Réduit de 8px à 6px */
+}
     .signal-word {
         color: #4CAF50;
         text-shadow: 0 0 8px rgba(76, 175, 80, 0.6);
     }
 
-    .bot-word {
-        color: #2196F3;
-        position: relative;
-    }
-
-    .bot-word::after {
-        content: "🤖";
-        position: absolute;
-        right: -25px;
-        top: -5px;
-        font-size: 1.5rem;
-        filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-    }
-
+    
     .trx-badge {
-        background: linear-gradient(135deg, #f44336 0%, #e91e63 100%);
-        color: white;
-        padding: 2px 12px;
-        border-radius: 6px;
-        font-size: 1.8rem;
-        margin-left: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-        position: relative;
-        top: -2px;
-    }
-
+    background: linear-gradient(135deg, #f44336 0%, #e91e63 100%);
+    color: white;
+    padding: 1px 8px; /* Réduit de 2px 10px à 1px 8px */
+    border-radius: 6px;
+    font-size: 1.2rem; /* Réduit de 1.4rem à 1.2rem */
+    margin-left: 6px; /* Réduit de 8px à 6px */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    position: relative;
+    top: -2px;
+}
     .version-badge {
         font-size: 12px;
         color: rgba(255, 255, 255, 0.7);
@@ -1283,6 +1299,7 @@
     .trx-badge {
         animation: pulse 2s infinite;
     }
+    
 
     /* Effet au survol */
     h1:hover .trx-badge {
@@ -1291,8 +1308,7 @@
         transition: all 0.3s ease;
     }
     html, body {
-    overflow-x: hidden;
-
+    
     margin: 0;           
     padding: 0;         
     }
@@ -1758,6 +1774,67 @@ tr.success-row .prediction-icon,
 tr.failure-row .prediction-icon {
     animation: none;
 }
+
+
+
+
+/* Supprimez l'ancien style .user-profile ou modifiez-le */
+.user-profile {
+    display: none; /* Cache l'ancien emplacement */
+}
+#userName, #userLevel, #haitiTime, #currentTime {
+    color: #ffffff;  /* Texte en blanc */
+    font-weight: 500; /* Un peu plus visible */
+    margin: 5px 0;   /* Espacement */
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* Ombre légère pour meilleure lisibilité */
+}
+
+/* Style spécifique pour l'heure */
+#currentTime {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #ffffff !important; /* Force la couleur blanche */
+}
+
+
+
+/* Style pour le conteneur des infos utilisateur */
+.user-info-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;  /* Change de center à flex-start */
+    margin-top: 10px;
+    margin-left: 5px;  /* Ajoute une marge à gauche */
+    background: rgba(0, 0, 0, 0.2);
+    padding: 10px 20px;  /* Augmente le padding horizontal */
+    border-radius: 10px;
+    width: auto;  /* Change de 100% à auto */
+    min-width: 150px;  /* Ajoute une largeur minimale */
+    text-align: left;  /* Aligne le texte à gauche */
+}
+
+.user-info-container p {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #ffffff;
+    width: 100%;  /* Assure que le texte prend toute la largeur */
+    text-align: left;  /* Aligne le texte à gauche */
+}
+
+.bot-word::after {
+    content: "🤖";
+    position: absolute;
+    right: -25px;
+    top: -5px;
+    font-size: 1.5rem;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    animation: float 2s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
 </style>
 </head>
 <div class="password-popup" id="passwordPopup" style="display: none;">
@@ -1817,50 +1894,38 @@ tr.failure-row .prediction-icon {
 </div>
 <body>
     <div class="container">
-        <div class="header">
-            <div class="whatsapp-profile">
-                <div class="profile-image-container">
-                    <img id="profileImage" src="https://cdn-icons-png.flaticon.com/512/124/124034.png" alt="Profil WhatsApp">
-                    <input type="file" id="profileUpload" accept="image/*" style="display: none;">
+        <div class="container">
+            <div class="header">
+                <div class="whatsapp-profile">
+                    <div class="profile-image-container">
+                        <img id="profileImage" src="https://cdn-icons-png.flaticon.com/512/124/124034.png" alt="Profil WhatsApp">
+                        <input type="file" id="profileUpload" accept="image/*" style="display: none;">
+                    </div>
+                    <button class="btn-change-profile" onclick="document.getElementById('profileUpload').click()">
+                        <i class="fas fa-camera"></i> Changer la photo
+                    </button>
+                    <div class="whatsapp-status">
+                        <span id="whatsappStatus">En ligne</span>
+                    </div>
                 </div>
-              
-                <button class="btn-change-profile" onclick="document.getElementById('profileUpload').click()">
-                    <i class="fas fa-camera"></i> Changer la photo
-                </button>
-                <div class="whatsapp-status">
-                    <span id="whatsappStatus">En ligne</span>
+                <div class="logo-title">
+                    <div class="trading-badge">TRADING 🤖 BOT</div>
+                    <h1>
+                        <span class="signal-word">SIGNAL</span>
+                        <span class="bot-word">BOT</span>
+                        <span class="trx-badge">TRX</span>
+                    </h1>
+                    <div class="version-badge">v3.0 • 97% Accuracy</div>
+                    <!-- Déplacé ici sous le titre -->
+                    <div class="user-info-container">
+                        <p id="userName">Nom : Utilisateur</p>
+                        <p id="userLevel">Niveau : <span id="userLevelSpan"></span></p>
+                        <p id="haitiTime">Heure : <span id="currentTime"></span></p>
+                    </div>
+                    </br><span id="quote-text">L'algorithme ne doute pas. Il calcule et conquiert.</span>
                 </div>
             </div>
-            <div class="logo-title">
-                <div class="trading-badge">TRADING 🤖 BOT</div>
-                <h1>
-                    <span class="signal-word">SIGNAL</span>
-                    <span class="bot-word">BOT</span>
-                    <span class="trx-badge">TRX</span>
-                </h1>
-                <div class="version-badge">v3.0 • 97% Accuracy</div>
-            </div>
-            <div class="user-profile">
-                <p id="userName">Nom : Utilisateur</p>
-                <p id="userLevel">Niveau : <span id="userLevelSpan"></span></p>
-                <p id="haitiTime">Heure : <span id="currentTime"></span></p>
-            </div>
-        </div>
-        <!-- Citation Motivante (3 phrases clés) -->
-<div id="trx-quote" style="
-text-align: center;
-margin: 5px 0 15px 0;
-padding: 8px;
-font-size: 14px;
-font-weight: 500;
-color: #2E7D32;
-background: rgba(46, 125, 50, 0.08);
-border-radius: 6px;
-border-top: 1px solid #4CAF50;
-font-family: 'Open Sans', sans-serif;
-">
-<span id="quote-text">"L'algorithme ne doute pas. Il calcule et conquiert."</span>
-</div>
+
  <!-- Bouton d'accès à la base externe -->
 <button class="btn-analyze" onclick="toggleExternalDBInterface()" style="background: white; color: black; border: 1px solid #e0e0e0;">
     <i class="fas fa-database" style="color: black;"></i> Base Externe
@@ -1917,7 +1982,7 @@ font-family: 'Open Sans', sans-serif;
                 
                 <div class="input-group">
                     <label for="martingaleInput">Séquence des mises (R) :</label>
-                    <input type="text" id="martingaleInput" value="1,2,4,8,16,32" placeholder="1,2,4,8,16">
+                    <input type="text" id="martingaleInput" value="6,13,28,60,125,260,540" placeholder="1,2,4,8,16">
                     <button onclick="validateMartingale()" class="btn-validate">Valider</button>
                 </div>
                 
@@ -2146,9 +2211,10 @@ function loadExternalPatterns() {
             <tr>
                 <th>N°</th>
                 <th>Date</th>
+                <th>Heure</th> <!-- Nouvelle colonne -->
                 <th>Couleurs</th>
                 <th>Prédiction</th>
-                <th>% Couleurs</th>
+                <th>% Couleur</th>
                 <th>Résultat</th>
                 <th>Actions</th>
             </tr>
@@ -2158,31 +2224,22 @@ function loadExternalPatterns() {
 
     externalPatterns.forEach((pattern, index) => {
         const row = document.createElement('tr');
-        
-        // Formatage des couleurs pour l'affichage
-        const colorsDisplay = pattern.colors.split(', ').map(c => 
-            c === 'rouge' ? '<span class="red-dot">🔴</span>' : 
-            '<span class="green-dot">🟢</span>'
-        ).join(' ');
-        
         row.innerHTML = `
             <td>${pattern.tradeNumber}</td>
             <td>${pattern.date}</td>
-            <td>${colorsDisplay}</td>
-            <td style="color:${pattern.prediction === 'rouge' ? '#dc3545' : '#28a745'};font-weight:bold">
+            <td>${pattern.time || '--:--'}</td> <!-- Affiche l'heure -->
+            <td>${formatColors(pattern.colors)}</td>
+            <td style="color:${pattern.prediction === 'rouge' ? '#dc3545' : '#28a745'};">
                 ${pattern.prediction.toUpperCase()}
             </td>
             <td>${pattern.frequentColor}</td>
             <td>${pattern.result ? 
-                (pattern.result === 'Succès' ? 
-                    '<span style="color:#28a745">✅ Succès</span>' : 
-                    '<span style="color:#dc3545">❌ Échec</span>'
-                ) : '⏳ En attente'}</td>
-            <td style="display:flex; flex-direction:column; gap:5px; align-items:center; padding:8px;">
-                <button onclick="editExternalPattern(${index})" class="btn-edit" style="margin-bottom:5px; width:100%;">
+                (pattern.result === 'Succès' ? '✅ Succès' : '❌ Échec') : '⏳ En attente'}</td>
+            <td>
+                <button onclick="editExternalPattern(${index})" class="btn-edit">
                     <i class="fas fa-edit"></i> Modifier
                 </button>
-                <button onclick="removeExternalPattern(${index})" class="btn-delete" style="width:100%;">
+                <button onclick="removeExternalPattern(${index})" class="btn-delete">
                     <i class="fas fa-trash"></i> Supprimer
                 </button>
             </td>
@@ -2191,83 +2248,73 @@ function loadExternalPatterns() {
     });
 
     container.appendChild(table);
-    updateExternalStats();
 }
 function copyExternalDatabase() {
     const formattedData = externalPatterns.map(pattern => {
-        return `${pattern.date} - ${pattern.colors} - ${pattern.prediction} - ${pattern.result}`;
+        // Format: "JJ/MM/AAAA HH:MM - R,V,R,V,... - R/V - Résultat"
+        return `${pattern.date} ${pattern.time} - ${pattern.colors.split(', ').map(c => c === 'rouge' ? 'R' : 'V').join(',')} - ${pattern.prediction === 'rouge' ? 'R' : 'V'} - ${pattern.result || ''}`;
     }).join('\n');
 
     navigator.clipboard.writeText(formattedData).then(() => {
         Swal.fire({
-            title: 'Base de données copiée !',
-            text: `${externalPatterns.length} entrées copiées dans le presse-papiers`,
-            icon: 'success',
-            timer: 2000,
-            showConfirmButton: false
+            title: 'Base copiée !',
+            text: `${externalPatterns.length} entrées copiées (avec heure)`,
+            icon: 'success'
         });
     });
 }
 function addExternalPattern() {
     const input = document.getElementById('externalPatternInput').value.trim();
     if (!input) {
-        Swal.fire({
-            title: 'Erreur',
-            text: 'Veuillez entrer un motif',
-            icon: 'error'
-        });
+        Swal.fire({ title: 'Erreur', text: 'Veuillez entrer un motif', icon: 'error' });
         return;
     }
 
     try {
-        // Séparer les lignes
         const patternLines = input.split('\n');
         const newPatterns = [];
         
         for (const line of patternLines) {
             if (!line.trim()) continue;
             
-            // Extraire les parties selon le format
+            // Nouveau regex pour inclure l'heure (JJ/MM/AAAA HH:MM - ...)
             const parts = line.split(' - ').map(p => p.trim());
-            if (parts.length < 3) {
-                throw new Error(`Format invalide pour la ligne: "${line}"`);
-            }
-            
-            const date = parts[0];
-            const colorsPart = parts[1];
-            const predictionPart = parts[2];
-            const resultPart = parts[3] || ''; // Résultat optionnel
-            
-            // Valider et convertir les couleurs
-            const colors = colorsPart.split(', ').map(c => {
+            if (parts.length < 4) throw new Error(`Format invalide pour la ligne: "${line}"`);
+
+            // Extraction de la date et de l'heure
+            const dateTimePart = parts[0].split(' ');
+            const date = dateTimePart[0]; // JJ/MM/AAAA
+            const time = dateTimePart[1] || '--:--'; // HH:MM (optionnel)
+
+            // Validation des couleurs
+            const colors = parts[1].split(',').map(c => {
+                c = c.trim();
                 if (!['rouge', 'vert', 'R', 'V'].includes(c)) {
                     throw new Error(`Couleur invalide: "${c}"`);
                 }
                 return c === 'rouge' || c === 'R' ? 'rouge' : 'vert';
             });
-            
+
             if (colors.length !== 10) {
                 throw new Error(`Doit avoir exactement 10 couleurs (${colors.length} fournies)`);
             }
-            
-            // Valider la prédiction
-            const prediction = predictionPart === 'rouge' || predictionPart === 'R' ? 'rouge' : 
-                             predictionPart === 'vert' || predictionPart === 'V' ? 'vert' : '';
-            if (!prediction) {
-                throw new Error(`Prédiction invalide: "${predictionPart}"`);
-            }
-            
-            // Valider le résultat si présent
-            const result = resultPart ? 
-                (resultPart === 'Succès' || resultPart === 'Échec' ? resultPart : '') : '';
-            
-            // Calculer le pourcentage de couleur
+
+            // Validation de la prédiction
+            const prediction = parts[2] === 'rouge' || parts[2] === 'R' ? 'rouge' : 
+                             parts[2] === 'vert' || parts[2] === 'V' ? 'vert' : '';
+            if (!prediction) throw new Error(`Prédiction invalide: "${parts[2]}"`);
+
+            // Résultat (optionnel)
+            const result = parts[3] ? (parts[3] === 'Succès' || parts[3] === 'Échec' ? parts[3] : '') : '';
+
+            // Calcul du pourcentage
             const redCount = colors.filter(c => c === 'rouge').length;
             const greenCount = colors.filter(c => c === 'vert').length;
             
             newPatterns.push({
                 tradeNumber: externalPatterns.length + newPatterns.length + 1,
                 date: date,
+                time: time, // <-- Heure ajoutée ici
                 colors: colors.join(', '),
                 prediction: prediction,
                 frequentColor: redCount >= greenCount ? 
@@ -2278,16 +2325,14 @@ function addExternalPattern() {
             });
         }
 
-        // Ajouter tous les nouveaux motifs
         externalPatterns.push(...newPatterns);
         localStorage.setItem('externalPatterns', JSON.stringify(externalPatterns));
-        
         loadExternalPatterns();
         document.getElementById('externalPatternInput').value = '';
         
         Swal.fire({
             title: 'Succès',
-            html: `${newPatterns.length} motif(s) ajouté(s) au bon format`,
+            html: `${newPatterns.length} motif(s) ajouté(s) avec l'heure !`,
             icon: 'success'
         });
 
@@ -2296,10 +2341,10 @@ function addExternalPattern() {
             title: 'Erreur de format',
             html: `
                 <p>${error.message}</p>
-                <p>Format attendu pour chaque ligne :</p>
-                <p><strong>JJ/MM/AAAA - V,V,V,V,V,V,V,V,V,V - V - Succès</strong></p>
+                <p>Format attendu :</p>
+                <p><strong>JJ/MM/AAAA HH:MM - R,V,R,V,... - R/V - Succès/Échec</strong></p>
                 <p>Exemple :</p>
-                <p>16/04/2025 - vert, vert, vert, vert, vert, vert, vert, vert, vert, vert - vert - Succès</p>
+                <p>16/04/2025 14:30 - R,V,V,R,V,V,R,R,V,V - R - Succès</p>
             `,
             icon: 'error'
         });
@@ -2352,21 +2397,25 @@ function editExternalPattern(index) {
     // Convertir les couleurs au format RV (ex: "vert, rouge" -> "V, R")
     const colorsToRV = pattern.colors.split(', ').map(c => 
         c === 'rouge' ? 'R' : 'V'
-    ).join(', ');
-    
+    ).join(',');
+
     Swal.fire({
         title: 'Modifier le motif',
         html: `
             <div style="text-align:left;margin:15px 0">
-                <div style="margin-bottom:10px">
+                <div style="margin-bottom:10px;">
                     <label>Date (JJ/MM/AAAA):</label>
                     <input id="editDate" value="${pattern.date}" class="swal2-input" placeholder="16/04/2025">
                 </div>
-                <div style="margin-bottom:10px">
+                <div style="margin-bottom:10px;">
+                    <label>Heure (HH:MM):</label>
+                    <input id="editTime" value="${pattern.time || ''}" class="swal2-input" placeholder="14:30">
+                </div>
+                <div style="margin-bottom:10px;">
                     <label>Couleurs (R,V,R,V...):</label>
                     <input id="editColors" value="${colorsToRV}" class="swal2-input" placeholder="V,V,V,V,V,V,V,V,V,V">
                 </div>
-                <div style="margin-bottom:10px">
+                <div style="margin-bottom:10px;">
                     <label>Prédiction:</label>
                     <select id="editPrediction" class="swal2-input">
                         <option value="R" ${pattern.prediction === 'rouge' ? 'selected' : ''}>Rouge (R)</option>
@@ -2386,50 +2435,51 @@ function editExternalPattern(index) {
         confirmButtonText: 'Enregistrer',
         cancelButtonText: 'Annuler',
         preConfirm: () => {
-            // Validation des données
             const dateInput = document.getElementById('editDate').value.trim();
+            const timeInput = document.getElementById('editTime').value.trim();
             const colorsInput = document.getElementById('editColors').value.trim().toUpperCase();
-            
-            if (!dateInput || !colorsInput) {
+
+            if (!dateInput || !timeInput || !colorsInput) {
                 Swal.showValidationMessage('Tous les champs sont obligatoires');
                 return false;
             }
-            
-            // Valider le format des couleurs
+
+            // Validation des couleurs
             if (!/^[RV](,[RV]){9}$/.test(colorsInput)) {
                 Swal.showValidationMessage('Format couleurs invalide. Doit être 10 couleurs séparées par des virgules (ex: V,V,V,R,V,V,R,V,V,V)');
                 return false;
             }
-            
+
             return {
                 date: dateInput,
-                colors: colorsInput.split(',').map(c => c.trim() === 'R' ? 'rouge' : 'vert').join(', '),
+                time: timeInput,
+                colors: colorsInput.split(',').map(c => c === 'R' ? 'rouge' : 'vert').join(', '),
                 prediction: document.getElementById('editPrediction').value === 'R' ? 'rouge' : 'vert',
                 result: document.getElementById('editResult').value,
-                tradeNumber: pattern.tradeNumber, // Conserver le numéro original
+                tradeNumber: pattern.tradeNumber,
                 timestamp: new Date().toISOString()
             };
         }
     }).then(result => {
         if (result.isConfirmed) {
-            // Calculer le pourcentage de couleurs
             const colors = result.value.colors.split(', ');
             const redCount = colors.filter(c => c === 'rouge').length;
             const greenCount = colors.filter(c => c === 'vert').length;
-            
+
             externalPatterns[index] = {
                 ...result.value,
                 frequentColor: redCount >= greenCount ? 
-                    `${(redCount/colors.length*100).toFixed(0)}% Rouge` : 
-                    `${(greenCount/colors.length*100).toFixed(0)}% Vert`
+                    `${(redCount / colors.length * 100).toFixed(0)}% Rouge` : 
+                    `${(greenCount / colors.length * 100).toFixed(0)}% Vert`
             };
-            
+
             localStorage.setItem('externalPatterns', JSON.stringify(externalPatterns));
             loadExternalPatterns();
-            Swal.fire('Succès!', 'Motif mis à jour avec le bon format', 'success');
+            Swal.fire('Succès!', 'Motif mis à jour avec succès ✅', 'success');
         }
     });
 }
+
 function removeExternalPattern(index) {
     Swal.fire({
         title: 'Confirmer la suppression',
@@ -3812,6 +3862,35 @@ const patterns = {
 "RVVRRVRVVV": "vert",
 "VVRVVRVVRR": "vert",
 "VRVRRVVVRV": "rouge",
+"RVRVRVRVRR": "vert",
+"RVRVRVRRVV": "vert",
+"VVRVRRVVVR": "vert",
+"VRVRVRVRRV": "rouge",
+"VRRRVRVVVR": "rouge",
+"RRVRVVVRRV": "rouge",
+"RVVRVVVVVV": "vert",
+"RRRVRVRVRR": "vert",
+"RVVRRVVVRV": "rouge",
+"VVRRVVRVVR": "rouge",
+"VRVVRRVVRR": "rouge",
+"VVVRVRRVRR": "vert",
+"VVRRVRVVVV": "rouge",
+"VVVVRVRVRR": "rouge",
+"RVVRRRRRVV": "rouge",
+"VVVRRVVVVV": "rouge",
+"VVRRVVVVVR": "vert",
+"RVRRVVRRRR": "rouge",
+"RVRVRRVVRV": "vert",
+"VRVVRVRVVR": "vert",
+"VVRRVRRVVR": "vert",
+"VRVRRVVRVR": "vert",
+"VRVVVRVRRR": "rouge",
+"RVVRRVVRVR": "rouge",
+"RVRVVVVVRV": "vert",
+"VRVVVVVRVV": "vert",
+"VRRVRRRRRR": "rouge",
+"VVVRVRVRVR": "vert",
+"VRRVVRVVRV": "vert"
 };
 function analyzeAndRecommend(sequence) {
     // Convertir la séquence en emojis 🔴/🟢 pour l'analyse
@@ -3877,6 +3956,9 @@ function analyzeAndRecommend(sequence) {
 async function predictColor() {
     const colorInput = document.getElementById('colorInput').value.toUpperCase();
     const validColors = ['R', 'V'];
+
+    // 🔁 Récupération de l'heure d'Haïti affichée
+    const haitiTime = document.getElementById('currentTime').textContent;
 
     // 1. Vérification du mode forcé (prioritaire)
     if (isForceModeActive) {
@@ -3946,10 +4028,9 @@ async function predictColor() {
             'VVV': 'rouge'
         };  
 
-
         if (threeColorPatterns[lastThree]) {
             const nextColor = threeColorPatterns[lastThree];
-            
+
             // Création de l'entrée historique
             const newRecord = {
                 tradeNumber: history.length + 1,
@@ -3957,19 +4038,15 @@ async function predictColor() {
                 prediction: nextColor,
                 frequentColor: frequentColor,
                 result: '',
-                date: document.getElementById('dateInput').value || new Date().toLocaleDateString(),
-                method: '3-color-pattern',
-                patternUsed: lastThree
+                date: document.getElementById('dateInput').value || new Date().toLocaleDateString('fr-FR'),
+                time: haitiTime,
+                method: nextColor ? 'pattern' : 'statistical'
             };
 
-            // Ajout à l'historique
             history.push(newRecord);
-            
-            // Mise à jour IMMÉDIATE de l'affichage
             updateHistory();
             saveHistoryToLocalStorage();
 
-            // Affichage de la prédiction
             const predictionResult = document.getElementById('predictionResult');
             predictionResult.className = `prediction-container prediction-${nextColor === 'rouge' ? 'red' : 'green'}`;
             predictionResult.innerHTML = `
@@ -3981,7 +4058,6 @@ async function predictColor() {
                 </div>
             `;
 
-            // Alertes SweetAlert conservées
             Swal.fire({
                 title: 'Stratégie spéciale activée',
                 html: `Après une perte, détection du motif <strong>${lastThree}</strong><br>
@@ -3996,17 +4072,21 @@ async function predictColor() {
         }
     }
 
-    // 9. Exécution normale
-    completePrediction(colorInput, lastColors, frequentColor);
+    // 9. Exécution normale (ajout de l'heure d'Haïti ici aussi)
+    completePrediction(colorInput, lastColors, frequentColor, haitiTime);
 }
+
 function completePrediction(colorInput, lastColors, frequentColor) {
+    // 🔁 Récupérer l'heure d'Haïti affichée dans l'élément #currentTime
+    const haitiTime = document.getElementById('currentTime').textContent;
+
     // 1. D'abord essayer avec les motifs répétés
     let nextColor = predictBasedOnRepeatedPatterns(colorInput);
 
     // 2. Si aucun motif répété, essayer avec les motifs prédéfinis
     if (!nextColor) {
         nextColor = predictBasedOnSimilarity(colorInput);
-        
+
         // 3. Si aucun motif prédéfini trouvé, utiliser la nouvelle règle par défaut
         if (!nextColor) {
             const lastColor = colorInput.slice(-1); // Prendre la dernière couleur
@@ -4014,18 +4094,19 @@ function completePrediction(colorInput, lastColors, frequentColor) {
         }
     }
 
-    // Enregistrement de la prédiction
+    // ✅ Enregistrement de la prédiction avec l'heure d'Haïti
     history.push({
         tradeNumber: history.length + 1,
         colors: lastColors.join(', '),
         prediction: nextColor,
         frequentColor: frequentColor,
         result: '',
-        date: document.getElementById('dateInput').value || new Date().toLocaleDateString(),
+        date: document.getElementById('dateInput').value || new Date().toLocaleDateString('fr-FR'),
+        time: haitiTime, // Utilise l'heure d'Haïti affichée
         method: nextColor ? 'pattern' : 'statistical'
     });
 
-    // Affichage du résultat
+    // 🎯 Affichage du résultat
     const predictionResult = document.getElementById('predictionResult');
     predictionResult.className = `prediction-container prediction-${nextColor === 'rouge' ? 'red' : 'green'}`;
     predictionResult.innerHTML = `
@@ -4034,10 +4115,11 @@ function completePrediction(colorInput, lastColors, frequentColor) {
         <span class="prediction-icon">${nextColor === 'rouge' ? '🔴' : '🟢'}</span>
     `;
 
+    // 🔄 Remise à zéro + feedback utilisateur
     document.getElementById('colorInput').value = '';
     updateHistory();
     enableFeedbackButtons();
-    
+
     Swal.fire({
         title: 'Prédiction Enregistrée!',
         html: `
@@ -4047,15 +4129,19 @@ function completePrediction(colorInput, lastColors, frequentColor) {
         icon: 'success',
         confirmButtonText: 'Continuer'
     });
-    
+
     updateStats();
     saveHistoryToLocalStorage();
     return true;
 }
+
 // Nouvelle fonction pour les prédictions forcées
 function completeForcedPrediction() {
+    // ⏰ Récupérer l'heure d'Haïti actuelle affichée dans l'interface
+    const haitiTime = document.getElementById('currentTime').textContent;
+
     const colorInput = document.getElementById('colorInput').value.toUpperCase();
-    
+
     // 1. Vérification IMPÉRATIVE de toutes les restrictions avant toute prédiction forcée
     if (!checkPredictionRestrictions(colorInput)) {
         Swal.fire({
@@ -4074,8 +4160,8 @@ function completeForcedPrediction() {
     }
 
     const lastColors = colorInput.split('').map(char => char === 'R' ? 'rouge' : 'vert');
-    
-    // Calcul du pourcentage de couleur (inchangé)
+
+    // Calcul du pourcentage de couleur
     const colorCount = colorInput.split('').reduce((count, char) => {
         count[char] = (count[char] || 0) + 1;
         return count;
@@ -4085,7 +4171,7 @@ function completeForcedPrediction() {
         ? `${(colorCount['R'] || 0) * 10}% Rouge` 
         : `${(colorCount['V'] || 0) * 10}% Vert`;
 
-    // Enregistrement de la prédiction forcée (inchangé)
+    // ✅ Enregistrement de la prédiction forcée avec l’heure d’Haïti
     history.push({
         tradeNumber: history.length + 1,
         colors: lastColors.join(', '),
@@ -4093,12 +4179,13 @@ function completeForcedPrediction() {
         frequentColor: frequentColor,
         result: '',
         date: document.getElementById('dateInput').value || new Date().toLocaleDateString(),
+        time: haitiTime, // ⏱️ Heure d’Haïti affichée
         method: 'forced',
         forced: true,
-        restrictionsChecked: true // Nouveau champ pour tracer le respect des règles
+        restrictionsChecked: true
     });
 
-    // Affichage du résultat (inchangé)
+    // Affichage du résultat
     const predictionResult = document.getElementById('predictionResult');
     predictionResult.className = `prediction-container prediction-${forcedColor === 'rouge' ? 'red' : 'green'}`;
     predictionResult.innerHTML = `
@@ -4111,8 +4198,7 @@ function completeForcedPrediction() {
     document.getElementById('colorInput').value = '';
     updateHistory();
     enableFeedbackButtons();
-    
-    // Notification (inchangée mais avec mention des règles respectées)
+
     Swal.fire({
         title: 'Prédiction Forcée Validée!',
         html: `
@@ -4127,6 +4213,7 @@ function completeForcedPrediction() {
         confirmButtonText: 'Continuer'
     });
 }
+
 
 // Fonctions helper (à ajouter dans votre code)
 function getActiveRestrictions(colorInput) {
@@ -4207,6 +4294,9 @@ function handleDuplicatePrediction(previousResult, colorInput, lastColors, frequ
 }
 // Nouvelle fonction pour la partie finale de la prédiction (identique à votre code original)
 function completePrediction(colorInput, lastColors, frequentColor) {
+    // ⏰ Récupérer l'heure actuelle d'Haïti depuis l'interface
+    const haitiTime = document.getElementById('currentTime').textContent;
+
     // 1. D'abord essayer avec les motifs répétés
     let nextColor = predictBasedOnRepeatedPatterns(colorInput);
 
@@ -4219,7 +4309,7 @@ function completePrediction(colorInput, lastColors, frequentColor) {
             const analysis = analyzeAndRecommend(colorInput);
             nextColor = analysis.recommendation.primary;
             
-            // Ajouter un message d'information
+            // 🔍 Message d’analyse statistique
             Swal.fire({
                 title: 'Analyse Statistique Activée 📊',
                 html: `
@@ -4240,18 +4330,19 @@ function completePrediction(colorInput, lastColors, frequentColor) {
         }
     }
 
-    // Enregistrement de la prédiction
+    // ✅ Enregistrement de la prédiction avec l'heure d’Haïti
     history.push({
         tradeNumber: history.length + 1,
         colors: lastColors.join(', '),
         prediction: nextColor,
         frequentColor: frequentColor,
         result: '',
-        date: document.getElementById('dateInput').value || new Date().toLocaleDateString(),
-        method: nextColor ? 'pattern' : 'statistical' // Nouveau champ pour tracker la méthode
+        date: document.getElementById('dateInput').value || new Date().toLocaleDateString('fr-FR'),
+        time: haitiTime, // 🕒 Ajout de l'heure d'Haïti
+        method: nextColor ? 'pattern' : 'statistical'
     });
 
-    // Affichage du résultat
+    // 🎯 Affichage du résultat
     const predictionResult = document.getElementById('predictionResult');
     predictionResult.className = `prediction-container prediction-${nextColor === 'rouge' ? 'red' : 'green'}`;
     predictionResult.innerHTML = `
@@ -4264,7 +4355,8 @@ function completePrediction(colorInput, lastColors, frequentColor) {
     document.getElementById('colorInput').value = '';
     updateHistory();
     enableFeedbackButtons();
-    
+
+    // ✅ Notification visuelle
     Swal.fire({
         title: 'Prédiction Enregistrée!',
         html: `
@@ -4275,7 +4367,7 @@ function completePrediction(colorInput, lastColors, frequentColor) {
         icon: 'success',
         confirmButtonText: 'Continuer'
     });
-    
+
     updateStats();
     saveHistoryToLocalStorage();
     return true;
@@ -4490,10 +4582,20 @@ function giveFeedback(correct) {
         currentConsecutiveLosses = 0; // Reset compteur
         updateLionCoins(+1);
         pertesConsecutivesActuelles = 0; // Réinitialise le compteur actuel
-        Swal.fire({
+        // Modifier la partie du Swal.fire dans la fonction giveFeedback pour le cas de succès
+Swal.fire({
     title: 'Victoire Impériale 🦁✨',
     html: `
         <div style="position:relative; margin:20px 0;">
+            <!-- Message de remerciement -->
+            <div style="background:#e8f5e9; padding:10px; border-radius:8px; margin-bottom:15px;">
+                <p style="color:#2E7D32; margin:0;">
+                    Merci à Dieu 🙏
+                    <br>
+                    +1 coeur pour Jésus ❤️
+                </p>
+            </div>
+
             <!-- Élément central lion + argent -->
             <div style="display:flex; flex-direction:column; align-items:center; margin-bottom:15px;">
                 <div style="font-size:3rem; line-height:1;">
@@ -4503,14 +4605,14 @@ function giveFeedback(correct) {
                     +${profit.toFixed(2)} R
                 </div>
                 <div style="font-size:0.85rem; color:#78909C; background:#f5f5f5; padding:2px 8px; border-radius:10px;">
-                    ${odds}% de chance
+                    ${odds}% de profit
                 </div>
             </div>
 
             <!-- Récompense Lion Coin - version compacte -->
             <div style="background:#FFF9C4; border-radius:8px; padding:8px; margin:0 auto 15px; width:fit-content;">
                 <p style="margin:0; font-size:0.95rem;">
-                    <span style="font-weight:bold; color:#FF6D00;">+1 Lion Coin</span> <span style="font-size:0.8rem; color:#616161;">(récompense exclusive)</span>
+                    <span style="font-weight:bold; color:#FF6D00;">+1 Lion Coin</span> <span style="font-size:0.8rem; color:#616161;">( votre récompense)</span>
                 </p>
             </div>
 
@@ -4522,8 +4624,8 @@ function giveFeedback(correct) {
                 </div>
                 <div style="border-left:1px solid #e0e0e0;"></div>
                 <div>
-                    <p style="margin:0 0 3px 0; font-size:0.75rem; color:#607d8b;">Mise suivante</p>
-                    <p style="margin:0; font-weight:bold; font-size:0.95rem;">${nextBet.toFixed(2)} R</p>
+                    <p style="margin:0 0 3px 0; font-size:0.75rem; color:#607d8b;"></p>
+                    <p style="margin:0; font-weight:bold; font-size:0.95rem;"></p>
                 </div>
             </div>
         </div>
@@ -4538,7 +4640,7 @@ function giveFeedback(correct) {
         popup: 'custom-swal-popup',
         title: 'custom-swal-title'
     }
-});
+     });
     } else {
         // ===== TRAITEMENT PERTE =====
         currentBankroll = parseFloat((currentBankroll - currentBet).toFixed(2));
@@ -4896,61 +4998,48 @@ function analyzeAllLosses() {
 }
 function updateHistory() {
     const historyElement = document.getElementById('history');
-    
-    // Créer un fragment de document pour une meilleure performance
-    const fragment = document.createDocumentFragment();
-    
-    // Créer l'en-tête du tableau
+    historyElement.innerHTML = '';
+
+    // 🧩 Création de l'en-tête du tableau
     const headerRow = document.createElement('tr');
     headerRow.innerHTML = `
         <th style="background-color:#f0f0f0; text-align: center;">N°</th>
         <th style="background-color:#f0f0f0; text-align: center;">Date</th>
+        <th style="background-color:#f0f0f0; text-align: center;">Heure</th>
         <th style="background-color:#f0f0f0; text-align: center;">Couleurs</th>
         <th style="background-color:#f0f0f0; text-align: center;">Prédiction</th>
         <th style="background-color:#f0f0f0; text-align: center;">Pourcentage</th>
         <th style="background-color:#f0f0f0; text-align: center;">Résultat</th>
     `;
-    fragment.appendChild(headerRow);
+    historyElement.appendChild(headerRow);
 
-    // Parcourir l'historique en commençant par le plus récent
+    // 🔄 Affichage des enregistrements en ordre inverse
     history.slice().reverse().forEach((record, index) => {
         const tr = document.createElement('tr');
-        
-        // Mise en forme conditionnelle basée sur le résultat
-        const resultClass = record.result === 'Succès' ? 'success-row' : 
-                          record.result === 'Échec' ? 'failure-row' : 'pending-row';
-        
+
+        const resultClass = record.result === 'Succès'
+            ? 'success-row'
+            : record.result === 'Échec'
+            ? 'failure-row'
+            : 'pending-row';
+
         tr.className = resultClass;
-        
-        // Formatage du texte de prédiction
-        const predictionText = record.modified ? 
-                             `${record.prediction} (modifié)` : 
-                             record.prediction;
-        
-        // Formatage de la date
-        const formattedDate = formatDate(record.date);
-        
+
         tr.innerHTML = `
             <td style="text-align: center;">${history.length - index}</td>
-            <td style="text-align: center;">${formattedDate}</td>
+            <td style="text-align: center;">${record.date}</td>
+            <td style="text-align: center;">${record.time || '--:--'}</td> <!-- 🕒 Heure d'Haïti affichée -->
             <td>${formatColors(record.colors)}</td>
-          <td style="text-align: center; font-size: 20px;">${record.prediction === 'rouge' ? '🔴' : '🟢'}</td>
+            <td style="text-align: center; font-size: 20px;">${record.prediction === 'rouge' ? '🔴' : '🟢'}</td>
             <td style="text-align: center;">${record.frequentColor}</td>
             <td style="text-align: center;">${formatResult(record.result)}</td>
         `;
-        
-        fragment.appendChild(tr);
+
+        historyElement.appendChild(tr);
     });
 
-    // Effacer et reconstruire le tableau
-    historyElement.innerHTML = '';
-    historyElement.appendChild(fragment);
-    
-    // Sauvegarder et mettre à jour les stats
     saveHistoryToLocalStorage();
     updateStats();
-    
-    // Ajouter un effet visuel pour la dernière entrée
     highlightLatestEntry();
 }
 
@@ -5200,19 +5289,25 @@ function updateSuccessRate() {
         }
 
         function saveHistoryToLocalStorage() {
-            localStorage.setItem('predictionHistory', JSON.stringify(history));
+        localStorage.setItem('predictionHistory', JSON.stringify(history));
         }
-
         function loadHistoryFromLocalStorage() {
-            const storedHistory = localStorage.getItem('predictionHistory');
-            if (storedHistory) {
-                history = JSON.parse(storedHistory);
-                updateHistory();
-                updateSuccessRate();
-                updateStats();
-                updatePoints();
-            }
-        }
+    const storedHistory = localStorage.getItem('predictionHistory');
+    if (storedHistory) {
+        history = JSON.parse(storedHistory);
+
+        // 🕒 S'assurer que chaque prédiction a un champ 'time'
+        history.forEach(record => {
+            if (!record.time) record.time = '--:--';
+        });
+
+        updateHistory();
+        updateSuccessRate();
+        updateStats();
+        updatePoints();
+    }
+}
+
 
         function updateStats() {
             document.getElementById('successRate').textContent = `Taux de réussite : ${(successes / (successes + failures) * 100).toFixed(2)}%`;
@@ -5825,7 +5920,7 @@ function exportToTxt() {
     content += "-".repeat(50) + "\n";
     const total = successes + failures;
     const successRate = total > 0 ? (successes / total * 100).toFixed(1) : 0;
-    
+
     content += `Total des prédictions    : ${total}\n`;
     content += `Réussites               : ${successes} (${successRate}%)\n`;
     content += `Échecs                  : ${failures}\n`;
@@ -5834,7 +5929,7 @@ function exportToTxt() {
     // Statistiques par couleur
     content += "STATISTIQUES PAR COULEUR\n";
     content += "-".repeat(50) + "\n";
-    
+
     const redTotal = redSuccesses + redFailures;
     const greenTotal = greenSuccesses + greenFailures;
     const redRate = redTotal > 0 ? (redSuccesses / redTotal * 100).toFixed(1) : 0;
@@ -5845,25 +5940,26 @@ function exportToTxt() {
 
     // En-tête du tableau d'historique
     content += "HISTORIQUE DÉTAILLÉ\n";
-    content += "-".repeat(80) + "\n";
-    content += "N°    | Date       | Couleurs           | Prédiction  | % Couleur   | Résultat\n";
-    content += "-".repeat(80) + "\n";
+    content += "-".repeat(100) + "\n";
+    content += "N°    | Date       | Heure   | Couleurs           | Prédiction  | % Couleur   | Résultat\n";
+    content += "-".repeat(100) + "\n";
 
     // Données de l'historique
     history.forEach((record, index) => {
         const num = (index + 1).toString().padEnd(5);
         const date = record.date.padEnd(11);
+        const time = (record.time || '--:--').padEnd(8);
         const colors = record.colors.replace(/rouge/g, '🔴').replace(/vert/g, '🟢').padEnd(18);
         const prediction = record.prediction.toUpperCase().padEnd(11);
         const freqColor = record.frequentColor.padEnd(12);
-        const result = record.result === 'Succès' ? '✅ Gain' : 
-                      record.result === 'Échec' ? '❌ Perte' : '⏳ Attente';
+        const result = record.result === 'Succès' ? '✅ Gain' :
+                       record.result === 'Échec' ? '❌ Perte' : '⏳ Attente';
 
-        content += `${num}| ${date}| ${colors}| ${prediction}| ${freqColor}| ${result}\n`;
+        content += `${num}| ${date}| ${time}| ${colors}| ${prediction}| ${freqColor}| ${result}\n`;
     });
 
     // Pied de page
-    content += "-".repeat(80) + "\n";
+    content += "-".repeat(100) + "\n";
     content += `\nExporté le : ${new Date().toLocaleString('fr-FR')}\n`;
     content += "Généré par Signal Bot 97 TRX\n";
 
@@ -5884,13 +5980,14 @@ function exportToTxt() {
                 <li>${total} prédictions</li>
                 <li>Statistiques globales</li>
                 <li>Statistiques par couleur</li>
-                <li>Historique détaillé</li>
+                <li>Historique détaillé avec heure</li>
             </ul>
         `,
         icon: 'success',
         confirmButtonText: 'OK'
     });
 }
+
 function copyHistoryInDBFormat() {
     if (history.length === 0) {
         Swal.fire({
@@ -5913,7 +6010,10 @@ function copyHistoryInDBFormat() {
         const formattedDate = dateParts.length === 3 ? 
             `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}` : record.date;
         
-        return `${formattedDate} - ${colorsFormatted} - ${record.prediction === 'rouge' ? 'R' : 'V'} - ${record.result || 'En attente'}`;
+        // Ajouter l'heure au format (HH:MM)
+        const time = record.time || '--:--';
+        
+        return `${formattedDate} ${time} - ${colorsFormatted} - ${record.prediction === 'rouge' ? 'R' : 'V'} - ${record.result || 'En attente'}`;
     }).join('\n');
 
     // Copier dans le presse-papiers
@@ -5975,12 +6075,12 @@ function hybridPrediction(colorInput) {
     return trendPrediction;  // Par défaut, utiliser la tendance
 }
 // ====== CITATIONS PUISSANTES ====== //
-const TRX_QUOTES = [
-    "Vos gains sont la somme de nos calculs et de votre discipline.",
-    "Derrière chaque fortune crypto, il y a un bot qui n'a pas dormi.",
-    "Nous automatisons la chance pour que vous héritiez du futur."
-];
 
+const TRX_QUOTES = [
+    'Vos gains sont la somme de nos calculs et de votre discipline.',
+    'Derrière chaque fortune crypto, il y a un bot qui na pas dormi.',
+    'Nous automatisons la chance pour que vous héritiez du futur.'
+];
 function rotateQuote() {
     const quoteElement = document.getElementById('quote-text');
     let currentIndex = 0;
