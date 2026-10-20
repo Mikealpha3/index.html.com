@@ -3066,6 +3066,20 @@ document.querySelectorAll('input[name="level"]').forEach(radio => {
 
 // Les niveaux Débutant, Intermédiaire et Avancé ont été retirés de l'interface.
 function confirmLevel() {}
+
+// Fonctions de compatibilité pour éviter toute erreur après retrait des niveaux
+function updateLevelButtons() {}
+function showLevelInfo() {}
+function hideLevelInfo() {}
+function clearSequenceInputs() {
+    const s = document.getElementById('seriesInput');
+    if (s) s.value = '';
+    const c = document.getElementById('colorInput');
+    if (c) c.value = '';
+    const p = document.getElementById('colorPercentage');
+    if (p) p.value = '';
+}
+
 function showPasswordPopup() {}
 function setUserLevel() {}
 function updateInterfaceForLevel() {}
@@ -4053,61 +4067,7 @@ async function predictColor() {
 
     // Vérification des doublons retirée (prédiction automatique continue)
 
-    // 8. Nouvelle stratégie après une perte
-    if (lastResultWasLoss) {
-        const lastThree = colorInput.slice(-3);
-        const threeColorPatterns = {
-            'RVV': 'rouge',
-            'VRR': 'vert',
-            'VVR': 'vert',
-            'RRV': 'rouge',
-            'RRR': 'vert',
-            'VVV': 'rouge'
-        };  
-
-        if (threeColorPatterns[lastThree]) {
-            const nextColor = threeColorPatterns[lastThree];
-
-            // Création de l'entrée historique
-            const newRecord = {
-                tradeNumber: history.length + 1,
-                colors: lastColors.join(', '),
-                prediction: nextColor,
-                frequentColor: frequentColor,
-                result: '',
-                date: document.getElementById('dateInput').value || new Date().toLocaleDateString('fr-FR'),
-                time: haitiTime,
-                method: nextColor ? 'pattern' : 'statistical'
-            };
-
-            history.push(newRecord);
-            updateHistory();
-            saveHistoryToLocalStorage();
-
-            const predictionResult = document.getElementById('predictionResult');
-            predictionResult.className = `prediction-container prediction-${nextColor === 'rouge' ? 'red' : 'green'}`;
-            predictionResult.innerHTML = `
-                <span class="prediction-icon">${nextColor === 'rouge' ? '🔴' : '🟢'}</span>
-                <span>PRÉDICTION: <strong>${nextColor.toUpperCase()}</strong> (Stratégie ${lastThree})</span>
-                <span class="prediction-icon">${nextColor === 'rouge' ? '🔴' : '🟢'}</span>
-                <div class="alert alert-info" style="margin-top:10px;padding:5px;">
-                    Stratégie anti-perte activée
-                </div>
-            `;
-
-            Swal.fire({
-                title: 'Stratégie spéciale activée',
-                html: `Après une perte, détection du motif <strong>${lastThree}</strong><br>
-                       Prédiction: <strong style="color:${nextColor === 'rouge' ? '#dc3545' : '#28a745'}">${nextColor.toUpperCase()}</strong>`,
-                icon: 'info',
-                confirmButtonText: 'Compris'
-            });
-
-            document.getElementById('colorInput').value = '';
-            enableFeedbackButtons();
-            return;
-        }
-    }
+    // Stratégies spéciales après perte retirées : exécution directe de la prédiction normale
 
     // 9. Exécution normale (ajout de l'heure d'Haïti ici aussi)
     completePrediction(colorInput, lastColors, frequentColor, haitiTime);
@@ -4265,9 +4225,7 @@ function getActiveRestrictions(colorInput) {
     const restrictions = [];
     const lastThree = colorInput.slice(-3);
     
-    if (lastThree === 'RVR' || lastThree === 'VRV') {
-        restrictions.push('• Séquence RVR/VRV interdite');
-    }
+// Aucune séquence RVR/VRV interdite
     
     const redCount = (colorInput.match(/R/g) || []).length;
     const greenCount = (colorInput.match(/V/g) || []).length;
@@ -4560,6 +4518,7 @@ function clearFields() {
 }
 
 function giveFeedback(correct) {
+    clearSequenceInputs();
     const lastHistoryItem = history[history.length - 1];
     
 // Vérification si le feedback a déjà été donné
@@ -4699,7 +4658,8 @@ Swal.fire({
     customClass: {
         popup: 'custom-swal-popup',
         title: 'custom-swal-title'
-    }
+    },
+    willClose: () => { clearSequenceInputs(); }
      });
     } else {
         // ===== TRAITEMENT PERTE =====
@@ -4737,7 +4697,8 @@ Swal.fire({
             background: 'linear-gradient(135deg, #fff0f0 0%, #ffe6e6 100%)',
             showClass: {
                 popup: 'animate__animated animate__headShake'
-            }
+            },
+            willClose: () => { clearSequenceInputs(); }
         });
 
        
@@ -4755,33 +4716,16 @@ Swal.fire({
     updateColorStatsDisplay();
     saveHistoryToLocalStorage();
     
-    document.getElementById('seriesInput').value = '';
-    document.getElementById('colorPercentage').value = '';
-    document.getElementById('predictionResult').textContent = '';
+    clearSequenceInputs();
+    const prEl = document.getElementById('predictionResult');
+    if (prEl) prEl.textContent = '';
      // Mettre à jour l'affichage
      document.getElementById('maxConsecutiveLosses').innerHTML = 
         `Plus grande série de pertes : <span>${maxConsecutiveLosses}</span>`;
 }
 function checkPredictionRestrictions(colorSeries) {
-    const lastThree = colorSeries.slice(-3); // Récupère les 3 dernières couleurs
-    // Vérification permanente - RVR et VRV
-    if (lastThree === 'RVR' || lastThree === 'VRV') {
-        Swal.fire({
-            title: 'PRÉDICTION INTERDITE ⛔',
-            html: `
-                <div style="font-size: 2rem;">🚨</div>
-                <p>La séquence <strong>${lastThree}</strong> est strictement interdite.</p>
-                <p>Motif : Tendance trop volatile et imprévisible.</p>
-                <p style="color: #dc3545;">Veuillez attendre le prochain tour.</p>
-            `,
-            icon: 'error',
-            confirmButtonText: 'Compris',
-            confirmButtonColor: '#dc3545'
-        });
-        return false;
-    }
-
-    return true; // Restrictions RRR/VVV, ratios extrêmes et motifs bannis retirées
+    // Contrainte RVR et VRV retirée : toutes les séquences sont désormais autorisées
+    return true;
 }
 // Fonction pour analyser les raisons de l'échec (exemple)
 function analyzeLossReason(colorInput, prediction, result) {
