@@ -8,7 +8,6 @@
     <script src="https://unpkg.com/docx@7.8.2/build/index.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code&family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
     <!-- Sons pour les feedbacks -->
 <audio id="winSound" src="https://assets.mixkit.co/sfx/preview/mixkit-winning-chimes-2015.mp3" preload="auto"></audio>
@@ -1835,6 +1834,150 @@ tr.failure-row .prediction-icon {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-5px); }
 }
+
+/* Disposition verticale des boutons bleus / actions comme les colonnes de couleurs */
+.action-buttons-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 15px auto;
+    max-width: 280px;
+    width: 100%;
+}
+.action-buttons-vertical button {
+    width: 100%;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.2s ease;
+}
+.btn-clear-single {
+    background-color: #007bff; /* Bleu royal */
+    color: white;
+}
+.btn-clear-single:hover {
+    background-color: #0056b3;
+}
+.action-buttons-vertical .btn-analyze {
+    background-color: #007bff !important; /* Boutons bleus verticaux */
+    color: white !important;
+    margin-left: 0 !important;
+}
+.action-buttons-vertical .btn-analyze:hover {
+    background-color: #0056b3 !important;
+}
+.action-buttons-vertical .btn-level {
+    background-color: #007bff !important;
+    color: white !important;
+    margin-left: 0 !important;
+}
+
+
+/* === Ajustements responsive Android demandés === */
+@media (max-width: 768px) {
+    body { padding: 8px !important; overflow-x: hidden !important; }
+    .container { padding: 12px !important; max-width: 100% !important; box-sizing: border-box !important; }
+    .action-buttons-vertical {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 8px !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        margin: 12px auto !important;
+    }
+    .action-buttons-vertical button {
+        width: 100% !important;
+        min-width: 0 !important;
+        padding: 10px 6px !important;
+        font-size: 13px !important;
+        box-sizing: border-box !important;
+    }
+    .feedback-buttons {
+        display: flex !important;
+        gap: 10px !important;
+        width: 100% !important;
+        margin: 12px 0 !important;
+    }
+    .feedback-buttons button {
+        flex: 1 1 0 !important;
+        width: auto !important;
+        min-width: 0 !important;
+        padding: 12px 6px !important;
+        font-size: 15px !important;
+        box-sizing: border-box !important;
+    }
+    .history-controls-row {
+        display: flex !important;
+        gap: 8px !important;
+        width: 100% !important;
+        margin: 8px 0 14px !important;
+    }
+    .history-controls-row button {
+        flex: 1 1 0 !important;
+        min-width: 0 !important;
+        padding: 10px 6px !important;
+        font-size: 13px !important;
+        box-sizing: border-box !important;
+    }
+    .stats {
+        padding: 12px !important;
+        font-size: 14px !important;
+        margin: 12px 0 !important;
+    }
+    .stats p { margin: 8px 0 !important; }
+    .loss-tiers-horizontal {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-around !important;
+        align-items: center !important;
+        gap: 4px !important;
+        padding: 8px 4px !important;
+        margin: 10px 0 !important;
+        background: #fff5f5 !important;
+        border: 1px solid #ffcdd2 !important;
+        border-radius: 8px !important;
+        box-sizing: border-box !important;
+    }
+    .loss-tiers-horizontal .tier-item {
+        flex: 1 1 0 !important;
+        min-width: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        gap: 3px !important;
+    }
+    .loss-tiers-horizontal .tier-label {
+        font-size: 10px !important;
+        line-height: 1.2 !important;
+        white-space: normal !important;
+        color: #b71c1c !important;
+        font-weight: 600 !important;
+    }
+    .loss-tiers-horizontal .tier-badge {
+        display: inline-block !important;
+        min-width: 24px !important;
+        padding: 2px 8px !important;
+        border-radius: 12px !important;
+        background: #dc3545 !important;
+        color: white !important;
+        font-size: 13px !important;
+        font-weight: bold !important;
+    }
+    #historyContainer { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; }
+}
+
+/* Bouton placé dans la rangée des commandes d'historique */
+.history-controls-row .btn-undo { background-color: #007bff !important; color: white !important; }
+.history-controls-row .btn-history { background-color: #6c757d !important; color: white !important; }
+
 </style>
 </head>
 <div class="password-popup" id="passwordPopup" style="display: none;">
@@ -1919,7 +2062,7 @@ tr.failure-row .prediction-icon {
                     <!-- Déplacé ici sous le titre -->
                     <div class="user-info-container">
                         <p id="userName">Nom : Utilisateur</p>
-                        <p id="userLevel">Niveau : <span id="userLevelSpan"></span></p>
+                        
                         <p id="haitiTime">Heure : <span id="currentTime"></span></p>
                     </div>
                     </br><span id="quote-text">L'algorithme ne doute pas. Il calcule et conquiert.</span>
@@ -1994,23 +2137,19 @@ tr.failure-row .prediction-icon {
                 
                 <div id="martingaleSequenceDisplay" class="martingale-sequence"></div>
             </div>            
-            <div class="action-buttons">
-                <button class="btn-predict" onclick="predictColor()" id="predictButton">
-                    <i class="fas fa-magic"></i> Prédire
+            <div class="action-buttons-vertical">
+                <button class="btn-clear-single" onclick="backspaceColor()" title="Effacer la dernière couleur entrée">
+                    <i class="fas fa-backspace"></i> Effacer un
                 </button>
-                
-                <button class="btn-clear" onclick="clearFields()">
-                    <i class="fas fa-eraser"></i> Effacer
+                <button class="btn-clear" onclick="clearFields()" title="Effacer tout le champ">
+                    <i class="fas fa-trash-alt"></i> Tout Effacer
                 </button>
-                
                 <button class="btn-level" onclick="showPasswordPopup()">
                     <i class="fas fa-lock"></i> Accès Sécurisé
                 </button>
-                
                 <button class="btn-analyze" onclick="analyzeAllLosses()">
                     <i class="fas fa-search-minus"></i> Pertes
                 </button>
-                
                 <button class="btn-analyze" onclick="forceStatisticalAnalysis()">
                     <i class="fas fa-chart-bar"></i> Stats
                 </button>
@@ -2019,6 +2158,7 @@ tr.failure-row .prediction-icon {
         <div class="input-container">
             <label for="dateInput" style="margin-left: 30px;">Date :</label>
             <input type="date" id="dateInput" class="color-input">
+            <script>(function(){ try { const d = new Date(); const y = d.getFullYear(); const m = String(d.getMonth()+1).padStart(2,"0"); const day = String(d.getDate()).padStart(2,"0"); const el = document.getElementById("dateInput"); if (el) el.value = `${y}-${m}-${day}`; } catch(e){} })();</script>
         </div>
         <div class="input-container">
             <input type="text" id="colorInput" class="color-input" maxlength="10" placeholder="Ajouter les Couleurs (ex: RVV)" readonly>
@@ -2094,43 +2234,32 @@ tr.failure-row .prediction-icon {
             </table>
           
        </div>
-       <div class="level-popup" id="levelPopup">
-        <h2>Choisissez votre Niveau</h2>
-        <div class="level-buttons">
-            <label><input type="radio" name="level" value="débutant" checked> Débutant</label>
-            <label><input type="radio" name="level" value="intermédiaire"> Intermédiaire</label>
-            <label><input type="radio" name="level" value="avancé"> Avancé</label>
-        </div>
-        <button class="btn-confirm" onclick="confirmLevel()">Confirmer</button>
-    </div>
+       <!-- Sélecteur de niveaux retiré -->
        <p id="previousResult"></p>
-        <div style="display: flex; align-items: center; gap: 20px;">
-             <div style="position: relative; width: 100%; height: 100vh;">
-        <button class="btn-undo" onclick="undo()" style="position: absolute; top: 80px; right:20px;">Marche Arrière</button>
-        
-        <div class="feedback-buttons">
-            <button class="btn-success" id="btnSuccess" onclick="giveFeedback(true)">Gagner ✅</button>
-            <button class="btn-failure" id="btnFailure" onclick="giveFeedback(false)">Perte ❌</button>
-            <button class="btn-history" onclick="clearHistory()">Effacer l'Historique</button>
+        <div class="feedback-and-stats-section">
+            <div class="feedback-buttons">
+                <button class="btn-success" id="btnSuccess" onclick="giveFeedback(true)">Gagner ✅</button>
+                <button class="btn-failure" id="btnFailure" onclick="giveFeedback(false)">Perte ❌</button>
+            </div>
+            <div class="history-controls-row">
+                <button class="btn-undo" onclick="undo()" title="Restaurer l'historique précédent"><i class="fas fa-undo"></i> Marche Arrière</button>
+                <button class="btn-history" onclick="clearHistory()" title="Effacer tout l'historique"><i class="fas fa-trash-alt"></i> Effacer l'Historique</button>
+            </div>
+            <div class="stats">
+                <p id="successRate">Taux de réussite : <span>0%</span></p>
+                <p id="totalPredictions">Total des Prédictions : <span>0</span></p>
+                <p id="totalSuccesses">Total des Réussites : <span>0</span></p>
+                <p id="totalFailures">Total des Pertes : <span>0</span></p>
+                <p id="maxConsecutiveLosses">Plus grande série de pertes : <span>0</span></p>
+                <div class="loss-tiers-horizontal" aria-label="Nombre de fois où les paliers de pertes consécutives ont été atteints">
+                    <div class="tier-item"><span class="tier-label">7 pertes</span><span id="tier7Losses" class="tier-badge">0</span></div>
+                    <div class="tier-item"><span class="tier-label">8 pertes</span><span id="tier8Losses" class="tier-badge">0</span></div>
+                    <div class="tier-item"><span class="tier-label">9+ pertes</span><span id="tier9Losses" class="tier-badge">0</span></div>
+                </div>
+                <p id="lionCoins">Lion Coins : <span>0</span> LC</p>
+                <p id="points">Points : <span>0</span></p>
+            </div>
         </div>
-        <div class="stats">
-            <p id="successRate">Taux de réussite : <span>0%</span></p>
-            <p id="totalPredictions">Total des Prédictions : <span>0</span></p>
-            <p id="totalSuccesses">Total des Réussites : <span>0</span></p>
-            <p id="totalFailures">Total des Pertes : <span>0</span></p>
-            <!-- Mets ça juste après la ligne des points -->
-            <p id="maxConsecutiveLosses">Plus grande série de pertes : <span>0</span></p>
-            <p id="lionCoins">Lion Coins : <span>0</span> LC</p>
-            <p id="points">Points : <span>0</span></p>
-        </div>
-        <canvas id="pieChart" width="400" height="400"></canvas>
-        
-    </div>
-    <div class="level-info-popup" id="levelInfoPopup">
-        <button class="close-btn" onclick="hideLevelInfo()">X</button>
-        <h2>Information de Niveau</h2>
-
-    </div>
     <script>
         // Variables pour la base de données externe
 let externalPatterns = JSON.parse(localStorage.getItem('externalPatterns')) || [];
@@ -2797,7 +2926,7 @@ updateHaitiTime();
             const savedLevel = localStorage.getItem('userLevel');
 
             // Vérifie si le nom et le niveau sont déjà sauvegardés
-            if (savedName && savedLevel) {
+            if (savedName) {
                 // Affiche la popup de notification
                 document.getElementById('notificationPopup').style.display = 'flex';
             }
@@ -2811,10 +2940,9 @@ updateHaitiTime();
             } else {
                 // Si l'utilisateur n'est pas satisfait, on lui permet de resaisir ses informations
                 localStorage.removeItem('userName');
-                localStorage.removeItem('userLevel');
                 document.getElementById('notificationPopup').style.display = 'none';
                 validateUserName(); // Redemande le nom
-                showLevelPopup(); // Redemande le niveau
+                // Le sélecteur de niveau a été retiré
             }
         }
 
@@ -2936,93 +3064,13 @@ document.querySelectorAll('input[name="level"]').forEach(radio => {
     });
 });
 
-function confirmLevel() {
-    const level = document.querySelector('input[name="level"]:checked').value;
-    
-    if (level === "intermédiaire" || level === "avancé") {
-        Swal.fire({
-            title: 'Mot de passe requis',
-            input: 'password',
-            showCancelButton: true,
-            confirmButtonText: 'Valider',
-            cancelButtonText: 'Annuler'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                alert("Mot de passe accepté !");
-            }
-        });
-    } else {
-        alert("Niveau débutant sélectionné");
-    }
-}
+// Les niveaux Débutant, Intermédiaire et Avancé ont été retirés de l'interface.
+function confirmLevel() {}
+function showPasswordPopup() {}
+function setUserLevel() {}
+function updateInterfaceForLevel() {}
+function showLevelPopup() {}
 
-function showPasswordPopup(level) {
-    Swal.fire({
-        title: `Accès ${level} 🔒`,
-        html: `Veuillez entrer le mot de passe pour le niveau <strong>${level}</strong>`,
-        input: 'password',
-        inputPlaceholder: 'Mot de passe...',
-        inputAttributes: {
-            autocapitalize: 'off',
-            autocorrect: 'off'
-        },
-        showCancelButton: true,
-        confirmButtonText: 'Valider',
-        cancelButtonText: 'Annuler',
-        allowOutsideClick: false,
-        preConfirm: (password) => {
-            if (password !== LEVEL_PASSWORDS[level]) {
-                Swal.showValidationMessage('Mot de passe incorrect');
-                return false;
-            }
-            return true;
-        }
-    }).then((result) => {
-        if (result.isConfirmed) {
-            setUserLevel(level);
-        } else {
-            // Re-sélectionne le niveau débutant si annulation
-            document.querySelector('input[value="débutant"]').checked = true;
-        }
-    });
-}
-
-// Définissez vos mots de passe (à changer pour la production)
-const LEVEL_PASSWORDS = {
-    "intermédiaire": "123",
-    "avancé": "456"
-};
-function setUserLevel(level) {
-    localStorage.setItem('userLevel', level);
-    document.getElementById('userLevelSpan').textContent = level;
-    document.getElementById('levelPopup').style.display = 'none';
-    
-    Swal.fire({
-        title: 'Succès !',
-        text: `Vous êtes maintenant niveau ${level}`,
-        icon: 'success'
-    });
-    
-    // Mettre à jour l'interface selon le niveau
-    updateInterfaceForLevel(level);
-}
-function updateInterfaceForLevel(level) {
-    // Désactiver certaines fonctionnalités pour les niveaux inférieurs
-    if (level === "débutant") {
-        // Désactiver les boutons avancés
-        document.querySelector('.btn-analyze').style.display = 'none';
-    } else {
-        // Activer tous les boutons
-        document.querySelector('.btn-analyze').style.display = 'inline-block';
-    }
-}
-function showLevelPopup() {
-    // Sélection automatique du niveau débutant si aucun niveau n'est défini
-    if (!localStorage.getItem('userLevel')) {
-        document.querySelector('input[value="débutant"]').checked = true;
-    }
-    document.getElementById('levelPopup').style.display = 'block';
-}
 // Démarrer le minuteur
     timerTime = minutes * 60; // Convertir en secondes
     isTimerRunning = true;
@@ -3122,18 +3170,27 @@ function updateTimerDisplay() {
     const seriesInput = document.getElementById('seriesInput').value.toUpperCase();
     const validColors = ['R', 'V'];
 
-    if (seriesInput.length === 10 && seriesInput.split('').every(char => validColors.includes(char))) {
+    if (seriesInput.length > 0) {
         const colorCount = seriesInput.split('').reduce((count, char) => {
             count[char] = (count[char] || 0) + 1;
             return count;
         }, {});
 
-        const redPercentage = (colorCount['R'] || 0) * 10;
-        const greenPercentage = (colorCount['V'] || 0) * 10;
+        const redPercentage = Math.round(((colorCount['R'] || 0) / seriesInput.length) * 100);
+        const greenPercentage = Math.round(((colorCount['V'] || 0) / seriesInput.length) * 100);
 
-        const mostFrequentColor = redPercentage >= greenPercentage ? `${redPercentage}% Rouge` : `${greenPercentage}% Vert`;
-        document.getElementById('colorPercentage').value = mostFrequentColor;
-        document.getElementById('colorInput').value = seriesInput; // Utilise les 10 couleurs
+        document.getElementById('colorPercentage').value = `${redPercentage}% Rouge / ${greenPercentage}% Vert`;
+        document.getElementById('colorInput').value = seriesInput;
+    } else {
+        document.getElementById('colorPercentage').value = '';
+        document.getElementById('colorInput').value = '';
+    }
+
+    // Déclenchement automatique immédiat dès que 10 couleurs sont saisies
+    if (seriesInput.length === 10 && seriesInput.split('').every(char => validColors.includes(char))) {
+        setTimeout(() => {
+            predictColor();
+        }, 150);
     }
 }
 function analyzeLossReason(colorInput, prediction, result) {
@@ -3960,26 +4017,11 @@ async function predictColor() {
     // 🔁 Récupération de l'heure d'Haïti affichée
     const haitiTime = document.getElementById('currentTime').textContent;
 
-    // 1. Vérification du mode forcé (prioritaire)
-    if (isForceModeActive) {
-        completeForcedPrediction();
-        return;
-    }
-
-    // 2. Vérification des restrictions
+    // 1. Vérification des restrictions
     if (!checkPredictionRestrictions(colorInput)) return;
 
-    // Nouvelle vérification : Prédiction basée sur les motifs
+    // Prédiction basée sur les motifs (sans blocage mode forcé ni avertissement 1ère couleur)
     let predictedColor = predictBasedOnSimilarity(colorInput);
-    
-    // Si nous sommes en phase de perte, vérifier la première couleur
-    if (lastResultWasLoss) {
-        const shouldContinue = await checkFirstColorWarning(colorInput, predictedColor);
-        if (!shouldContinue) {
-            clearFields();
-            return;
-        }
-    }
 
     // 3. Validation du format
     if (colorInput.length !== 10 || !colorInput.split('').every(char => validColors.includes(char))) {
@@ -4009,12 +4051,7 @@ async function predictColor() {
     // 6. Conversion au format lisible
     const lastColors = colorInput.split('').map(char => char === 'R' ? 'rouge' : 'vert');
 
-    // 7. Vérification des doublons
-    const previousResult = history.find(record => record.colors === lastColors.join(', '));
-    if (previousResult) {
-        handleDuplicatePrediction(previousResult, colorInput, lastColors, frequentColor);
-        return;
-    }
+    // Vérification des doublons retirée (prédiction automatique continue)
 
     // 8. Nouvelle stratégie après une perte
     if (lastResultWasLoss) {
@@ -4127,7 +4164,15 @@ function completePrediction(colorInput, lastColors, frequentColor) {
             <p>${frequentColor}</p>
         `,
         icon: 'success',
-        confirmButtonText: 'Continuer'
+        showCancelButton: true,
+        confirmButtonText: 'Continuer',
+        cancelButtonText: 'Annuler (retour arrière)',
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#dc3545'
+    }).then((result) => {
+        if (!result.isConfirmed) {
+            cancelLastPrediction(colorInput);
+        }
     });
 
     updateStats();
@@ -4365,7 +4410,15 @@ function completePrediction(colorInput, lastColors, frequentColor) {
             <p>${frequentColor}</p>
         `,
         icon: 'success',
-        confirmButtonText: 'Continuer'
+        showCancelButton: true,
+        confirmButtonText: 'Continuer',
+        cancelButtonText: 'Annuler (retour arrière)',
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#dc3545'
+    }).then((result) => {
+        if (!result.isConfirmed) {
+            cancelLastPrediction(colorInput);
+        }
     });
 
     updateStats();
@@ -4476,7 +4529,14 @@ function displayPreviousResult(previousResult) {
 
 
 
-        function clearFields() {
+        function backspaceColor() {
+    const input = document.getElementById('seriesInput');
+    if (input.value.length > 0) {
+        input.value = input.value.slice(0, -1);
+        autoFillColors();
+    }
+}
+function clearFields() {
             document.getElementById('colorInput').value = '';
             document.getElementById('seriesInput').value = '';
             document.getElementById('colorPercentage').value = '';
@@ -4661,51 +4721,7 @@ Swal.fire({
         // ===== FIN DE L'AJOUT =====
         lastHistoryItem.result = 'Échec';
         failures++;
-         let warningMessage = '';
-         if (consecutiveLosses >= 1,2,3,4,5,6,7,8,9) {
-            warningMessage = `
-               <div style="background:#ffebee;padding:10px;border-radius:5px;margin:10px 0;">
-               <p style="color:#d32f2f">🚨 PHASE DE PERTES - Restrictions Actives</p>
-               <p><strong>Séquences à éviter :</strong></p>
-               <ul style="margin: 5px 0; color: #d32f2f;">
-               <li>Les séquences de 10 couleurs se terminant par RRR</li>
-               <li>Les séquences de 10 couleurs se terminant par VVV</li>
-               </ul>
-               <p style="font-size: 0.9em; margin-top: 8px;">
-            ⚠️ Ces restrictions sont en place pour éviter les séries de pertes consécutives
-            </p>
-            </div>
-            `;
-        }
-
-        // Gestion du mode forcé
-        if (consecutiveLosses >= 4 && !isForceModeActive) {
-            isForceModeActive = true;
-            
-            const redTotal = redSuccesses + redFailures;
-            const greenTotal = greenSuccesses + greenFailures;
-            
-            const redRate = redTotal > 0 ? redSuccesses / redTotal : 0;
-            const greenRate = greenTotal > 0 ? greenSuccesses / greenTotal : 0;
-            
-            forcedColor = redRate >= greenRate ? 'rouge' : 'vert';
-            
-            document.getElementById('forceModeAlert').style.display = 'block';
-            document.getElementById('forcedColorText').textContent = forcedColor;
-            document.getElementById('forcedColorText').style.color = forcedColor === 'rouge' ? '#dc3545' : '#28a745';
-            
-            if (forcedColor === 'rouge') {
-                document.getElementById('redStats').classList.add('force-mode-active');
-            } else {
-                document.getElementById('greenStats').classList.add('force-mode-active');
-            }
-            
-            warningMessage += `
-                <div style="margin-top:10px; background:#fff3cd; padding:10px; border-radius:5px;">
-                    <p style="color:#856404;">⚠️ Mode forcé activé (5 pertes): Prédictions sur <strong>${forcedColor}</strong></p>
-                </div>
-            `;
-        }
+         let warningMessage = ''; // Restrictions RRR/VVV et activation du mode forcé retirées
         
         Swal.fire({
             title: 'Perdu ❌',
@@ -4733,6 +4749,7 @@ Swal.fire({
     updateHistory();
     updateSuccessRate();
     updatePoints();
+    updateStats();
     updateLevelButtons();
     updatePieChart();
     updateColorStatsDisplay();
@@ -4747,26 +4764,7 @@ Swal.fire({
 }
 function checkPredictionRestrictions(colorSeries) {
     const lastThree = colorSeries.slice(-3); // Récupère les 3 dernières couleurs
-    const redCount = (colorSeries.match(/R/g) || []).length;
-    const greenCount = (colorSeries.match(/V/g) || []).length;
-    // 1. Vérification des séquences RRR et VVV après une perte
-    if (consecutiveLosses > 0 && isBlockedAfterLoss(colorSeries)) {
-        Swal.fire({
-            title: 'SÉQUENCE BLOQUÉE APRÈS PERTE ⛔',
-            html: `
-                <div style="font-size: 2rem;">🚫</div>
-                <p>La séquence se termine par <strong>${lastThree}</strong></p>
-                <p>Les séquences se terminant par RRR ou VVV sont bloquées après une perte.</p>
-                <p style="color: #dc3545;">Veuillez attendre une nouvelle séquence.</p>
-                <p>Pertes consécutives actuelles : ${consecutiveLosses}</p>
-            `,
-            icon: 'error',
-            confirmButtonText: 'Compris',
-            confirmButtonColor: '#dc3545'
-        });
-        return false;
-    }
-    // 2. Vérification permanente (valable en tout temps) - RVR et VRV
+    // Vérification permanente - RVR et VRV
     if (lastThree === 'RVR' || lastThree === 'VRV') {
         Swal.fire({
             title: 'PRÉDICTION INTERDITE ⛔',
@@ -4782,80 +4780,8 @@ function checkPredictionRestrictions(colorSeries) {
         });
         return false;
     }
-    // 3. Vérification des ratios interdits EN PHASE DE PERTES SEULEMENT
-if (consecutiveLosses > 0) {
-    const redCount = (colorSeries.match(/R/g) || []).length;
-    const greenCount = (colorSeries.match(/V/g) || []).length;
-    
-    // Liste des ratios interdits
-    const bannedRatios = [
-        {r:7, v:3}, {r:3, v:7},
-        {r:8, v:2}, {r:2, v:8},
-        {r:9, v:1}, {r:1, v:9},
-        {r:10, v:0}, {r:0, v:10}
-    ];
 
-    // Vérifier si le ratio actuel est interdit
-    const isBannedRatio = bannedRatios.some(ratio => 
-        (redCount === ratio.r && greenCount === ratio.v) ||
-        (redCount === ratio.v && greenCount === ratio.r)
-    );
-
-    if (isBannedRatio) {
-        Swal.fire({
-            title: 'RATIO INTERDIT EN PHASE DE PERTES ⛔',
-            html: `
-                <div style="font-size: 2rem;">🚫</div>
-                <p>Le ratio <strong>${redCount}R/${greenCount}V</strong> est interdit pendant les phases de pertes.</p>
-                <p>Motif : Ces ratios extrêmes sont trop risqués après une perte.</p>
-                <p style="color: #dc3545;">Veuillez entrer une nouvelle séquence.</p>
-                <p>Pertes consécutives : ${consecutiveLosses}</p>
-            `,
-            icon: 'error',
-            confirmButtonText: 'Compris',
-            confirmButtonColor: '#dc3545'
-        });
-        return false;
-    }
-}
-
-    // 4. Vérification des ratios interdits (6R/4V et 6V/4R)
-   /* if ((redCount === 6 && greenCount === 4) || (redCount === 4 && greenCount === 6)) {
-        Swal.fire({
-            title: 'RATIO INTERDIT ⛔',
-            html: `
-                <div style="font-size: 2rem;">🚫</div>
-                <p>Le ratio <strong>${redCount}R/${greenCount}V</strong> est interdit.</p>
-                <p>Motif : Ces ratios montrent une instabilité statistique trop importante.</p>
-                <p style="color: #dc3545;">Veuillez entrer une nouvelle séquence.</p>
-            `,
-            icon: 'error',
-            confirmButtonText: 'Compris',
-            confirmButtonColor: '#dc3545'
-        });
-        return false;
-    }*/
-     
-    // 3. Vérification des motifs bloqués après une perte (s'applique même en mode forcé)
-    if (bannedPatterns.includes(lastThree)) {
-        Swal.fire({
-            title: 'PRÉDICTION TEMPORAIREMENT BLOQUÉE ⚠️',
-            html: `
-                <div style="font-size: 2rem;">🔒</div>
-                <p>La séquence <strong>${lastThree}</strong> est temporairement bloquée.</p>
-                <p>Motif : Cette séquence a récemment entraîné une perte.</p>
-                <p style="color: #ffc107;">Attendez un gain pour débloquer ce motif.</p>
-                ${consecutiveLosses >= 0 ? `<p style="margin-top:10px;">🚨 Vous avez ${consecutiveLosses} pertes consécutives - Soyez prudent!</p>` : ''}
-            `,
-            icon: 'warning',
-            confirmButtonText: 'Compris',
-            confirmButtonColor: '#ffc107',
-            background: '#fff3cd'
-        });
-        return false;
-    }
-
-    return true; // Tout est OK - Aucune restriction ne s'applique
+    return true; // Restrictions RRR/VVV, ratios extrêmes et motifs bannis retirées
 }
 // Fonction pour analyser les raisons de l'échec (exemple)
 function analyzeLossReason(colorInput, prediction, result) {
@@ -5166,6 +5092,7 @@ function highlightLatestEntry() {
             updateHistory();
             updateSuccessRate();
             updatePoints();
+            updateStats();
             updateProgressBar(successes);
             updatePieChart();
 
@@ -5309,50 +5236,55 @@ function updateSuccessRate() {
 }
 
 
-        function updateStats() {
-            document.getElementById('successRate').textContent = `Taux de réussite : ${(successes / (successes + failures) * 100).toFixed(2)}%`;
-            document.getElementById('totalPredictions').textContent = `Total des Prédictions : ${history.length}`;
-            document.getElementById('totalSuccesses').textContent = `Total des Réussites : ${successes}`;
-            document.getElementById('totalFailures').textContent = `Total des Pertes : ${failures}`;
-        }
-        let pieChart;
-
-function createPieChart() {
-    const ctx = document.getElementById('pieChart').getContext('2d');
-    pieChart = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: ['Réussites', 'Pertes'],
-            datasets: [{
-                data: [successes, failures],
-                backgroundColor: ['#28a745', '#dc3545'],
-                borderColor: ['#218838', '#c82333'],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'top',
-                },
-                tooltip: {
-                    enabled: true
-                }
+        function getLossMilestones() {
+            let count7 = 0;
+            let count8 = 0;
+            let count9 = 0;
+            let streak = 0;
+            if (Array.isArray(history)) {
+                history.forEach(record => {
+                    if (record && record.result === 'Échec') {
+                        streak++;
+                        if (streak === 7) count7++;
+                        if (streak === 8) count8++;
+                        if (streak === 9) count9++;
+                    } else if (record && record.result === 'Succès') {
+                        streak = 0;
+                    }
+                });
             }
+            return { count7, count8, count9 };
         }
-    });
-}
 
-function updatePieChart() {
-    if (pieChart) {
-        pieChart.data.datasets[0].data = [successes, failures];
-        pieChart.update();
-    } else {
-        createPieChart();
-    }
-}
+        function updateLossMilestones() {
+            const milestones = getLossMilestones();
+            const el7 = document.getElementById('tier7Losses');
+            const el8 = document.getElementById('tier8Losses');
+            const el9 = document.getElementById('tier9Losses');
+            if (el7) el7.textContent = milestones.count7;
+            if (el8) el8.textContent = milestones.count8;
+            if (el9) el9.textContent = milestones.count9;
+        }
+
+        function updateStats() {
+            const evaluated = successes + failures;
+            const rate = evaluated > 0 ? ((successes / evaluated) * 100).toFixed(2) : '0.00';
+            const sr = document.getElementById('successRate');
+            const tp = document.getElementById('totalPredictions');
+            const ts = document.getElementById('totalSuccesses');
+            const tf = document.getElementById('totalFailures');
+            const ml = document.getElementById('maxConsecutiveLosses');
+            if (sr) sr.innerHTML = `Taux de réussite : <span>${rate}%</span>`;
+            if (tp) tp.innerHTML = `Total des Prédictions : <span>${history.length}</span>`;
+            if (ts) ts.innerHTML = `Total des Réussites : <span>${successes}</span>`;
+            if (tf) tf.innerHTML = `Total des Pertes : <span>${failures}</span>`;
+            if (ml) ml.innerHTML = `Plus grande série de pertes : <span>${maxConsecutiveLosses}</span>`;
+            updateLossMilestones();
+        }
+
+        let pieChart = null;
+        function createPieChart() { /* Diagramme circulaire supprimé */ }
+        function updatePieChart() { /* Diagramme circulaire supprimé */ }
 
         function enableFeedbackButtons() {
             document.getElementById('btnSuccess').disabled = false;
@@ -5442,50 +5374,8 @@ function updatePieChart() {
 
 
 
-        function showLevelPopup() {
-            const savedLevel = localStorage.getItem('userLevel');
-            if (!savedLevel) {
-                document.getElementById('levelPopup').style.display = 'block';
-            } else {
-                document.getElementById('userLevelSpan').textContent = `${savedLevel}`;
-            }
-        }
-
-        function confirmLevel() {
-    const selectedLevel = document.querySelector('input[name="level"]:checked').value;
-    localStorage.setItem('userLevel', selectedLevel);
-    document.getElementById('userLevelSpan').textContent = selectedLevel.charAt(0).toUpperCase() + selectedLevel.slice(1);
-    document.getElementById('levelPopup').style.display = 'none';
-    
-    Swal.fire({
-        title: 'Niveau changé !',
-        text: `Vous êtes maintenant niveau ${selectedLevel}`,
-        icon: 'success'
-    });
-}
-
-        function showLevelInfo() {
-            document.getElementById('levelInfoPopup').style.display = 'block';
-            document.getElementById('currentPoints').textContent = `Points actuels : ${points}`;
-        }
-
-        function hideLevelInfo() {
-            document.getElementById('levelInfoPopup').style.display = 'none';
-        }
-
-        function updateLevelButtons() {
-    const intermediateButton = document.querySelector('input[value="intermédiaire"]');
-    const advancedButton = document.querySelector('input[value="avancé"]');
-    
-    // Débloque TOUJOURS les boutons, quel que soit le nombre de points
-    intermediateButton.disabled = false;
-    advancedButton.disabled = false;
-    
-    // Optionnel : supprime aussi l'apparence visuelle "désactivé"
-    intermediateButton.classList.remove('disabled');
-    advancedButton.classList.remove('disabled');
-}
-        document.addEventListener('DOMContentLoaded', () => {
+        // Les éléments d'information de niveau ont été retirés.
+document.addEventListener('DOMContentLoaded', () => {
     loadHistoryFromLocalStorage();
     loadStatsFromLocalStorage();
     validateUserName();
@@ -5717,55 +5607,12 @@ function updateTrendIndicators(redRate, greenRate) {
 
 // Fonction pour vérifier si on doit activer le mode forcé
 function checkForceMode() {
-    // Désactiver le mode forcé si on a un gain (inchangé)
-    if (history.length > 0 && history[history.length - 1].result === 'Succès') {
-        if (isForceModeActive) {
-            isForceModeActive = false;
-            document.getElementById('forceModeAlert').style.display = 'none';
-            document.getElementById('redStats').classList.remove('force-mode-active');
-            document.getElementById('greenStats').classList.remove('force-mode-active');
-            
-            Swal.fire({
-                title: 'Mode Forcé Désactivé',
-                text: 'Un gain a été enregistré, retour au mode normal.',
-                icon: 'success',
-                timer: 2000
-            });
-        }
-        return;
-    }
-    
-    // MODIFICATION PRINCIPALE : Activation après 5 pertes au lieu de 2
-    if (consecutiveLosses >= 5 && !isForceModeActive) {
-        isForceModeActive = true;
-        
-        // Déterminer quelle couleur forcer (inchangé)
-        const redTotal = redSuccesses + redFailures;
-        const greenTotal = greenSuccesses + greenFailures;
-        
-        const redRate = redTotal > 0 ? redSuccesses / redTotal : 0;
-        const greenRate = greenTotal > 0 ? greenSuccesses / greenTotal : 0;
-        
-        forcedColor = redRate >= greenRate ? 'rouge' : 'vert';
-        
-        // Mettre à jour l'interface (inchangé)
-        document.getElementById('forceModeAlert').style.display = 'block';
-        document.getElementById('forcedColorText').textContent = forcedColor;
-        document.getElementById('forcedColorText').style.color = forcedColor === 'rouge' ? '#dc3545' : '#28a745';
-        
-        if (forcedColor === 'rouge') {
-            document.getElementById('redStats').classList.add('force-mode-active');
-        } else {
-            document.getElementById('greenStats').classList.add('force-mode-active');
-        }
-        
-        // Message d'alerte mis à jour pour refléter 5 pertes
-        Swal.fire({
-            title: 'Mode Forcé Activé!',
-            html: `5 pertes consécutives détectées. Le bot forcera maintenant les prédictions sur <strong style="color:${forcedColor === 'rouge' ? '#dc3545' : '#28a745'}">${forcedColor}</strong> jusqu'au prochain gain.`,
-            icon: 'warning',
-            confirmButtonText: 'Compris'
-        });
+    // Mode forcé automatique désactivé
+    if (isForceModeActive) {
+        isForceModeActive = false;
+        if (document.getElementById('forceModeAlert')) document.getElementById('forceModeAlert').style.display = 'none';
+        if (document.getElementById('redStats')) document.getElementById('redStats').classList.remove('force-mode-active');
+        if (document.getElementById('greenStats')) document.getElementById('greenStats').classList.remove('force-mode-active');
     }
 }
 function predictBasedOnSimilarity(inputPattern) {
@@ -5785,10 +5632,9 @@ function showPasswordPopup() {
     document.getElementById('passwordInput').focus();
 }
 
-// Afficher le popup au chargement
+// Mot de passe d'entrée retiré : pas d'affichage automatique au chargement
 document.addEventListener('DOMContentLoaded', function() {
-    // Affiche le popup après un court délai (1 seconde)
-    setTimeout(showPasswordPopup, 1000);
+    // Le popup de mot de passe à l'entrée a été désactivé
 });
 function closePasswordPopup() {
     document.getElementById('passwordPopup').style.display = 'none';
@@ -6097,41 +5943,72 @@ function rotateQuote() {
 
 rotateQuote(); // Lance le système
 function isBlockedAfterLoss(colorInput) {
-    // Vérifie si la séquence se termine par RRR ou VVV
-    const lastThree = colorInput.slice(-3);
-    return lastThree === 'RRR' || lastThree === 'VVV';
+    // Restriction retirée : ne bloque plus sur RRR ou VVV
+    return false;
 }
 // Ajoutez cette fonction helper
 function checkFirstColorWarning(colorInput, prediction) {
-    const firstColor = colorInput[0];
-    const predictionColor = prediction === 'rouge' ? 'R' : 'V';
-    
-    if (firstColor !== predictionColor && lastResultWasLoss) {
-        return Swal.fire({
-            title: '⚠️ Attention - Risque Détecté!',
-            html: `
-                <div style="background:#fff3cd; padding:15px; border-radius:8px; margin:10px 0;">
-                    <p><strong>Première couleur :</strong> ${firstColor === 'R' ? '🔴 Rouge' : '🟢 Vert'}</p>
-                    <p><strong>Prédiction :</strong> ${prediction === 'rouge' ? '🔴 Rouge' : '🟢 Vert'}</p>
-                    <p style="color:#856404; margin-top:10px;">
-                        ⚠️ La première couleur ne correspond pas à la prédiction!
-                    </p>
-                </div>
-                <p style="margin-top:15px;">En phase de perte, il est recommandé d'avoir une correspondance.</p>
-            `,
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Continuer quand même',
-            cancelButtonText: 'Annuler la prédiction',
-            confirmButtonColor: '#ffc107',
-            cancelButtonColor: '#dc3545',
-            reverseButtons: true
-        }).then((result) => {
-            return result.isConfirmed;
-        });
-    }
+    // Restriction retirée : avertissement désactivé
     return Promise.resolve(true);
 }
+</script>
+</body>
+</html>
+
+<script>
+
+function initAutoDate() {
+    try {
+        const el = document.getElementById("dateInput");
+        if (el && !el.value) {
+            const d = new Date();
+            const y = d.getFullYear();
+            const m = String(d.getMonth()+1).padStart(2,"0");
+            const day = String(d.getDate()).padStart(2,"0");
+            el.value = `${y}-${m}-${day}`;
+        }
+    } catch(e) {}
+}
+window.addEventListener("DOMContentLoaded", initAutoDate);
+initAutoDate();
+
+
+function cancelLastPrediction(savedColorSequence) {
+    if (typeof history !== "undefined" && history.length > 0) {
+        history.pop();
+        if (typeof saveHistoryToLocalStorage === "function") saveHistoryToLocalStorage();
+        if (typeof updateHistory === "function") updateHistory();
+        if (typeof updateStats === "function") updateStats();
+    }
+    const seriesInput = document.getElementById("seriesInput");
+    const colorInputElem = document.getElementById("colorInput");
+    if (seriesInput && savedColorSequence) {
+        seriesInput.value = savedColorSequence;
+    }
+    if (colorInputElem && savedColorSequence) {
+        colorInputElem.value = savedColorSequence;
+        const colorCount = savedColorSequence.split("").reduce((acc, c) => { acc[c] = (acc[c] || 0) + 1; return acc; }, {});
+        const rPct = Math.round(((colorCount["R"] || 0) / savedColorSequence.length) * 100);
+        const vPct = Math.round(((colorCount["V"] || 0) / savedColorSequence.length) * 100);
+        const pctElem = document.getElementById("colorPercentage");
+        if (pctElem) pctElem.value = `${rPct}% Rouge / ${vPct}% Vert`;
+    }
+    const predRes = document.getElementById("predictionResult");
+    if (predRes) {
+        predRes.innerHTML = "";
+        predRes.className = "";
+    }
+    if (typeof history !== "undefined") {
+        const lastRec = history[history.length - 1];
+        if (!lastRec || lastRec.result) {
+            const btnS = document.getElementById("btnSuccess");
+            const btnF = document.getElementById("btnFailure");
+            if (btnS) btnS.disabled = true;
+            if (btnF) btnF.disabled = true;
+        }
+    }
+}
+
 </script>
 </body>
 </html>
